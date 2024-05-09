@@ -1,0 +1,2818 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: 校園監控系統API
+  description: 監測校園每間教室的用電設備，提供課程排程、預約排程、群控功能
+
+servers:
+# Added by API Auto Mocking Plugin
+  - url: https://beta2-api.dforcepro.com
+    description: 內部測試站
+
+tags:
+
+  - name: auth
+    description: 認證用資料
+  - name: monitor
+    description: 監示數值
+  - name: control
+    description: 遠端控制
+  - name: schedule
+    description: 排程
+  - name: queue
+    description: 佇列管理
+  - name: ews
+    description: 預警功能
+  - name: ems
+    description: 能源管理
+  - name: report
+    description: 報表管理
+  - name: sys
+    description: 系統設定
+paths:
+  /v1/login:
+    post:
+      tags: [auth]
+      summary: 登入
+      operationId: login
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: string
+                  description: 使用者帳號
+                  example: gavin
+                pwd:
+                  type: string
+                  description: 密碼
+                  example: 1234
+      responses:
+        '200':
+          description: 回傳使用者Token，做API使用者驗證
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 身份驗證
+                  permission:
+                    type: string
+                    enum: [user, admin]
+                    description: 權限
+                example:
+                  token: Dv+BBAEC/4IAAQwBEAAA/5P/ggAGAXMFaW50NjQEBgD8tMEGGgJpZAZzdHJpbmcMGgAYNWEwNmI2OTBhYzk1NzYwMDA5MjZiNTY3B2FjY291bnQGc3RyaW5nDAcABXBldGVyBG5hbWUGc3RyaW5nDAgABlBldGVyYQVncm91cAZzdHJpbmcMBwAFYWRtaW4Gc3lzdGVtBnN0cmluZwwFAANsenc=
+                  permission: user
+        '400':
+          description: 無效的輸入
+        '404':
+          description: 使用者帳號或密碼錯誤
+        '500':
+          description: 伺服器發生錯誤
+  /v1/pwd:
+    put:
+      tags: [auth]
+      summary: 修改密碼
+      operationId: change-password
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                old:
+                  type: string
+                  description: 舊使用者帳號
+                  example: 1234
+                new:
+                  type: string
+                  description: 新密碼
+                  example: 5678
+      responses:
+        '200':
+          description: ok
+        '400':
+          description: invalid password
+        '500':
+          description: interval server error
+  /v1/token/remote:
+    post:
+      tags: [auth]
+      summary: 取得遠端控制Token
+      operationId: get-remote-token
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                pwd:
+                  type: string
+                  description: 使用者帳號
+                  example: 1234
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 身份驗證
+                example:
+                  token: Dv+BBAEC/4IAAQwBEAAA/5P/ggAGAXMFaW50NjQEBgD8tMEGGgJpZAZzdHJpbmcMGgAYNWEwNmI2OTBhYzk1NzYwMDA5MjZiNTY3B2FjY291bnQGc3RyaW5nDAcABXBldGVyBG5hbWUGc3RyaW5nDAgABlBldGVyYQVncm91cAZzdHJpbmcMBwAFYWRtaW4Gc3lzdGVtBnN0cmluZwwFAANsenc=
+        '400':
+          description: invalid password
+        '500':
+          description: interval server error
+  /v1/data:
+    get:
+      tags: [monitor]
+      summary: 取得即時數據資料
+      operationId: get-data
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+            enum: [1F, 2F, 3F, 4F, B1]
+          description: 欄層
+        - in: query
+          name: tag
+          required: false
+          schema:
+            type: string
+            enum: [power]
+          description: 標籤
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRealtimeData'
+        '204':
+          description: 無資料
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v1/chart:
+    get:
+      tags: [monitor]
+      summary: 取得數據趨勢圖(一分鐘一筆)
+      operationId: get-data-chart
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: fields
+          required: false
+          schema:
+            type: string
+          description: 欄位名稱 (field1+field2)
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: interval
+          required: false
+          schema:
+            type: integer
+          description: 期間
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataChart'
+        '204':
+          description: 無資料
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v2/data/report:
+    post:
+      tags: [monitor]
+      summary: 取得數據報表
+      operationId: get-data-report
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReport'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v1/data/csv:
+    post:
+      tags: [monitor]
+      summary: 取得csv報表
+      operationId: get-data-report-csv
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetCsv'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v1/data/excel:
+    post:
+      tags: [monitor]
+      summary: 取得Excel報表
+      operationId: get-data-report-excel
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetExcel'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v1/controller:
+    post:
+      tags: [control]
+      summary: 遠端控制
+      operationId: remote-control
+      security:
+        - ApiKeyAuth: []
+        - RemoteKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoteInput'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/scenario:
+    get:
+      tags: [schedule]
+      summary: 取得腳本設定
+      operationId: get-scenario-list
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScenarioList'
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [schedule]
+      summary: 建立腳本
+      operationId: create-scenario
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScenario'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/scenario/{NAME}:
+    delete:
+      tags: [schedule]
+      summary: 刪除腳本設定
+      operationId: delete-scenario
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '500':
+          description: 伺服器發生錯誤
+  /v1/schedule/{NAME}:
+    get:
+      tags: [schedule]
+      summary: 取得行程詳細
+      operationId: get-schedule-detail
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105@A
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleDetail'
+        '204':
+          description: no content (行程不存在)
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [schedule]
+      summary: 建立/更新行程
+      operationId: create-schedule
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105@A
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetScheduleDetail'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/schedule/condition:
+    get:
+      tags: [schedule]
+      summary: 條件式排程
+      operationId: get-condition-schedule
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleCondition'
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/reservation/{NAME}:
+    get:
+      tags: [schedule]
+      summary: 取得預約排程
+      operationId: get-reservation-detail
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReservationDetail'
+        '204':
+          description: no content (行程不存在)
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [schedule]
+      summary: 建立預約排程
+      operationId: create-reservation
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReservationDetail'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/weekSchedule:
+    post:
+      tags: [schedule]
+      summary: 建立周排程
+      operationId: create-week-schedule
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWeekSchedule'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+    get:
+      tags: [schedule]
+      summary: 取得周排程清單
+      operationId: get-week-schedule
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWeekSchedule'
+        '204':
+          description: no content (參數不存在)
+        '500':
+          description: 伺服器發生錯誤
+  /v1/info:
+    get:
+      tags: [sys]
+      summary: 系統資訊
+      operationId: get_info
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInfo'
+        '500':
+          description: 伺服器發生錯誤
+  /v1/SYS/config/hook:
+    post:
+      tags: [sys]
+      summary: 系統設定檔更新hook
+      operationId: sys-config-hook
+      parameters:
+        - in: header
+          name: X-SYS-SECRET
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                delaySecs:
+                  type: integer
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/SYS:
+    post:
+      tags: [sys]
+      summary: 系統設定
+      operationId: create-sys-paramter
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSysParamter'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/SYS/avg/persistence:
+    get:
+      tags: [sys]
+      summary: 取得系統-平均溫度固定值設定
+      operationId: get-sys-avg-persistence
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSysAvgPersistenceResult'
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [sys]
+      summary: 系統-平均溫度固定值
+      operationId: create-sys-avg-persistence
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSysAvgPersistence'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+    delete:
+      tags: [sys]
+      summary: 刪除系統-平均溫度固定值
+      operationId: delete-sys-avg-persistence
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: fields
+          required: true
+          schema:
+            type: string
+            example: field_1,field_2
+      responses:
+        '200':
+          description: success
+        '500':
+          description: 伺服器發生錯誤
+  /v1/SYS/{NAME}:
+    get:
+      tags: [sys]
+      summary: 取得系統參數
+      operationId: get-sys-paramter
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+            enum: ["startAirACTemp", "unloadingTemp"]
+      responses:
+        '200':
+          description: success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 200
+        '204':
+          description: no content (參數不存在)
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue:
+    get:
+      tags: [queue]
+      summary: 取得系統佇列
+      operationId: get-queue
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetQueue'
+        '204':
+          description: no content (參數不存在)
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [queue]
+      summary: 建立佇列群組
+      operationId: create-queue
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQueue'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/{ID}:
+    get:
+      tags: [queue]
+      summary: 取得queue明細
+      operationId: get-queue-detail
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateQueue'
+        '500':
+          description: 伺服器發生錯誤
+    put:
+      tags: [queue]
+      summary: 更新queue
+      operationId: update-queue
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateQueue'
+        '500':
+          description: 伺服器發生錯誤
+    delete:
+      tags: [queue]
+      summary: 刪除queue
+      operationId: delete-queue
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/_move:
+    put:
+      tags: [queue]
+      summary: 移動設備群組
+      operationId: move-queue-equip
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveQueueEquip'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/equip/{NAME}:
+    get:
+      tags: [queue]
+      summary: 取得queue設備資訊
+      operationId: get-queue-equip-info
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueEquipInfo'
+        '204':
+          description: no content
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/log:
+    get:
+      tags: [queue]
+      summary: 佇列log
+      operationId: queue-log
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: end
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueLogArray'
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/warning/conf:
+    get:
+      tags: [ews]
+      summary: 取得警報駐列清單
+      operationId: get-warning-conf
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarningQueList'
+        '204':
+          description: No Content
+        '400':
+          description: Invalid Input
+        '403':
+          description: permission denied
+  /v1/warning/conf/{GROUP}:
+    post:
+      tags: [ews]
+      summary: 建立警報駐列
+      operationId: create-warning-conf
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: GROUP
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateWarning'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [ews]
+      summary: 取得警告駐列設定詳細
+      operationId: get-warning-group-detail
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: GROUP
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateWarning'
+        '204':
+          description: No Content
+        '400':
+          description: Invalid Input
+        '403':
+          description: permission denied
+    delete:
+      tags: [ews]
+      summary: 刪除預警設定
+      operationId: delete-warning-conf
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: GROUP
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '403':
+          description: permission denied
+        '404':
+          description: not found group
+        '500':
+          description: internal service error
+  /v1/warning:
+    get:
+      tags: [ews]
+      summary: 取得預警清單
+      operationId: get-warning
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: field
+          required: true
+          schema:
+            type: string
+          description: 欄位
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: ["connErr", "alert", "alarm"]
+          description: 類型
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: interval
+          required: false
+          schema:
+            type: string
+            enum: ["1h, 2h, 4h, 6h, 12h, 24h"]
+          description: 依現在時間前 x 小時
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWarningList'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v1/warning/realtime:
+    get:
+      tags: [ews]
+      summary: 取得預警清單
+      operationId: get-warning-realtime
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWarningRealtime'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v1/warning/realtime/{KEY}/confirmation:
+    post:
+      tags: [ews]
+      summary: 即時告警確認
+      operationId: realtime-warning-confirmation
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: KEY
+          required: true
+          schema:
+            type: string
+          description: warning realtime key
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/warning/realtime/confirmation/_batch:
+    post:
+      tags: [ews]
+      summary: 批次即時告警確認
+      operationId: batch-realtime-warning-confirm-batch
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/event:
+    get:
+      tags: [ews]
+      summary: 取得事件清單
+      operationId: get-event
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: service
+          required: true
+          schema:
+            type: string
+            enum: ["api", "ems", "que", "scm"]
+          description: 欄位
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: ["login", "set_electricity_demand", "user_control", "avg_persistence", "emsDemandMgr", "queRemote", "schedule", "newProcess"]
+          description: 類型
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: interval
+          required: false
+          schema:
+            type: string
+            enum: ["1h, 2h, 4h, 6h, 12h, 24h"]
+          description: 依現在時間前 x 小時
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetEventList'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v1/electricity-demand:
+    post:
+      tags: [ems]
+      summary: 用電需量管理設定
+      operationId: create-electricity-demand
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateElectricityDemand'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [ems]
+      summary: 取得用電需量管理設定
+      operationId: get-electricity-demand
+      parameters:
+        - in: query
+          name: view
+          required: false
+          schema:
+            type: string
+            enum: ["display", "edit"]
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CreateElectricityDemand'
+                  - $ref: '#/components/schemas/ViewElectricityDemand'
+              examples:
+                Edit_ElectricityDemand:
+                  value:
+                    targetElectricity: 580
+                    restrictedMins: 4
+                    delayMins: 3
+                    unloading:
+                      - electricity: -13
+                        elapsedMins: 12
+                        action: "run"
+                        isOpen: true
+                        cmds: []
+                      - electricity: 12
+                        elapsedMins: 6
+                        action: "stop"
+                        isOpen: true
+                        cmds:
+                          - field: "BBB@1F_PP"
+                            runValue: 1
+                            stopValue: 0
+                      - electricity: 5
+                        elapsedMins: 8
+                        action: "stop"
+                        isOpen: true
+                        cmds:
+                          - field: "CCC@1F_PP"
+                            runValue: 1
+                            stopValue: 0
+                Display_ElectricityDemand:
+                  value:
+                    currentElectricity: 200
+                    targetElectricity: 580
+                    restrictedMins: 4
+                    delayMins: 3
+                    unloading:
+                      - electricity: -13
+                        elapsedMins: 12
+                        action: "run"
+                        isOpen: true
+                    unloadingGroup:
+                      "BBB@1F_PP": 1
+                      "CCC@1F_PP": 2
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v2/electricity-demand:
+    post:
+      tags: [ems]
+      summary: 用電需量管理設定
+      operationId: v2-create-electricity-demand
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/V2CreateElectricityDemand'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [ems]
+      summary: 取得用電需量管理設定
+      operationId: get-v2-electricity-demand
+      parameters:
+        - in: query
+          name: view
+          required: false
+          schema:
+            type: string
+            enum: ["display", "edit"]
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/V2CreateElectricityDemand'
+                  - $ref: '#/components/schemas/V2ViewElectricityDemand'
+              examples:
+                Edit_ElectricityDemand:
+                  value:
+                  - name: name
+                    enable: true
+                    mode: "normal"
+                    applyTime:
+                      sun: 0
+                      mon: 1
+                      tues: 1
+                      wed: 0
+                      thur: 1
+                      fri: 1
+                      sat: 1
+                    targetElectricity: 580
+                    restrictedMins: 4
+                    delayMins: 3
+                    unloading:
+                      - electricity: -13
+                        elapsedMins: 12
+                        action: "run"
+                        isOpen: true
+                        cmds: []
+                      - electricity: 12
+                        elapsedMins: 6
+                        action: "stop"
+                        isOpen: true
+                        cmds:
+                          - field: "BBB@1F_PP"
+                            runValue: 1
+                            stopValue: 0
+                      - electricity: 5
+                        elapsedMins: 8
+                        action: "stop"
+                        isOpen: true
+                        cmds:
+                          - field: "CCC@1F_PP"
+                            runValue: 1
+                            stopValue: 0
+                Display_ElectricityDemand:
+                  value:
+                    name: "name"
+                    mode: "normal"
+                    targetElectricity: 580
+                    restrictedMins: 4
+                    delayMins: 3
+                    unloading:
+                      - electricity: -13
+                        elapsedMins: 12
+                        action: "run"
+                        isOpen: true
+                    unloadingGroup:
+                      "BBB@1F_PP": 1
+                      "CCC@1F_PP": 2
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v1/electricity-demand/dashboard:
+    get:
+      tags: [ems]
+      summary: 取得用電需量管理儀表版資訊
+      operationId: get-electricity-demand-dashboard
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandDashboard'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v2/electricity-demand/dashboard:
+    get:
+      tags: [ems]
+      summary: 取得用電需量管理儀表版資訊
+      operationId: get-v2-electricity-demand-dashboard
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandDashboard'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v2/electricity-demand/schedule/{MODE}:
+    get:
+      tags: [ems]
+      summary: 取得用電需量時間排程
+      operationId: get-v2-electricity-demand-schedule
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: MODE
+          required: true
+          schema:
+            type: string
+            enum: ["normal", "dynamo"]
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandSchedule'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+    put:
+      tags: [ems]
+      summary: 取得用電需量管理儀表版資訊
+      operationId: update-v2-electricity-demand-schedule
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: MODE
+          required: true
+          schema:
+            type: string
+            enum: ["normal", "dynamo"]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetElectricityDemandSchedule'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/electricity-reduction:
+    post:
+      tags: [ems]
+      summary: 抑電管理設定
+      operationId: create-electricity-reduction
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateElectricityReduction'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [ems]
+      summary: 取得抑電管理設定
+      operationId: get-electricity-reduction
+      parameters:
+        - in: query
+          name: view
+          required: false
+          schema:
+            type: string
+            enum: ["display", "edit"]
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CreateElectricityReduction'
+                  - $ref: '#/components/schemas/ViewElectricityReduction'
+              examples:
+                Edit_ElectricityReduction:
+                  value:
+                    reductionStateField: "reduction@3F_Test"
+                    totalElectricityField: "BBB@2F_Prod"
+                    targetElectricity: 460
+                    delaySecs: 450
+                    equipGroups:
+                      - title: 主機群
+                        equips:
+                          - field: "CCC@3F_Prod"
+                            stopValue: 0
+                            runValue: 1
+                            order: 1
+                          - field: "DDD@3F_Prod"
+                            stopValue: 0
+                            runValue: 1
+                            order: 1
+                      - title: 冷凍庫 A
+                        equips:
+                          - field: "EEE@3F_ICE"
+                            stopValue: 0
+                            runValue: 1
+                            order: 1
+                          - field: "DDD@3F_ICE"
+                            stopValue: 0
+                            runValue: 1
+                            order: 1
+                Display_ElectricityReduction:
+                  value:
+                    reductionState: run
+                    totalElectricity: 600
+                    targetElectricity: 460
+                    delaySecs: 450
+                    equipGroups:
+                      - title: 主機群
+                        equips:
+                          - field: "CCC@3F_Prod"
+                            order: 1
+                          - field: "DDD@3F_Prod"
+                            order: 1
+                      - title: 冷凍庫 A
+                        equips:
+                          - field: "EEE@3F_ICE"
+                            order: 1
+                          - field: "DDD@3F_ICE"
+                            order: 1
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+  /v1/report/favorite:
+    post:
+      tags: [report]
+      summary: 建立報表常用欄位
+      operationId: create-report-favorite
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFavoriteReport'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [report]
+      summary: 取得報表常用欄位
+      operationId: get-report-favorite
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFavoriteReport'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/report/pdf/cron:
+    post:
+      tags: [report]
+      summary: 建立PDF報表排程
+      operationId: create-report-cron
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportPdfCron'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [report]
+      summary: 取得PDF報表欄位群組清單
+      operationId: get-report-pdf-cron-list
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportPdfCronList'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/report/excel/cron:
+    post:
+      tags: [report]
+      summary: 建立excel報表排程
+      operationId: create-report-excel-cron
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportExcelCron'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [report]
+      summary: 取得excel報表欄位群組清單
+      operationId: get-report-excel-cron-list
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportExcelCronList'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/report/{TYPE}/cron/{KEY}:
+    delete:
+      tags: [report]
+      summary: 刪除pdf/excel報表排程
+      operationId: delete-report-cron
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: TYPE
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: KEY
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+components:
+  schemas:
+    queListEquip:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 名稱
+        waitingTime:
+          type: integer
+          description: 預計執行等待時間(分)
+        remainTime:
+          type: integer
+          description: 當前除霜狀態剩餘時間(分)
+        totalRemainTime:
+          type: integer
+          description: 除霜流程剩餘時間(分)
+    queEquip:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 名稱
+        state_field:
+          type: string
+          description: 狀態
+        execute_field:
+          type: string
+          description: 執行除霜
+        waiting_field:
+          type: string
+          description: 預計執行等待時間欄位
+        processID_field:
+          type: string
+          description: 除霜程序ID
+        defDelayTime_field:
+          type: string
+          description: 除霜延遲時間
+        defTime_field:
+          type: string
+          description: 除霜時間
+        defDripTime_field:
+          type: string
+          description: 除霜滴水時間
+        defDelayRemainTime_field:
+          type: string
+          description: 除霜延遲剩餘時間
+        defRemainTime_field:
+          type: string
+          description: 除霜剩餘時間
+        defDripRemainTime_field:
+          type: string
+          description: 除霜滴水剩餘時間
+        defMode_field:
+          type: string
+          description: 除霜模式
+        defStopMode_field:
+          type: string
+          description: 除霜終止模式
+        ioStatus_field:
+          type: string
+          description: 輸入/出狀態
+        forcedDef_field:
+          type: string
+          description: 強制除霜/解除霜
+        errCode_field:
+          type: string
+          description: 錯誤提示
+    reversDateTimeAct:
+      type: object
+      properties:
+        time:
+          type: string
+          description: 執行時間
+          example: "2020-09-20T08:00:00+08:00"
+        act:
+          type: array
+          items:
+            type: string
+          description: 二個模式
+          example: ["class", "afterClass"]
+    timeAct:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+          description: 二個時間
+          example: ["08:00:00+08:00", "08:50:00+08:00"]
+        act:
+          type: array
+          items:
+            type: string
+          description: 二個模式
+          example: ["class", "afterClass"]
+    CreateFavoriteReport:
+      type: array
+      items:
+        type: object
+        properties:
+          favouriteName:
+            type: string
+          fields:
+            type: array
+            items:
+              type: string
+    GetWarningList:
+      type: array
+      items:
+        type: object
+        properties:
+          time:
+            type: string
+          type:
+            type: string
+          field:
+            type: string
+          name:
+            type: string
+          state:
+            type: string
+          preTime:
+            type: string
+          conditionJson:
+            type: string
+          viewsLogs:
+            type: array
+            items:
+              type: object
+              properties:
+                time:
+                  type: string
+                account:
+                  type: string
+    GetScheduleCondition:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          fields:
+            type: array
+            items:
+              type: object
+              properties:
+                monitorfield:
+                  type: string
+                conditions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      operation:
+                        type: string
+                        enum: ["eq", "lte", "lt", "gte", "gt"]
+                      applyTime:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            weekOfDay:
+                              type: integer
+                            times:
+                              type: array
+                              items:
+                                type: string
+                controlField:
+                  type: string
+                runValue:
+                  type: number
+                stopValue:
+                  type: number
+    GetWarningQueList:
+      type: object
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+    valueCondition:
+      type: object
+      properties:
+        op:
+          type: string
+        value:
+          type: string
+    warningCondition:
+      type: object
+      properties:
+        isOpen:
+          type: boolean
+        valueConditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/valueCondition'
+        timeRange:
+          type: object
+          properties:
+            start:
+              type: string
+            end:
+              type: string
+        weekDays:
+          type: array
+          items:
+            type: integer
+        frequency:
+          type: object
+          properties:
+            minutes:
+              type: integer
+            times:
+              type: integer
+        ewsAct:
+          type: string
+          enum: ["alert", "alarm"]
+    CreateWarning:
+      type: object
+      properties:
+        field:
+          type: string
+        name:
+          type: string
+        isOpen:
+          type: boolean
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/warningCondition'
+    GetExcel:
+      type: object
+      properties:
+        timeRange:
+          type: object
+          properties:
+            start:
+              type: string
+            end:
+              type: string
+        pages:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              fields:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    fieldName:
+                      type: string
+                    op:
+                      type: string
+        dataInterval:
+          type: string
+          enum: ["1m", "5m", "1h"]
+        fileName:
+          type: string
+    GetCsv:
+      type: object
+      properties:
+        timeRange:
+          type: object
+          properties:
+            start:
+              type: string
+            end:
+              type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              fieldName:
+                type: string
+              op:
+                type: string
+        dataInterval:
+          type: string
+          enum: ["1m", "5m", "1h"]
+        fileName:
+          type: string
+      example:
+        timeRange:
+          start: 2022-11-18T00:00:00+08:00
+          end: 2022-11-25T00:00:00+08:00
+        dataInterval: 1m
+        fields:
+          - fieldName: "3f H庫平均庫溫"
+            op: "{82@3F_MT_display}"
+        fileName: downloadFileName
+    GetReport:
+      type: object
+      properties:
+        interval:
+          type: string
+          enum: ["daily", "week", "month", "year"]
+        time:
+          type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+        format:
+          type: string
+          enum: ["pdf", "printer"]
+          description: 格式 (pdf, 印表機)
+        show:
+          type: boolean
+          description: 是否顯示公司名稱
+        detail:
+          type: boolean
+          description: 是否用詳細資料表格
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              name:
+                type: string
+              equip:
+                type: string
+              type:
+                type: string
+              unit:
+                type: string
+              displayType:
+                type: string
+                enum: ["realtime", "state", "accumulation"]
+              trans:
+                type: object
+                properties:
+                  "1":
+                    type: string
+                  "0":
+                    type: string
+      example:
+        interval: "month"
+        time: "2016-07-14T00:00:00+08:00"
+        format: "pdf"
+        show: true
+        detail: true
+        fields:
+          - "field": "Average_Temp@1F_K_avgTemp"
+            "name": "中文說明"
+            "equip": "設備名稱"
+            "type": "電壓"
+            "unit": "kW"
+            "displayType": "realtime"
+          - "field": "Average_Temp@1F_K_avgTemp"
+            "name": "中文說明"
+            "equip": "設備名稱"
+            "type": "電壓"
+            "unit": "kW"
+            "displayType": "accumulation"
+          - "field": "Average_Temp@1F_K_avgTemp"
+            "name": "中文說明"
+            "equip": "設備名稱"
+            "type": "電壓"
+            "unit": "kW"
+            "displayType": "state"
+            "trans":
+              "1": "開啟"
+              "0": "關閉"
+    GetQueue:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          concurrence:
+            type: integer
+          equipNum:
+            type: integer
+            description: 群組設備數量
+          equips:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          cutInlineNum:
+            type: integer
+            description: 插隊設備數量
+          cutInlineList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          inlineNum:
+            type: integer
+            description: 排隊設備數量
+          inlineList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          delayNum:
+            type: integer
+            description: 群組延遲除霜設備數量
+          delayList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          defrostNum:
+            type: integer
+            description: 群組除霜設備數量
+          defrostList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          dripNum:
+            type: integer
+            description: 群組滴水設備數量
+          dripList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          createTime:
+            type: string
+            description: 群組建立日期
+    QueueEquipInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        queueName:
+          type: string
+        state:
+          type: string
+          enum: ["none", "waiting", "force","inline", "cutInline", "delay", "defrost", "drip"]
+        waitingTime:
+          type: integer
+          description: 預計等待除霜時間(分)
+        defDelayTime:
+          type: integer
+          description: 除霜延遲時間(分)
+        defTime:
+          type: integer
+          description: 除霜時間(分)
+        defDripTime:
+          type: integer
+          description: 除霜滴水時間(分)
+        defDelayRemainTime:
+          type: integer
+          description: 除霜延遲剩餘時間(分)
+        defRemainTime:
+          type: integer
+          description: 除霜剩餘時間(分)
+        defDripRemainTime:
+          type: integer
+          description: 除霜滴水剩餘時間(分)
+        totalRemainTime:
+          type: integer
+          description: 除霜剩餘時間(分)
+    MoveQueueEquip:
+      type: object
+      properties:
+        originQueID:
+          type: string
+        targetQueID:
+          type: string
+        equips:
+          type: array
+          items:
+            type: string
+    CreateQueue:
+      type: object
+      properties:
+        name:
+          type: string
+        concurrence:
+          type: integer
+        equips:
+          type: array
+          items:
+            $ref: '#/components/schemas/queEquip'
+    QueueLogArray:
+      type: array
+      items:
+        type: object
+        properties:
+          equipName:
+            type: string
+          processID:
+            type: string
+          stateLog:
+            type: array
+            items:
+              type: object
+              properties:
+                time:
+                  type: string
+                state:
+                  type: string
+                defMode:
+                  type: integer
+                  description: 除霜模式
+                defStopMode:
+                  type: integer
+                  description: 除霜終止模式
+                ioStatus:
+                  type: integer
+                  description: 輸入/出狀態
+                forcedDef:
+                  type: integer
+                  description: 強制除霜/解除霜
+                errCode:
+                  type: integer
+                  description: 錯誤提示
+    GetInfo:
+      type: object
+      properties:
+        emsDynamoMode:
+          type: boolean
+    CreateSysParamter:
+      type: object
+      properties:
+        startAirACTemp:
+          type: number
+          description: 啟動溫度
+        unloadingTemp:
+          type: number
+          description: 卸載溫度
+    GetReservationDetail:
+      type: array
+      items:
+        $ref: '#/components/schemas/reversDateTimeAct'
+    GetScheduleDetail:
+      type: object
+      properties:
+        applyDate:
+          type: array
+          items:
+            type: string
+          description: 排程適用期間
+        mon:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        tue:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        wed:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        thu:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        fri:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        sat:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        sun:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+    CreateWeekSchedule:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          cycle:
+            type: integer
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                display:
+                  type: string
+                enable:
+                  type: boolean
+                startDate:
+                  type: string
+                  description: 週啟始日 (只允許星期日、一的日期)
+                weeklyIntervals:
+                  type: integer
+                time:
+                  type: string
+                act:
+                  type: string
+            example:
+              - name: A_104
+                display: 自定義雙數周名稱
+                enable: true
+                startDate: "2021-06-21T00:00:00+08:00"
+                weeklyIntervals: 2
+                time: "08:00:00+08:00"
+                act: mode1
+              - name: A_104
+                display: 自定義單數周名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 1
+                time: "08:00:00+08:00"
+                act: mode1
+              - name: A_104
+                display: 自定義每周執行名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 0
+                time: "08:00:00+08:00"
+                act: mode1
+    GetWeekSchedule:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          cycle:
+            type: integer
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                enable:
+                  type: boolean
+                startDate:
+                  type: string
+                weeklyIntervals:
+                  type: integer
+                time:
+                  type: string
+                act:
+                  type: string
+                currentWeek:
+                  type: integer
+                lastExecuteTime:
+                  type: string
+            example:
+              - name: A_104
+                display: 自定義雙數周名稱
+                enable: true
+                startDate: "2020-08-29T00:00:00+08:00"
+                weeklyIntervals: 2
+                time: "08:00:00+08:00"
+                act: mode1
+                currentWeek: 32
+                lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              - name: A_104
+                display: 自定義單數周名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 1
+                time: "08:00:00+08:00"
+                act: mode1
+                currentWeek: 32
+                lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              - name: A_104
+                display: 自定義每周執行名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 0
+                time: "08:00:00+08:00"
+                act: mode1
+                currentWeek: 32
+                lastExecuteTime: "2020-08-29T00:00:00+08:00"
+    GetDataChart:
+      type: object
+      properties:
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      example:
+        columns: ["time", "1_1_ModePV", "1_1_TempPV"]
+        values:
+          - ["2018-08-29T03:48:28Z",-14083,-1234.9]
+          - ["2018-08-29T03:48:38Z",7115,-2678]
+    GetScenarioList:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          delayMins:
+            type: integer
+          cmdSet:
+            type: array
+            items:
+              type: object
+              properties:
+                funcName:
+                  type: string
+                value:
+                  type: number
+    CreateScenario:
+      type: object
+      properties:
+        name:
+          type: string
+        delayMins:
+          type: integer
+        cmdSet:
+          type: array
+          items:
+            type: object
+            properties:
+              funcName:
+                type: string
+              value:
+                type: number
+          description: 指令集
+    RemoteInput:
+      type: array
+      items:
+        type: object
+        properties:
+          fields:
+            type: array
+            items:
+              type: string
+          value:
+            type: number
+    GetRealtimeData:
+      type: array
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+          value:
+            type: number
+    GetWarningRealtime:
+      type: array
+      items:
+        type: object
+        properties:
+          time:
+            type: string
+          key:
+            type: string
+          field:
+            type: string
+          name:
+            type: string
+          state:
+            type: string
+          type:
+            type: string
+          condition:
+            type: object
+            properties:
+              valueConditions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    op:
+                      type: string
+                    value:
+                      type: number
+              timeRange:
+                type: object
+                properties:
+                  start:
+                    type: string
+                  end:
+                    type: string
+              weekDays:
+                type: array
+                items:
+                  type: integer
+              frequency:
+                type: object
+                properties:
+                  minutes:
+                    type: integer
+                  times:
+                    type: integer
+              ewsAct:
+                type: string
+          isViewed:
+            type: boolean
+          viewLogs:
+            type: array
+            items:
+              type: object
+              properties:
+                time:
+                  type: string
+                account:
+                  type: string
+    GetEventList:
+      properties:
+        time:
+          type: string
+        type:
+          type: string
+        field:
+          type: string
+        name:
+          type: string
+        service:
+          type: string
+        message:
+          type: string
+        jsonData:
+          type: string
+    unloadingItem:
+      properties:
+        electricity:
+          type: number
+        elapsedMins:
+          type: integer
+        action:
+          type: string
+          enum: ["run", "stop"]
+        isOpen:
+          type: boolean
+        cmds:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              runValue:
+                type: number
+              stopValue:
+                type: number
+    viewUnloadingItem:
+      properties:
+        electricity:
+          type: number
+        elapsedMins:
+          type: integer
+        action:
+          type: string
+          enum: ["run", "stop"]
+        isOpen:
+          type: boolean
+    CreateElectricityDemand:
+      properties:
+        targetElectricity:
+          type: number
+          description: 契約電量(kW)
+        restrictedMins:
+          type: integer
+          description: 禁止時間
+        delayMins:
+          type: integer
+          description: 延遲時間
+        unloading:
+          type: array
+          items:
+            $ref: '#/components/schemas/unloadingItem'
+    V2CreateElectricityDemand:
+      type: array
+      items:
+        properties:
+          name:
+            type: string
+          enable:
+            type: boolean
+          mode:
+            type: string
+            enum: ["normal", "dynamo"]
+          restrictedMins:
+            type: integer
+            description: 禁止時間
+          delayMins:
+            type: integer
+            description: 延遲時間
+          targetElectricity:
+            type: number
+            description: 契約電量(kW)
+          applyTime:
+            type: object
+            properties:
+              sun:
+                type: integer
+              mon:
+                type: integer
+              tues:
+                type: integer
+              wed:
+                type: integer
+              thur:
+                type: integer
+              fri:
+                type: integer
+              sat:
+                type: integer
+          unloading:
+            type: array
+            items:
+              $ref: '#/components/schemas/unloadingItem'
+    ViewElectricityDemand:
+      properties:
+        targetElectricity:
+          type: number
+          description: 契約電量(kW)
+        restrictedMins:
+          type: integer
+          description: 禁止時間
+        delayMins:
+          type: integer
+          description: 延遲時間
+        unloading:
+          type: array
+          items:
+            $ref: '#/components/schemas/viewUnloadingItem'
+        unloadingGroup:
+          type: object
+          properties:
+            field:
+              type: string
+            group:
+              type: integer
+    V2ViewElectricityDemand:
+      properties:
+        name:
+          type: string
+        mode:
+          type: string
+        targetElectricity:
+          type: number
+          description: 契約電量(kW)
+        restrictedMins:
+          type: integer
+          description: 禁止時間
+        delayMins:
+          type: integer
+          description: 延遲時間
+        unloading:
+          type: array
+          items:
+            $ref: '#/components/schemas/viewUnloadingItem'
+        unloadingGroup:
+          type: object
+          properties:
+            field:
+              type: string
+            group:
+              type: integer
+    GetElectricityDemandDashboard:
+      properties:
+        mode:
+          type: string
+          enum: ["normal", "dynamo"]
+        targetElectricity:
+          type: number
+        restrictedMins:
+          type: integer
+        delayMins:
+          type: integer
+        correctTime:
+          type: string
+          example: "2019-01-01T00:02:01+08:00"
+        currentMins:
+          type: integer
+        usedElectricity:
+          type: array
+          items:
+            type: number
+        currentElectricity:
+          type: number
+        forecastElectricity:
+          type: number
+        avgElectricity:
+          type: number
+        adjustElectricity:
+          type: number
+        lastElectricity:
+          type: number
+        dailyMaxElectricity:
+          type: number
+        dailyMaxTime:
+          type: string
+        monthMaxElectricity:
+          type: number
+        monthMaxDateTime:
+          type: string
+        yearMaxElectricity:
+          type: number
+        yearMaxDateTime:
+          type: string
+    equipGroups:
+      type: object
+      properties:
+        title:
+          type: string
+        equips:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              stopValue:
+                type: number
+              runValue:
+                type: number
+              order:
+                type: integer
+    CreateElectricityReduction:
+      properties:
+        reductionStateField:
+          type: string
+        totalElectricityField:
+          type: string
+        targetElectricity:
+          type: number
+        delaySecs:
+          type: integer
+        equipGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/equipGroups'
+    viewEquipGroups:
+      type: object
+      properties:
+        title:
+          type: string
+        equips:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              order:
+                type: integer
+    ViewElectricityReduction:
+      properties:
+        reductionState:
+          type: string
+          enum: ["run", "stop"]
+        totalElectricity:
+          type: number
+        targetElectricity:
+          type: number
+        delaySecs:
+          type: integer
+        equipGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/viewEquipGroups'
+    CreateSysAvgPersistence:
+      type: array
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+          val:
+            type: number
+    GetSysAvgPersistenceResult:
+      type: object
+      properties:
+        avgFields:
+          type: array
+          items:
+            type: string
+        persistenceFields:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              val:
+                type: number
+    pdfField:
+      type: object
+      properties:
+        field:
+          type: string
+        name:
+          type: string
+        equip:
+          type: string
+        type:
+          type: string
+        unit:
+          type: string
+        displayType:
+          type: string
+    CreateReportPdfCron:
+      type: object
+      properties:
+        fileName:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/pdfField'
+        interval:
+          type: string
+          enum: ["daily", "week", "month", "year"]
+        show:
+          type: boolean
+        detail:
+          type: boolean
+        cronFormat:
+          type: string
+    GetReportPdfCronList:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          fileName:
+            type: string
+          fields:
+            type: array
+            items:
+              $ref: '#/components/schemas/pdfField'
+          interval:
+            type: string
+            enum: ["daily", "week", "month", "year"]
+          show:
+            type: boolean
+          detail:
+            type: boolean
+          cronFormat:
+            type: string
+    excelPage:
+      type: object
+      properties:
+        name:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              fieldName:
+                type: string
+              op:
+                type: string
+    CreateReportExcelCron:
+      type: object
+      properties:
+        fileName:
+          type: string
+        pages:
+          type: array
+          items:
+            $ref: '#/components/schemas/excelPage'
+        dataInterval:
+          type: string
+          enum: ["1m", "5m", "1h"]
+        interval:
+          type: string
+          enum: ["daily", "week", "month", "year"]
+        cronFormat:
+          type: string
+    GetReportExcelCronList:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          fileName:
+            type: string
+          pages:
+            type: array
+            items:
+              $ref: '#/components/schemas/excelPage'
+          dataInterval:
+            type: string
+          interval:
+            type: string
+            enum: ["daily", "week", "month", "year"]
+          cronFormat:
+            type: string
+    GetElectricityDemandSchedule:
+      type: object
+      properties:
+        sun:
+          type: array
+          items:
+            type: string
+        mon:
+          type: array
+          items:
+            type: string
+        tue:
+          type: array
+          items:
+            type: string
+        wed:
+          type: array
+          items:
+            type: string
+        thu:
+          type: array
+          items:
+            type: string
+        fri:
+          type: array
+          items:
+            type: string
+        sat:
+          type: array
+          items:
+            type: string
+  securitySchemes:
+    ApiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: Auth-Token  # name of the header, query parameter or cookie
+    RemoteKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: Remote-Token  # name of the header, query parameter or cookie
