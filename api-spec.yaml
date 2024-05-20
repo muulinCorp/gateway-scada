@@ -215,6 +215,7 @@ paths:
           description: 伺服器發生錯誤
   /v2/data/report:
     post:
+      #FIXME
       tags: [monitor]
       summary: 取得數據報表
       operationId: get-data-report
@@ -234,6 +235,7 @@ paths:
           description: 伺服器發生錯誤
   /v1/data/csv:
     post:
+      #FIXME
       tags: [monitor]
       summary: 取得csv報表
       operationId: get-data-report-csv
@@ -253,6 +255,7 @@ paths:
           description: 伺服器發生錯誤
   /v1/data/excel:
     post:
+      #FIXME
       tags: [monitor]
       summary: 取得Excel報表
       operationId: get-data-report-excel
@@ -1810,6 +1813,8 @@ paths:
     get: 
       summary: get fields by groupID, elementID, and also keyword
       tags: [layout]
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: groupID
@@ -1958,10 +1963,16 @@ paths:
   /v1/layout/tv:
     get:
       summary: get TV details
-      tags: [layout]
+      tags: [layout, TV]
       operationId: get-tv-v1
       security:
         - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          schema: 
+            type: string
+          description: tvID
       responses:
         200:
           description: "ok"
@@ -2130,6 +2141,7 @@ components:
                 account:
                   type: string
     GetScheduleCondition:
+      #FIXME
       type: array
       items:
         type: object
@@ -2335,7 +2347,7 @@ components:
                     type: string
                   "0":
                     type: string
-      example:
+      example: 
         interval: "month"
         time: "2016-07-14T00:00:00+08:00"
         format: "pdf"
@@ -2527,6 +2539,7 @@ components:
       items:
         $ref: '#/components/schemas/reversDateTimeAct'
     GetScheduleDetail:
+      #FIXME
       type: object
       properties:
         applyDate:
@@ -2684,6 +2697,7 @@ components:
             type: array
             items:
               type: string
+      #FIXME
       example:
         columns: ["time", "1_1_ModePV", "1_1_TempPV"]
         values:
@@ -2703,6 +2717,7 @@ components:
             items:
               type: object
               properties:
+                #FIXME
                 funcName:
                   type: string
                 value:
@@ -3234,10 +3249,7 @@ components:
           example: 1F 理貨區
         imageUrl: 
           type: string
-          example: http://localhost:3002/image_xxx.png
-        imagePackUrl:
-          type: string
-          example: "http://localhost:3002/image/image_pack.png"
+          example: image_xxx.png
         resolution:
           $ref: "#/components/schemas/ResolutionDetail"
         imageContents:
@@ -3260,7 +3272,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/StatusDescription"
-      description: pipes and the imageContents which is at back will be removed and i will set them into the bg image
 
     ImageContent:
       type: object
@@ -3270,10 +3281,6 @@ components:
           example: IC_1700468198
         image:
           $ref: "#/components/schemas/ImageCut"
-        color: 
-          type: string
-          example: "#00000000"
-          description: RGBA
         transform:
           $ref: "#/components/schemas/TranformDetail"
     
@@ -3298,10 +3305,6 @@ components:
             h: 
               type: number
               example: 50
-        rotation:
-          type: number
-          example: 90
-          description: remain Z-axis only
       description: the pivot will be changed to fixed on the top left
 
     TextContent:
@@ -3402,7 +3405,6 @@ components:
                   moreEqual,
                   lessEqual,
                   unEqual,
-                  pow,
                   inRange,
                   outRange
                 ]
@@ -3984,72 +3986,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PlanContent"
-          example: [
-            {
-              "id": "BD_1713429875",
-              "name": "學生宿舍（勤樓）",
-              "floor": [],
-              "transform": {
-                "position": {
-                  "x": 539.4336432796325,
-                  "y": 555.0295857991754
-                },
-                "size": {
-                  "w": 186.0,
-                  "h": 39.0
-                },
-                "rotation": 0,
-              },
-              "fontStyle": {
-                "size": 22,
-                "color": "#FFFFFFFF",
-                "bgColor": "#FF9E9E9E"
-              }
-            },
-            {
-              "id": "BD_1713429889",
-              "name": "學生宿舍（誠樓）",
-              "floor": [],
-              "transform": {
-                "position": {
-                  "x": 859.7116558653374,
-                  "y": 474.14295106638696
-                },
-                "size": {
-                  "w": 186.0,
-                  "h": 39.0
-                },
-                "rotation": 90,
-              },
-              "fontStyle": {
-                "size": 22,
-                "color": "#FFFFFFFF",
-                "bgColor": "#FF9E9E9E"
-              }
-            },
-            {
-              "id": "BD_1713429914",
-              "name": "教學大樓",
-              "floor": [],
-              "transform": {
-                "position": {
-                  "x": 449.32375316974253,
-                  "y": 308.96027049909105
-                },
-                "size": {
-                  "w": 106.0,
-                  "h": 42.0
-                },
-                "rotation": 0,
-              },
-              "fontStyle": {
-                "size": 24,
-                "color": "#FFFFFFFF",
-                "bgColor": "#9E9E9EFF"
-              }
-            }
-          ]
-    
+
     ResolutionDetail:
       type: object
       properties:
@@ -4108,7 +4045,7 @@ components:
           properties:
             logo: 
               type: string
-              example: http://localhost:3002/image/logo.png
+              example: logo.png
             projectName: 
               type: string
               example: 沐霖監控系統
@@ -8653,9 +8590,9 @@ components:
                                       moreEqual,
                                       lessEqual,
                                       unEqual,
-                                      pow,
                                       inRange,
-                                      outRange
+                                      outRange,
+                                      bitIndex
                                     ]
                                   value: 
                                     type: number
