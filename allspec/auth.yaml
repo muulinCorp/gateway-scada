@@ -1,0 +1,148 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Scada_Auth_Service
+  description: scada授權服務功能規格
+
+paths:
+  /v1/login:
+    post:
+      summary: 登入
+      operationId: login
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: string
+                  description: 使用者帳號
+                  example: gavin
+                pwd:
+                  type: string
+                  description: 密碼
+                  example: 1234
+      responses:
+        '200':
+          description: 回傳使用者Token，做API使用者驗證
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 身份驗證
+                  permission:
+                    type: string
+                    enum: [user, admin]
+                    description: 權限
+                example:
+                  token: Dv+BBAEC/4IAAQwBEAAA/5P/ggAGAXMFaW50NjQEBgD8tMEGGgJpZAZzdHJpbmcMGgAYNWEwNmI2OTBhYzk1NzYwMDA5MjZiNTY3B2FjY291bnQGc3RyaW5nDAcABXBldGVyBG5hbWUGc3RyaW5nDAgABlBldGVyYQVncm91cAZzdHJpbmcMBwAFYWRtaW4Gc3lzdGVtBnN0cmluZwwFAANsenc=
+                  permission: user
+        '400':
+          description: 無效的輸入
+        '404':
+          description: 使用者帳號或密碼錯誤
+        '500':
+          description: 伺服器發生錯誤
+  /v1/pwd:
+    put:
+      summary: 修改密碼
+      operationId: change-password
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                old:
+                  type: string
+                  description: 舊使用者帳號
+                  example: 1234
+                new:
+                  type: string
+                  description: 新密碼
+                  example: 5678
+      responses:
+        '200':
+          description: ok
+        '400':
+          description: invalid password
+        '500':
+          description: interval server error
+  /v1/token/remote:
+    post:
+      summary: 取得遠端控制Token
+      operationId: get-remote-token
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                pwd:
+                  type: string
+                  description: 使用者帳號
+                  example: 1234
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 身份驗證
+                example:
+                  token: Dv+BBAEC/4IAAQwBEAAA/5P/ggAGAXMFaW50NjQEBgD8tMEGGgJpZAZzdHJpbmcMGgAYNWEwNmI2OTBhYzk1NzYwMDA5MjZiNTY3B2FjY291bnQGc3RyaW5nDAcABXBldGVyBG5hbWUGc3RyaW5nDAgABlBldGVyYQVncm91cAZzdHJpbmcMBwAFYWRtaW4Gc3lzdGVtBnN0cmluZwwFAANsenc=
+        '400':
+          description: invalid password
+        '500':
+          description: interval server error
+  /v1/register:
+    post:
+      summary: 使用者註冊
+      operationId: register
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: string
+                  description: 使用者帳號
+                  example: admin
+                pwd:
+                  type: string
+                  description: 密碼
+                  example: 1234
+                perm:
+                  type: string
+                  description: 權限
+                  enum: [user, admin]
+                key:
+                  type: string
+                  description: 驗證碼
+                  example: 1234
+      responses:
+        '200':
+          description: ok
+        '400':
+          description: invalid password
+        '500':
+          description: interval server error
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

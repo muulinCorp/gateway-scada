@@ -1,0 +1,414 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Schedule_Service
+  description: 預約排程、固定排程及週排程功能服務
+
+paths:
+  /v1/scenario:
+    get:
+      tags: [schedule]
+      summary: 取得腳本設定
+      operationId: get-scenario-list
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScenarioList'
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [schedule]
+      summary: 建立腳本
+      operationId: create-scenario
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScenario'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/scenario/{NAME}:
+    delete:
+      tags: [schedule]
+      summary: 刪除腳本設定
+      operationId: delete-scenario
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '500':
+          description: 伺服器發生錯誤
+  /v1/schedule/{NAME}:
+    get:
+      tags: [schedule]
+      summary: 取得行程詳細
+      operationId: get-schedule-detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105@A
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleDetail'
+        '204':
+          description: no content (行程不存在)
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [schedule]
+      summary: 建立/更新行程
+      operationId: create-schedule
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105@A
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetScheduleDetail'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/reservation/{NAME}:
+    get:
+      tags: [schedule]
+      summary: 取得預約排程
+      operationId: get-reservation-detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReservationDetail'
+        '204':
+          description: no content (行程不存在)
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [schedule]
+      summary: 建立預約排程
+      operationId: create-reservation
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+          example: A_1F_A105
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReservationDetail'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/weekSchedule:
+    post:
+      tags: [schedule]
+      summary: 建立周排程
+      operationId: create-week-schedule
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWeekSchedule'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+    get:
+      tags: [schedule]
+      summary: 取得周排程清單
+      operationId: get-week-schedule
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWeekSchedule'
+        '204':
+          description: no content (參數不存在)
+        '500':
+          description: 伺服器發生錯誤
+components:
+  schemas:
+    reversDateTimeAct:
+      type: object
+      properties:
+        time:
+          type: string
+          description: 執行時間
+          example: "2020-09-20T08:00:00+08:00"
+        act:
+          type: array
+          items:
+            type: string
+          description: 二個模式
+          example: ["class", "afterClass"]
+    timeAct:
+      type: object
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+          description: 二個時間
+          example: ["08:00:00+08:00", "08:50:00+08:00"]
+        act:
+          type: array
+          items:
+            type: string
+          description: 二個模式
+          example: ["class", "afterClass"]
+    GetReservationDetail:
+      type: array
+      items:
+        $ref: '#/components/schemas/reversDateTimeAct'
+    GetScheduleDetail:
+      type: object
+      properties:
+        applyDate:
+          type: array
+          items:
+            type: string
+          description: 排程適用期間
+        mon:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        tue:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        wed:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        thu:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        fri:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        sat:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+        sun:
+          type: array
+          items:
+            $ref: '#/components/schemas/timeAct'
+    CreateWeekSchedule:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          cycle:
+            type: integer
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                display:
+                  type: string
+                enable:
+                  type: boolean
+                startDate:
+                  type: string
+                  description: 週啟始日 (只允許星期日、一的日期)
+                weeklyIntervals:
+                  type: integer
+                time:
+                  type: string
+                act:
+                  type: string
+            example:
+              - name: A_104
+                display: 自定義雙數周名稱
+                enable: true
+                startDate: "2021-06-21T00:00:00+08:00"
+                weeklyIntervals: 2
+                time: "08:00:00+08:00"
+                act: mode1
+              - name: A_104
+                display: 自定義單數周名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 1
+                time: "08:00:00+08:00"
+                act: mode1
+              - name: A_104
+                display: 自定義每周執行名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 0
+                time: "08:00:00+08:00"
+                act: mode1
+    GetWeekSchedule:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          cycle:
+            type: integer
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                enable:
+                  type: boolean
+                startDate:
+                  type: string
+                weeklyIntervals:
+                  type: integer
+                time:
+                  type: string
+                act:
+                  type: string
+                currentWeek:
+                  type: integer
+                lastExecuteTime:
+                  type: string
+            example:
+              - name: A_104
+                display: 自定義雙數周名稱
+                enable: true
+                startDate: "2020-08-29T00:00:00+08:00"
+                weeklyIntervals: 2
+                time: "08:00:00+08:00"
+                act: mode1
+                currentWeek: 32
+                lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              - name: A_104
+                display: 自定義單數周名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 1
+                time: "08:00:00+08:00"
+                act: mode1
+                currentWeek: 32
+                lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              - name: A_104
+                display: 自定義每周執行名稱
+                enable: true
+                startDate: ""
+                weeklyIntervals: 0
+                time: "08:00:00+08:00"
+                act: mode1
+                currentWeek: 32
+                lastExecuteTime: "2020-08-29T00:00:00+08:00"
+    GetScenarioList:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          delayMins:
+            type: integer
+          cmdSet:
+            type: array
+            items:
+              type: object
+              properties:
+                funcName:
+                  type: string
+                value:
+                  type: number
+    CreateScenario:
+      type: object
+      properties:
+        name:
+          type: string
+        delayMins:
+          type: integer
+        cmdSet:
+          type: array
+          items:
+            type: object
+            properties:
+              funcName:
+                type: string
+              value:
+                type: number
+          description: 指令集
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
