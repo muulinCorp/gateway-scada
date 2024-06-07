@@ -1,0 +1,297 @@
+{
+  "group": [
+    {
+      "description": "刪除腳本設定",
+      "endpoint": "/v1/scenario/{NAME}",
+      "method": "DELETE",
+      "backend": "/v1/scenario/{NAME}",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "Get plan",
+      "endpoint": "/v1/plan",
+      "method": "GET",
+      "backend": "/v1/plan",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "取得行程詳細",
+      "endpoint": "/v1/schedule/{NAME}",
+      "method": "GET",
+      "backend": "/v1/schedule/{NAME}",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "建立/更新行程",
+      "endpoint": "/v1/schedule/{NAME}",
+      "method": "POST",
+      "backend": "/v1/schedule/{NAME}",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "get TV details",
+      "endpoint": "/v1/tv",
+      "method": "GET",
+      "backend": "/v1/tv",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "id"
+      ]
+    },
+    {
+      "description": "get smart temperature with groupID",
+      "endpoint": "/v1/smart/temperature/{ID}",
+      "method": "GET",
+      "backend": "/v1/smart/temperature/{ID}",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "取得預約排程",
+      "endpoint": "/v1/reservation/{NAME}",
+      "method": "GET",
+      "backend": "/v1/reservation/{NAME}",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "建立預約排程",
+      "endpoint": "/v1/reservation/{NAME}",
+      "method": "POST",
+      "backend": "/v1/reservation/{NAME}",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "取得腳本設定",
+      "endpoint": "/v1/scenario",
+      "method": "GET",
+      "backend": "/v1/scenario",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "建立腳本",
+      "endpoint": "/v1/scenario",
+      "method": "POST",
+      "backend": "/v1/scenario",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "get report",
+      "endpoint": "/v1/report",
+      "method": "GET",
+      "backend": "/v1/report",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "Get sbt pages detail by using sbtID",
+      "endpoint": "/v1/plan/sbt/{ID}",
+      "method": "GET",
+      "backend": "/v1/plan/sbt/{ID}",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "Get floor detail by using BuildingID and floorID",
+      "endpoint": "/v1/plan/building/{ID}/floor/{floorID}",
+      "method": "GET",
+      "backend": "/v1/plan/building/{ID}/floor/{floorID}",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "Get Element's fields detail by using ElementID (sourceID)",
+      "endpoint": "/v1/element/{ID}",
+      "method": "GET",
+      "backend": "/v1/element/{ID}",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "get fields by groupID, elementID, and also keyword",
+      "endpoint": "/v1/fields",
+      "method": "GET",
+      "backend": "/v1/fields",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "groupID",
+        "elementID",
+        "keyword"
+      ]
+    },
+    {
+      "description": "取得遠端控制Token",
+      "endpoint": "/v1/token/remote",
+      "method": "POST",
+      "backend": "/v1/token/remote",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "get all smart defrost element",
+      "endpoint": "/v1/smart/defrost",
+      "method": "GET",
+      "backend": "/v1/smart/defrost",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "ids"
+      ]
+    },
+    {
+      "description": "Floor-SSE",
+      "endpoint": "/v1/sse/{FLOOR_ID}",
+      "method": "GET",
+      "backend": "/v1/sse/{FLOOR_ID}",
+      "host": [
+        "http://scada-com2scada-svc:9080"
+      ]
+    },
+    {
+      "description": "get event setting (type dropdown list)",
+      "endpoint": "/v1/event",
+      "method": "GET",
+      "backend": "/v1/event",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "Get preload data",
+      "endpoint": "/v1/preload",
+      "method": "GET",
+      "backend": "/v1/preload",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "get electric power information",
+      "endpoint": "/v1/electric",
+      "method": "GET",
+      "backend": "/v1/electric",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "使用者註冊",
+      "endpoint": "/v1/register",
+      "method": "POST",
+      "backend": "/v1/register",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "登入",
+      "endpoint": "/v1/login",
+      "method": "POST",
+      "backend": "/v1/login",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "Get floor list by using BuildingID",
+      "endpoint": "/v1/plan/building/{ID}/floor",
+      "method": "GET",
+      "backend": "/v1/plan/building/{ID}/floor",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "get group and element with type",
+      "endpoint": "/v1/group",
+      "method": "GET",
+      "backend": "/v1/group",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "type"
+      ]
+    },
+    {
+      "description": "取得周排程清單",
+      "endpoint": "/v1/weekSchedule",
+      "method": "GET",
+      "backend": "/v1/weekSchedule",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "建立周排程",
+      "endpoint": "/v1/weekSchedule",
+      "method": "POST",
+      "backend": "/v1/weekSchedule",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "遠端控制",
+      "endpoint": "/v1/controller",
+      "method": "POST",
+      "backend": "/v1/controller",
+      "host": [
+        "http://scada-com2scada-svc:9080"
+      ]
+    },
+    {
+      "description": "更新access token",
+      "endpoint": "/v1/token/refresh",
+      "method": "GET",
+      "backend": "/v1/token/refresh",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "修改密碼",
+      "endpoint": "/v1/pwd",
+      "method": "PUT",
+      "backend": "/v1/pwd",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "get all ems element",
+      "endpoint": "/v1/ems",
+      "method": "GET",
+      "backend": "/v1/ems",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    }
+  ]
+}

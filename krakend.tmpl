@@ -1,0 +1,68 @@
+{
+  "version": 3,
+  "name": "tv-gateway",
+  "port": 8080,
+  "cache_ttl": "3600s",
+  "timeout": "3s",
+  "plugin": {
+    "pattern": ".so",
+    "folder": "./plugin/"
+  },
+  "extra_config": {
+    "telemetry/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    },
+    "security/cors": {
+      "allow_origins": [ "*" ],
+      "allow_methods": [ "GET", "POST", "PUT", "DELETE" ],
+      "allow_headers": [ "Origin", "Authorization", "Content-Type" ],
+      "expose_headers": [ "Content-Length" ],
+      "max_age": "12h"
+    },
+    "plugin/http-server": {
+      "name": ["static-filesystem"],
+      "static-filesystem": {
+        "prefix": "/doc/*",
+        "path": "./doc"
+      }
+    }
+  },
+  "endpoints": [
+    {
+      "endpoint": "/",
+      "backend": [
+        {
+          "host": ["http://localhost:8080"],
+          "url_pattern": "/__health"
+        }
+      ]
+    },
+    {{ range $idx, $endpoint := .endpoint.group }}{{if $idx}},{{end}}
+    {
+    "endpoint": "{{ $endpoint.endpoint }}",
+    "method": "{{ $endpoint.method }}",
+    "input_headers": [
+        "User-Agent",
+        "Authorization",
+        "Content-Type",
+        "X-Channel"
+    ],
+    {{if $endpoint.input_querys}}"input_query_strings": {{ marshal $endpoint.input_querys }},{{end}}
+    "output_encoding": "no-op",
+    "extra_config": {
+      {{ include "rate_limit_endpoint.tmpl" }}{{if $endpoint.modifier_lua_proxy}},
+      "modifier/lua-proxy":{{ marshal $endpoint.modifier_lua_proxy }}{{end}}
+    },
+    "backend": [
+      {
+        "url_pattern": "{{ $endpoint.backend }}",
+        "method": "{{ $endpoint.method }}",
+        "encoding": "no-op",
+        "host": {{ marshal $endpoint.host }}
+      }
+    ]}{{ end }}
+	]
+}

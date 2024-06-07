@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: Scada_Auth_Service
+  title: Scada-Auth-Api
   description: scada授權服務功能規格
 
 paths:
@@ -31,15 +31,19 @@ paths:
               schema:
                 type: object
                 properties:
+                  refresh:
+                    type: string
+                    description: refresh token
                   token:
                     type: string
-                    description: 身份驗證
+                    description: access token
                   permission:
                     type: string
                     enum: [user, admin]
                     description: 權限
                 example:
-                  token: Dv+BBAEC/4IAAQwBEAAA/5P/ggAGAXMFaW50NjQEBgD8tMEGGgJpZAZzdHJpbmcMGgAYNWEwNmI2OTBhYzk1NzYwMDA5MjZiNTY3B2FjY291bnQGc3RyaW5nDAcABXBldGVyBG5hbWUGc3RyaW5nDAgABlBldGVyYQVncm91cAZzdHJpbmcMBwAFYWRtaW4Gc3lzdGVtBnN0cmluZwwFAANsenc=
+                  refresh: 85NIXszWOzL6oSJuSdIMBOCSOnQHrOqeROfAy_vAwtyU9Asd2t9PE9WDubG0YNceb8czjmeQxDNj2uS_mC6YiNAwmOUkfgVeQnuM8xiItKM4qTwkWFSOHIqrn7UqyggJGYosA-ilF9PpKBRiqm-EKvS_ptioNQHe3wtDHJS1YgpXtGtzoyIamCVBxUXJSukczRdKfh5xjdtD-1zDOVsHWM6WUkhfGUK1qew-vgSuXBiT0uEzqpDLt-mawQqDH3kZgiReTc3mmxkSlY2Eiq5Z6yf6UyCkpnd_C0R3lEe6rw==
+                  token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
                   permission: user
         '400':
           description: 無效的輸入
@@ -102,9 +106,30 @@ paths:
                     type: string
                     description: 身份驗證
                 example:
-                  token: Dv+BBAEC/4IAAQwBEAAA/5P/ggAGAXMFaW50NjQEBgD8tMEGGgJpZAZzdHJpbmcMGgAYNWEwNmI2OTBhYzk1NzYwMDA5MjZiNTY3B2FjY291bnQGc3RyaW5nDAcABXBldGVyBG5hbWUGc3RyaW5nDAgABlBldGVyYQVncm91cAZzdHJpbmcMBwAFYWRtaW4Gc3lzdGVtBnN0cmluZwwFAANsenc=
+                  token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
         '400':
           description: invalid password
+        '500':
+          description: interval server error
+  /v1/token/refresh:
+    get:
+      summary: 更新access token
+      operationId: refresh-token
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 身份驗證
+                example:
+                  token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
+        '400':
+          description: invalid token
         '500':
           description: interval server error
   /v1/register:

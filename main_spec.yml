@@ -1,0 +1,27 @@
+openapi: 3.0.2
+info:
+  version: "1.0.0"
+  title: "Scada API"
+  description: "Scada API"
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+servers:
+  - url: https://api-dev.oosa.life 
+    description: Dev API
+  - url: http://scada-auth-svc:9080
+    description: Scada-Auth-Api
+  - url: http://scada-com2scada-svc:9080
+    description: Com2Scada
+  - url: http://scada-layout-svc:9080
+    description: Scada_Layout_Service
+  - url: http://scada-schedule-svc:9080
+    description: Schedule_Service
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

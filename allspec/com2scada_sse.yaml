@@ -1,8 +1,8 @@
 openapi: 3.0.2
 info:
   version: "1.0.0"
-  title: "Communicate_To_Sacada_Service"
-  description: "subscribe communicate data and persitence to sacada"
+  title: "Com2Scada"
+  description: "Scada connect with Communicate service"
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -34,7 +34,37 @@ paths:
                 example:
                   10100@1F_engine_AVD101: 12.4
                   10101@1F_engine_AVD101: -2.8
+  /v1/controller:
+    post:
+      summary: 遠端控制
+      operationId: remote-control
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoteInput'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
 components:
+  schemas:
+    RemoteInput:
+      type: array
+      items:
+        type: object
+        properties:
+          fields:
+            type: array
+            items:
+              type: string
+          value:
+            type: number
   securitySchemes:
     BearerAuth:
       type: http
