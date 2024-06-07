@@ -115,6 +115,12 @@ paths:
     get:
       summary: 更新access token
       operationId: refresh-token
+      parameters:
+        - name: refresh_token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ok
