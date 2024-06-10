@@ -1,22 +1,80 @@
 {
   "group": [
     {
-      "description": "get TV details",
-      "endpoint": "/v1/tv",
+      "description": "Floor-SSE",
+      "endpoint": "/v1/sse/{FLOOR_ID}",
       "method": "GET",
-      "backend": "/v1/tv",
+      "backend": "/v1/sse/{FLOOR_ID}",
+      "host": [
+        "http://scada-com2scada-svc:9080"
+      ]
+    },
+    {
+      "description": "取得系統佇列",
+      "endpoint": "/v1/queue",
+      "method": "GET",
+      "backend": "/v1/queue",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ]
+    },
+    {
+      "description": "建立佇列群組",
+      "endpoint": "/v1/queue",
+      "method": "POST",
+      "backend": "/v1/queue",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ]
+    },
+    {
+      "description": "佇列log",
+      "endpoint": "/v1/queue/log",
+      "method": "GET",
+      "backend": "/v1/queue/log",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ],
+      "input_querys": [
+        "start",
+        "end"
+      ]
+    },
+    {
+      "description": "刪除腳本設定",
+      "endpoint": "/v1/scenario/{NAME}",
+      "method": "DELETE",
+      "backend": "/v1/scenario/{NAME}",
+      "host": [
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "get all smart defrost element",
+      "endpoint": "/v1/smart/defrost",
+      "method": "GET",
+      "backend": "/v1/smart/defrost",
       "host": [
         "http://scada-layout-svc:9080"
       ],
       "input_querys": [
-        "id"
+        "ids"
       ]
     },
     {
-      "description": "Get floor list by using BuildingID",
-      "endpoint": "/v1/plan/building/{ID}/floor",
+      "description": "Get preload data",
+      "endpoint": "/v1/preload",
       "method": "GET",
-      "backend": "/v1/plan/building/{ID}/floor",
+      "backend": "/v1/preload",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "Get sbt pages detail by using sbtID",
+      "endpoint": "/v1/plan/sbt/{ID}",
+      "method": "GET",
+      "backend": "/v1/plan/sbt/{ID}",
       "host": [
         "http://scada-layout-svc:9080"
       ]
@@ -40,104 +98,21 @@
       ]
     },
     {
-      "description": "取得遠端控制Token",
-      "endpoint": "/v1/token/remote",
-      "method": "POST",
-      "backend": "/v1/token/remote",
-      "host": [
-        "http://scada-auth-svc:9080"
-      ]
-    },
-    {
-      "description": "get all smart defrost element",
-      "endpoint": "/v1/smart/defrost",
+      "description": "Get floor list by using BuildingID",
+      "endpoint": "/v1/plan/building/{ID}/floor",
       "method": "GET",
-      "backend": "/v1/smart/defrost",
-      "host": [
-        "http://scada-layout-svc:9080"
-      ],
-      "input_querys": [
-        "ids"
-      ]
-    },
-    {
-      "description": "get group and element with type",
-      "endpoint": "/v1/group",
-      "method": "GET",
-      "backend": "/v1/group",
-      "host": [
-        "http://scada-layout-svc:9080"
-      ],
-      "input_querys": [
-        "type"
-      ]
-    },
-    {
-      "description": "使用者註冊",
-      "endpoint": "/v1/register",
-      "method": "POST",
-      "backend": "/v1/register",
-      "host": [
-        "http://scada-auth-svc:9080"
-      ]
-    },
-    {
-      "description": "Get floor detail by using BuildingID and floorID",
-      "endpoint": "/v1/plan/building/{ID}/floor/{floorID}",
-      "method": "GET",
-      "backend": "/v1/plan/building/{ID}/floor/{floorID}",
+      "backend": "/v1/plan/building/{ID}/floor",
       "host": [
         "http://scada-layout-svc:9080"
       ]
     },
     {
-      "description": "更新access token",
-      "endpoint": "/v1/token/refresh",
+      "description": "get smart temperature with groupID",
+      "endpoint": "/v1/smart/temperature/{ID}",
       "method": "GET",
-      "backend": "/v1/token/refresh",
-      "host": [
-        "http://scada-auth-svc:9080"
-      ]
-    },
-    {
-      "description": "get all ems element",
-      "endpoint": "/v1/ems",
-      "method": "GET",
-      "backend": "/v1/ems",
+      "backend": "/v1/smart/temperature/{ID}",
       "host": [
         "http://scada-layout-svc:9080"
-      ]
-    },
-    {
-      "description": "get electric power information",
-      "endpoint": "/v1/electric",
-      "method": "GET",
-      "backend": "/v1/electric",
-      "host": [
-        "http://scada-layout-svc:9080"
-      ]
-    },
-    {
-      "description": "get event setting (type dropdown list)",
-      "endpoint": "/v1/event",
-      "method": "GET",
-      "backend": "/v1/event",
-      "host": [
-        "http://scada-layout-svc:9080"
-      ]
-    },
-    {
-      "description": "get fields by groupID, elementID, and also keyword",
-      "endpoint": "/v1/fields",
-      "method": "GET",
-      "backend": "/v1/fields",
-      "host": [
-        "http://scada-layout-svc:9080"
-      ],
-      "input_querys": [
-        "groupID",
-        "elementID",
-        "keyword"
       ]
     },
     {
@@ -150,28 +125,19 @@
       ]
     },
     {
-      "description": "刪除腳本設定",
-      "endpoint": "/v1/scenario/{NAME}",
-      "method": "DELETE",
-      "backend": "/v1/scenario/{NAME}",
-      "host": [
-        "http://scada-schedule-svc:9080"
-      ]
-    },
-    {
-      "description": "Get sbt pages detail by using sbtID",
-      "endpoint": "/v1/plan/sbt/{ID}",
+      "description": "get event setting (type dropdown list)",
+      "endpoint": "/v1/event",
       "method": "GET",
-      "backend": "/v1/plan/sbt/{ID}",
+      "backend": "/v1/event",
       "host": [
         "http://scada-layout-svc:9080"
       ]
     },
     {
-      "description": "get report",
-      "endpoint": "/v1/report",
+      "description": "Get Element's fields detail by using ElementID (sourceID)",
+      "endpoint": "/v1/element/{ID}",
       "method": "GET",
-      "backend": "/v1/report",
+      "backend": "/v1/element/{ID}",
       "host": [
         "http://scada-layout-svc:9080"
       ]
@@ -204,21 +170,77 @@
       ]
     },
     {
-      "description": "get smart temperature with groupID",
-      "endpoint": "/v1/smart/temperature/{ID}",
+      "description": "更新access token",
+      "endpoint": "/v1/token/refresh",
       "method": "GET",
-      "backend": "/v1/smart/temperature/{ID}",
+      "backend": "/v1/token/refresh",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ],
+      "input_querys": [
+        "refresh_token"
+      ]
+    },
+    {
+      "description": "get electric power information",
+      "endpoint": "/v1/electric",
+      "method": "GET",
+      "backend": "/v1/electric",
       "host": [
         "http://scada-layout-svc:9080"
       ]
     },
     {
-      "description": "取得預約排程",
-      "endpoint": "/v1/reservation/{NAME}",
+      "description": "get all ems element",
+      "endpoint": "/v1/ems",
       "method": "GET",
-      "backend": "/v1/reservation/{NAME}",
+      "backend": "/v1/ems",
       "host": [
-        "http://scada-schedule-svc:9080"
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "Get plan",
+      "endpoint": "/v1/plan",
+      "method": "GET",
+      "backend": "/v1/plan",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ]
+    },
+    {
+      "description": "取得遠端控制Token",
+      "endpoint": "/v1/token/remote",
+      "method": "POST",
+      "backend": "/v1/token/remote",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "get group and element with type",
+      "endpoint": "/v1/group",
+      "method": "GET",
+      "backend": "/v1/group",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "type"
+      ]
+    },
+    {
+      "description": "get fields by groupID, elementID, and also keyword",
+      "endpoint": "/v1/fields",
+      "method": "GET",
+      "backend": "/v1/fields",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "groupID",
+        "elementID",
+        "keyword"
       ]
     },
     {
@@ -231,12 +253,75 @@
       ]
     },
     {
-      "description": "Floor-SSE",
-      "endpoint": "/v1/sse/{FLOOR_ID}",
+      "description": "取得預約排程",
+      "endpoint": "/v1/reservation/{NAME}",
       "method": "GET",
-      "backend": "/v1/sse/{FLOOR_ID}",
+      "backend": "/v1/reservation/{NAME}",
       "host": [
-        "http://scada-com2scada-svc:9080"
+        "http://scada-schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "修改密碼",
+      "endpoint": "/v1/pwd",
+      "method": "PUT",
+      "backend": "/v1/pwd",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "刪除queue",
+      "endpoint": "/v1/queue/{ID}",
+      "method": "DELETE",
+      "backend": "/v1/queue/{ID}",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ]
+    },
+    {
+      "description": "取得queue明細",
+      "endpoint": "/v1/queue/{ID}",
+      "method": "GET",
+      "backend": "/v1/queue/{ID}",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ]
+    },
+    {
+      "description": "更新queue",
+      "endpoint": "/v1/queue/{ID}",
+      "method": "PUT",
+      "backend": "/v1/queue/{ID}",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ]
+    },
+    {
+      "description": "使用者註冊",
+      "endpoint": "/v1/register",
+      "method": "POST",
+      "backend": "/v1/register",
+      "host": [
+        "http://scada-auth-svc:9080"
+      ]
+    },
+    {
+      "description": "移動設備群組",
+      "endpoint": "/v1/queue/_move",
+      "method": "PUT",
+      "backend": "/v1/queue/_move",
+      "host": [
+        "http://scada-queue-svc:9080"
+      ]
+    },
+    {
+      "description": "Get floor detail by using BuildingID and floorID",
+      "endpoint": "/v1/plan/building/{ID}/floor/{floorID}",
+      "method": "GET",
+      "backend": "/v1/plan/building/{ID}/floor/{floorID}",
+      "host": [
+        "http://scada-layout-svc:9080"
       ]
     },
     {
@@ -258,39 +343,33 @@
       ]
     },
     {
-      "description": "Get plan",
-      "endpoint": "/v1/plan",
+      "description": "get TV details",
+      "endpoint": "/v1/tv",
       "method": "GET",
-      "backend": "/v1/plan",
+      "backend": "/v1/tv",
+      "host": [
+        "http://scada-layout-svc:9080"
+      ],
+      "input_querys": [
+        "id"
+      ]
+    },
+    {
+      "description": "get report",
+      "endpoint": "/v1/report",
+      "method": "GET",
+      "backend": "/v1/report",
       "host": [
         "http://scada-layout-svc:9080"
       ]
     },
     {
-      "description": "修改密碼",
-      "endpoint": "/v1/pwd",
-      "method": "PUT",
-      "backend": "/v1/pwd",
-      "host": [
-        "http://scada-auth-svc:9080"
-      ]
-    },
-    {
-      "description": "Get preload data",
-      "endpoint": "/v1/preload",
+      "description": "取得queue設備資訊",
+      "endpoint": "/v1/queue/equip/{NAME}",
       "method": "GET",
-      "backend": "/v1/preload",
+      "backend": "/v1/queue/equip/{NAME}",
       "host": [
-        "http://scada-layout-svc:9080"
-      ]
-    },
-    {
-      "description": "Get Element's fields detail by using ElementID (sourceID)",
-      "endpoint": "/v1/element/{ID}",
-      "method": "GET",
-      "backend": "/v1/element/{ID}",
-      "host": [
-        "http://scada-layout-svc:9080"
+        "http://scada-queue-svc:9080"
       ]
     }
   ]

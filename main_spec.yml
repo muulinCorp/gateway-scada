@@ -18,6 +18,8 @@ servers:
     description: Scada_Layout_Service
   - url: http://scada-schedule-svc:9080
     description: Schedule_Service
+  - url: http://scada-queue-svc:9080
+    description: Queue_Service
 
 components:
   securitySchemes:

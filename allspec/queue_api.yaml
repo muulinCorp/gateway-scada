@@ -1,0 +1,396 @@
+openapi: 3.0.2
+info:
+  version: "1.0.0"
+  title: "Queue_Service"
+  description: "Scada Queue service"
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+paths:
+  /v1/queue:
+    get:
+      tags: [queue]
+      summary: 取得系統佇列
+      operationId: get-queue
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetQueue'
+        '204':
+          description: no content (參數不存在)
+        '500':
+          description: 伺服器發生錯誤
+    post:
+      tags: [queue]
+      summary: 建立佇列群組
+      operationId: create-queue
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQueue'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/{ID}:
+    get:
+      tags: [queue]
+      summary: 取得queue明細
+      operationId: get-queue-detail
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateQueue'
+        '500':
+          description: 伺服器發生錯誤
+    put:
+      tags: [queue]
+      summary: 更新queue
+      operationId: update-queue
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateQueue'
+        '500':
+          description: 伺服器發生錯誤
+    delete:
+      tags: [queue]
+      summary: 刪除queue
+      operationId: delete-queue
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/_move:
+    put:
+      tags: [queue]
+      summary: 移動設備群組
+      operationId: move-queue-equip
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveQueueEquip'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/equip/{NAME}:
+    get:
+      tags: [queue]
+      summary: 取得queue設備資訊
+      operationId: get-queue-equip-info
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: NAME
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueEquipInfo'
+        '204':
+          description: no content
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/log:
+    get:
+      tags: [queue]
+      summary: 佇列log
+      operationId: queue-log
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: end
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueLogArray'
+        '400':
+          description: 無效的輸入
+        '500':
+          description: 伺服器發生錯誤
+components:
+  schemas:
+    queListEquip:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 名稱
+        waitingTime:
+          type: integer
+          description: 預計執行等待時間(分)
+        remainTime:
+          type: integer
+          description: 當前除霜狀態剩餘時間(分)
+        totalRemainTime:
+          type: integer
+          description: 除霜流程剩餘時間(分)
+    queEquip:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 名稱
+        state_field:
+          type: string
+          description: 狀態
+        execute_field:
+          type: string
+          description: 執行除霜
+        waiting_field:
+          type: string
+          description: 預計執行等待時間欄位
+        processID_field:
+          type: string
+          description: 除霜程序ID
+        defDelayTime_field:
+          type: string
+          description: 除霜延遲時間
+        defTime_field:
+          type: string
+          description: 除霜時間
+        defDripTime_field:
+          type: string
+          description: 除霜滴水時間
+        defDelayRemainTime_field:
+          type: string
+          description: 除霜延遲剩餘時間
+        defRemainTime_field:
+          type: string
+          description: 除霜剩餘時間
+        defDripRemainTime_field:
+          type: string
+          description: 除霜滴水剩餘時間
+        defMode_field:
+          type: string
+          description: 除霜模式
+        defStopMode_field:
+          type: string
+          description: 除霜終止模式
+        ioStatus_field:
+          type: string
+          description: 輸入/出狀態
+        forcedDef_field:
+          type: string
+          description: 強制除霜/解除霜
+        errCode_field:
+          type: string
+          description: 錯誤提示
+    GetQueue:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          concurrence:
+            type: integer
+          equipNum:
+            type: integer
+            description: 群組設備數量
+          equips:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          cutInlineNum:
+            type: integer
+            description: 插隊設備數量
+          cutInlineList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          inlineNum:
+            type: integer
+            description: 排隊設備數量
+          inlineList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          delayNum:
+            type: integer
+            description: 群組延遲除霜設備數量
+          delayList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          defrostNum:
+            type: integer
+            description: 群組除霜設備數量
+          defrostList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          dripNum:
+            type: integer
+            description: 群組滴水設備數量
+          dripList:
+            type: array
+            items:
+              $ref: '#/components/schemas/queListEquip'
+          createTime:
+            type: string
+            description: 群組建立日期
+    CreateQueue:
+      type: object
+      properties:
+        name:
+          type: string
+        concurrence:
+          type: integer
+        equips:
+          type: array
+          items:
+            $ref: '#/components/schemas/queEquip'
+    QueueEquipInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        queueName:
+          type: string
+        state:
+          type: string
+          enum: ["none", "waiting", "force","inline", "cutInline", "delay", "defrost", "drip"]
+        waitingTime:
+          type: integer
+          description: 預計等待除霜時間(分)
+        defDelayTime:
+          type: integer
+          description: 除霜延遲時間(分)
+        defTime:
+          type: integer
+          description: 除霜時間(分)
+        defDripTime:
+          type: integer
+          description: 除霜滴水時間(分)
+        defDelayRemainTime:
+          type: integer
+          description: 除霜延遲剩餘時間(分)
+        defRemainTime:
+          type: integer
+          description: 除霜剩餘時間(分)
+        defDripRemainTime:
+          type: integer
+          description: 除霜滴水剩餘時間(分)
+        totalRemainTime:
+          type: integer
+          description: 除霜剩餘時間(分)
+    MoveQueueEquip:
+      type: object
+      properties:
+        originQueID:
+          type: string
+        targetQueID:
+          type: string
+        equips:
+          type: array
+          items:
+            type: string
+    QueueLogArray:
+      type: array
+      items:
+        type: object
+        properties:
+          equipName:
+            type: string
+          processID:
+            type: string
+          stateLog:
+            type: array
+            items:
+              type: object
+              properties:
+                time:
+                  type: string
+                state:
+                  type: string
+                defMode:
+                  type: integer
+                  description: 除霜模式
+                defStopMode:
+                  type: integer
+                  description: 除霜終止模式
+                ioStatus:
+                  type: integer
+                  description: 輸入/出狀態
+                forcedDef:
+                  type: integer
+                  description: 強制除霜/解除霜
+                errCode:
+                  type: integer
+                  description: 錯誤提示
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
