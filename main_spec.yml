@@ -20,6 +20,8 @@ servers:
     description: Schedule_Service
   - url: http://scada-queue-svc:9080
     description: Queue_Service
+  - url: http://scada-report-svc:9080
+    description: Report_Service
 
 components:
   securitySchemes:

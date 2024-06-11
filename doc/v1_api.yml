@@ -19,6 +19,8 @@ servers:
   description: Schedule_Service
 - url: http://scada-queue-svc:9080
   description: Queue_Service
+- url: http://scada-report-svc:9080
+  description: Report_Service
 tags:
 - name: Scada-Auth-Api
   description: scada授權服務功能規格
@@ -28,9 +30,51 @@ tags:
   description: 前端版型相關資訊服務
 - name: Queue_Service
   description: Scada Queue service
+- name: Report_Service
+  description: 報表、數據相關服務
 - name: Schedule_Service
   description: 預約排程、固定排程及週排程功能服務
 paths:
+  /v1/chart:
+    get:
+      tags:
+      - Report_Service
+      - monitor
+      summary: 取得數據趨勢圖(一分鐘一筆)
+      operationId: get-data-chart
+      parameters:
+      - name: fields
+        in: query
+        description: 欄位名稱 (field1+field2)
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: 日期 (2016-07-14T00:00:00Z)
+        required: true
+        schema:
+          type: string
+        example: "2016-07-14T00:00:00Z"
+      - name: interval
+        in: query
+        description: 期間
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataChart'
+        "204":
+          description: 無資料
+        "400":
+          description: invalid input
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
   /v1/controller:
     post:
       tags:
@@ -47,6 +91,27 @@ paths:
           description: success
         "400":
           description: 無效的輸入
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+  /v1/data/excel:
+    post:
+      tags:
+      - Report_Service
+      - monitor
+      summary: 取得Excel報表
+      operationId: get-data-report-excel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetExcel'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: invalid input
         "500":
           description: 伺服器發生錯誤
       security:
@@ -685,6 +750,153 @@ paths:
           description: Internal Server Error
       security:
       - bearerAuth: []
+  /v1/report/{TYPE}/cron/{KEY}:
+    delete:
+      tags:
+      - Report_Service
+      - report
+      summary: 刪除pdf/excel報表排程
+      operationId: delete-report-cron
+      parameters:
+      - name: TYPE
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: KEY
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
+  /v1/report/excel/cron:
+    get:
+      tags:
+      - Report_Service
+      - report
+      summary: 取得excel報表欄位群組清單
+      operationId: get-report-excel-cron-list
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportExcelCronList'
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Report_Service
+      - report
+      summary: 建立excel報表排程
+      operationId: create-report-excel-cron
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportExcelCron'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
+  /v1/report/favorite:
+    get:
+      tags:
+      - Report_Service
+      - report
+      summary: 取得報表常用欄位
+      operationId: get-report-favorite
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFavoriteReport'
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Report_Service
+      - report
+      summary: 建立報表常用欄位
+      operationId: create-report-favorite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFavoriteReport'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
+  /v1/report/pdf/cron:
+    get:
+      tags:
+      - Report_Service
+      - report
+      summary: 取得PDF報表欄位群組清單
+      operationId: get-report-pdf-cron-list
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportPdfCronList'
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Report_Service
+      - report
+      summary: 建立PDF報表排程
+      operationId: create-report-cron
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportPdfCron'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "404":
+          description: Gateway or Sensor not found
+      security:
+      - bearerAuth: []
   /v1/reservation/{NAME}:
     get:
       tags:
@@ -1067,6 +1279,27 @@ paths:
           description: 伺服器發生錯誤
       security:
       - bearerAuth: []
+  /v2/data/report:
+    post:
+      tags:
+      - Report_Service
+      - monitor
+      summary: 取得數據報表
+      operationId: get-data-report
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReport'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: invalid input
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
 components:
   schemas:
     ButtonContent:
@@ -1092,6 +1325,17 @@ components:
           enum:
           - sbt
           - schedule
+    CreateFavoriteReport:
+      type: array
+      items:
+        type: object
+        properties:
+          favouriteName:
+            type: string
+          fields:
+            type: array
+            items:
+              type: string
     CreateQueue:
       type: object
       properties:
@@ -1103,6 +1347,52 @@ components:
             $ref: '#/components/schemas/queEquip'
         name:
           type: string
+    CreateReportExcelCron:
+      type: object
+      properties:
+        cronFormat:
+          type: string
+        dataInterval:
+          type: string
+          enum:
+          - 1m
+          - 5m
+          - 1h
+        fileName:
+          type: string
+        interval:
+          type: string
+          enum:
+          - daily
+          - week
+          - month
+          - year
+        pages:
+          type: array
+          items:
+            $ref: '#/components/schemas/excelPage'
+    CreateReportPdfCron:
+      type: object
+      properties:
+        cronFormat:
+          type: string
+        detail:
+          type: boolean
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/pdfField'
+        fileName:
+          type: string
+        interval:
+          type: string
+          enum:
+          - daily
+          - week
+          - month
+          - year
+        show:
+          type: boolean
     CreateScenario:
       type: object
       properties:
@@ -2195,6 +2485,65 @@ components:
         size:
           type: integer
           example: 20
+    GetDataChart:
+      type: object
+      example:
+        columns:
+        - time
+        - 1_1_ModePV
+        - 1_1_TempPV
+        values:
+        - - "2018-08-29T03:48:28Z"
+          - -14083
+          - -1234.9
+        - - "2018-08-29T03:48:38Z"
+          - 7115
+          - -2678
+      properties:
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    GetExcel:
+      type: object
+      properties:
+        dataInterval:
+          type: string
+          enum:
+          - 1m
+          - 5m
+          - 1h
+        fileName:
+          type: string
+        pages:
+          type: array
+          items:
+            type: object
+            properties:
+              fields:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    fieldName:
+                      type: string
+                    op:
+                      type: string
+              name:
+                type: string
+        timeRange:
+          type: object
+          properties:
+            end:
+              type: string
+            start:
+              type: string
     GetFieldDetail:
       type: object
       properties:
@@ -2298,6 +2647,137 @@ components:
             description: 排隊設備數量
           name:
             type: string
+    GetReport:
+      type: object
+      example:
+        detail: true
+        fields:
+        - displayType: realtime
+          equip: 設備名稱
+          field: Average_Temp@1F_K_avgTemp
+          name: 中文說明
+          type: 電壓
+          unit: kW
+        - displayType: accumulation
+          equip: 設備名稱
+          field: Average_Temp@1F_K_avgTemp
+          name: 中文說明
+          type: 電壓
+          unit: kW
+        - displayType: state
+          equip: 設備名稱
+          field: Average_Temp@1F_K_avgTemp
+          name: 中文說明
+          trans:
+            "0": 關閉
+            "1": 開啟
+          type: 電壓
+          unit: kW
+        format: pdf
+        interval: month
+        show: true
+        time: "2016-07-14T00:00:00+08:00"
+      properties:
+        detail:
+          type: boolean
+          description: 是否用詳細資料表格
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              displayType:
+                type: string
+                enum:
+                - realtime
+                - state
+                - accumulation
+              equip:
+                type: string
+              field:
+                type: string
+              name:
+                type: string
+              trans:
+                type: object
+                properties:
+                  "0":
+                    type: string
+                  "1":
+                    type: string
+              type:
+                type: string
+              unit:
+                type: string
+        format:
+          type: string
+          description: 格式 (pdf, 印表機)
+          enum:
+          - pdf
+          - printer
+        interval:
+          type: string
+          enum:
+          - daily
+          - week
+          - month
+          - year
+        show:
+          type: boolean
+          description: 是否顯示公司名稱
+        time:
+          type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+    GetReportExcelCronList:
+      type: array
+      items:
+        type: object
+        properties:
+          cronFormat:
+            type: string
+          dataInterval:
+            type: string
+          fileName:
+            type: string
+          interval:
+            type: string
+            enum:
+            - daily
+            - week
+            - month
+            - year
+          key:
+            type: string
+          pages:
+            type: array
+            items:
+              $ref: '#/components/schemas/excelPage'
+    GetReportPdfCronList:
+      type: array
+      items:
+        type: object
+        properties:
+          cronFormat:
+            type: string
+          detail:
+            type: boolean
+          fields:
+            type: array
+            items:
+              $ref: '#/components/schemas/pdfField'
+          fileName:
+            type: string
+          interval:
+            type: string
+            enum:
+            - daily
+            - week
+            - month
+            - year
+          key:
+            type: string
+          show:
+            type: boolean
     GetReservationDetail:
       type: array
       items:
@@ -6475,6 +6955,20 @@ components:
         10102@1F_engine_AVD101: 開啓
       additionalProperties:
         type: string
+    excelPage:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              fieldName:
+                type: string
+              op:
+                type: string
+        name:
+          type: string
     fieldClassifyDetail:
       type: object
       properties:
@@ -6486,6 +6980,21 @@ components:
         name:
           type: string
           example: A架
+    pdfField:
+      type: object
+      properties:
+        displayType:
+          type: string
+        equip:
+          type: string
+        field:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        unit:
+          type: string
     queEquip:
       type: object
       properties:

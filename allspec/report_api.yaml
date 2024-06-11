@@ -1,0 +1,463 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Report_Service
+  description: 報表、數據相關服務
+
+paths:
+  /v1/chart:
+    get:
+      tags: [monitor]
+      summary: 取得數據趨勢圖(一分鐘一筆)
+      operationId: get-data-chart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: fields
+          required: false
+          schema:
+            type: string
+          description: 欄位名稱 (field1+field2)
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: interval
+          required: false
+          schema:
+            type: integer
+          description: 期間
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDataChart'
+        '204':
+          description: 無資料
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v2/data/report:
+    post:
+      tags: [monitor]
+      summary: 取得數據報表
+      operationId: get-data-report
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReport'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v1/data/excel:
+    post:
+      tags: [monitor]
+      summary: 取得Excel報表
+      operationId: get-data-report-excel
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetExcel'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: invalid input
+        '500':
+          description: 伺服器發生錯誤
+  /v1/report/favorite:
+    post:
+      tags: [report]
+      summary: 建立報表常用欄位
+      operationId: create-report-favorite
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFavoriteReport'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [report]
+      summary: 取得報表常用欄位
+      operationId: get-report-favorite
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFavoriteReport'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/report/pdf/cron:
+    post:
+      tags: [report]
+      summary: 建立PDF報表排程
+      operationId: create-report-cron
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportPdfCron'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [report]
+      summary: 取得PDF報表欄位群組清單
+      operationId: get-report-pdf-cron-list
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportPdfCronList'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/report/excel/cron:
+    post:
+      tags: [report]
+      summary: 建立excel報表排程
+      operationId: create-report-excel-cron
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportExcelCron'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+    get:
+      tags: [report]
+      summary: 取得excel報表欄位群組清單
+      operationId: get-report-excel-cron-list
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportExcelCronList'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+  /v1/report/{TYPE}/cron/{KEY}:
+    delete:
+      tags: [report]
+      summary: 刪除pdf/excel報表排程
+      operationId: delete-report-cron
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: TYPE
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: KEY
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: Gateway or Sensor not found
+components:
+  schemas:
+    pdfField:
+      type: object
+      properties:
+        field:
+          type: string
+        name:
+          type: string
+        equip:
+          type: string
+        type:
+          type: string
+        unit:
+          type: string
+        displayType:
+          type: string
+    excelPage:
+      type: object
+      properties:
+        name:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              fieldName:
+                type: string
+              op:
+                type: string
+    GetDataChart:
+      type: object
+      properties:
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      example:
+        columns: ["time", "1_1_ModePV", "1_1_TempPV"]
+        values:
+          - ["2018-08-29T03:48:28Z",-14083,-1234.9]
+          - ["2018-08-29T03:48:38Z",7115,-2678]
+    GetReport:
+      type: object
+      properties:
+        interval:
+          type: string
+          enum: ["daily", "week", "month", "year"]
+        time:
+          type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+        format:
+          type: string
+          enum: ["pdf", "printer"]
+          description: 格式 (pdf, 印表機)
+        show:
+          type: boolean
+          description: 是否顯示公司名稱
+        detail:
+          type: boolean
+          description: 是否用詳細資料表格
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              name:
+                type: string
+              equip:
+                type: string
+              type:
+                type: string
+              unit:
+                type: string
+              displayType:
+                type: string
+                enum: ["realtime", "state", "accumulation"]
+              trans:
+                type: object
+                properties:
+                  "1":
+                    type: string
+                  "0":
+                    type: string
+      example:
+        interval: "month"
+        time: "2016-07-14T00:00:00+08:00"
+        format: "pdf"
+        show: true
+        detail: true
+        fields:
+          - "field": "Average_Temp@1F_K_avgTemp"
+            "name": "中文說明"
+            "equip": "設備名稱"
+            "type": "電壓"
+            "unit": "kW"
+            "displayType": "realtime"
+          - "field": "Average_Temp@1F_K_avgTemp"
+            "name": "中文說明"
+            "equip": "設備名稱"
+            "type": "電壓"
+            "unit": "kW"
+            "displayType": "accumulation"
+          - "field": "Average_Temp@1F_K_avgTemp"
+            "name": "中文說明"
+            "equip": "設備名稱"
+            "type": "電壓"
+            "unit": "kW"
+            "displayType": "state"
+            "trans":
+              "1": "開啟"
+              "0": "關閉"
+    GetExcel:
+      type: object
+      properties:
+        timeRange:
+          type: object
+          properties:
+            start:
+              type: string
+            end:
+              type: string
+        pages:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              fields:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    fieldName:
+                      type: string
+                    op:
+                      type: string
+        dataInterval:
+          type: string
+          enum: ["1m", "5m", "1h"]
+        fileName:
+          type: string
+    CreateFavoriteReport:
+      type: array
+      items:
+        type: object
+        properties:
+          favouriteName:
+            type: string
+          fields:
+            type: array
+            items:
+              type: string
+    CreateReportPdfCron:
+      type: object
+      properties:
+        fileName:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/pdfField'
+        interval:
+          type: string
+          enum: ["daily", "week", "month", "year"]
+        show:
+          type: boolean
+        detail:
+          type: boolean
+        cronFormat:
+          type: string
+    GetReportPdfCronList:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          fileName:
+            type: string
+          fields:
+            type: array
+            items:
+              $ref: '#/components/schemas/pdfField'
+          interval:
+            type: string
+            enum: ["daily", "week", "month", "year"]
+          show:
+            type: boolean
+          detail:
+            type: boolean
+          cronFormat:
+            type: string
+    CreateReportExcelCron:
+      type: object
+      properties:
+        fileName:
+          type: string
+        pages:
+          type: array
+          items:
+            $ref: '#/components/schemas/excelPage'
+        dataInterval:
+          type: string
+          enum: ["1m", "5m", "1h"]
+        interval:
+          type: string
+          enum: ["daily", "week", "month", "year"]
+        cronFormat:
+          type: string
+    GetReportExcelCronList:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          fileName:
+            type: string
+          pages:
+            type: array
+            items:
+              $ref: '#/components/schemas/excelPage'
+          dataInterval:
+            type: string
+          interval:
+            type: string
+            enum: ["daily", "week", "month", "year"]
+          cronFormat:
+            type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
