@@ -24,13 +24,13 @@ gen-conf: gen-setting-json
 
 merge-spec:
 	docker run -it \
-	-v $$PWD:/workdir 94peter/openapi-cli:1.1 /main ms \
+	-v $$PWD:/workdir 94peter/openapi-cli:v1.2 /main ms \
 	-main /workdir/main_spec.yml \
 	-mergeDir /workdir/allspec/ \
 	-output /workdir/doc/v1_api.yml
 
 gen-setting-json: merge-spec
 	docker run -it \
-	-v $$PWD:/workdir 94peter/openapi-cli:1.1 /main togs \
+	-v $$PWD:/workdir 94peter/openapi-cli:v1.2 /main togs \
 	-spec /workdir/doc/v1_api.yml \
 	-output /workdir/settings/endpoint.json

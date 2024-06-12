@@ -8,7 +8,22 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /v1/preload:
+  /v1/layout/loginpage: 
+    get: 
+      summary: Get login page layout
+      tags: 
+        - "Preload"
+      operationId: get-loginpage-v1
+      responses:
+        200:
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginPageDetail"
+        500:
+          description: "Internal Server Error"
+  /v1/layout/preload:
     get:
       summary: "Get preload data"
       tags:
@@ -28,7 +43,7 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /v1/plan:
+  /v1/layout/plan:
     get:
       summary: "Get plan"
       tags:
@@ -48,7 +63,7 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /v1/plan/building/{ID}/floor:
+  /v1/layout/plan/building/{ID}/floor:
     get: 
       summary: "Get floor list by using BuildingID"
       tags:
@@ -116,7 +131,7 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /v1/plan/building/{ID}/floor/{floorID}:
+  /v1/layout/plan/building/{ID}/floor/{floorID}:
     get:
       summary: "Get floor detail by using BuildingID and floorID"
       tags:
@@ -151,7 +166,7 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/plan/sbt/{ID}:
+  /v1/layout/plan/sbt/{ID}:
     get:
       summary: "Get sbt pages detail by using sbtID"
       tags:
@@ -180,7 +195,7 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/group:
+  /v1/layout/group:
     get:
       summary: get group and element with type
       tags:
@@ -210,7 +225,7 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /v1/element/{ID}:
+  /v1/layout/element/{ID}:
     get:
       summary: "Get Element's fields detail by using ElementID (sourceID)"
       tags:
@@ -238,7 +253,7 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/fields:
+  /v1/layout/fields:
     get: 
       summary: get fields by groupID, elementID, and also keyword
       tags: 
@@ -277,7 +292,27 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/smart/temperature/{ID}:
+  /v1/layout/electric:
+    get: 
+      summary: get electric power information
+      tags: 
+        - "Electric Power"
+      operationId: get-electric-v1
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ElectricDetail"
+        401: 
+          description: "Unauthorized"
+        500:
+          description: "Internal Server Error"
+  
+  /v1/layout/smart/temperature/{ID}:
     get:
       summary: get smart temperature with groupID
       tags:
@@ -305,7 +340,7 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/smart/defrost:
+  /v1/layout/smart/defrost:
     get:
       summary: get all smart defrost element
       tags:
@@ -335,7 +370,7 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/ems:
+  /v1/layout/ems:
     get:
       summary: get all ems element
       tags:
@@ -355,7 +390,7 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /v1/report:
+  /v1/layout/report:
     get:
       summary: get report
       tags:
@@ -375,7 +410,7 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /v1/event:
+  /v1/layout/event:
     get: 
       summary: get event setting (type dropdown list)
       tags: 
@@ -395,14 +430,12 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/tv:
+  /v1/layout/tv:
     get:
       summary: get TV details
       tags:
         - "TV"
       operationId: get-tv-v1
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           in: query
@@ -416,26 +449,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TVDetail"
-        401: 
-          description: "Unauthorized"
-        500:
-          description: "Internal Server Error"
-  
-  /v1/electric:
-    get: 
-      summary: get electric power information
-      tags: 
-        - "Electric Power"
-      operationId: get-electric-v1
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "ok"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ElectricDetail"
         401: 
           description: "Unauthorized"
         500:
@@ -493,7 +506,46 @@ components:
           $ref: "#/components/schemas/ImageCut"
         transform:
           $ref: "#/components/schemas/TranformDetail"
-    
+        elementId: 
+          type: string
+          description: if this is not empty, it need to linked to the detail of element like elementContent
+        trigger: 
+          type: object
+          properties:
+            field: 
+              type: string
+            fieldValue: 
+              type: number
+            graphical: 
+              type: array
+              items: 
+                type: object
+                properties:
+                  operator: 
+                    type: string
+                    enum: [
+                      equal,
+                      more,
+                      less,
+                      moreEqual,
+                      lessEqual,
+                      unEqual,
+                      inRange,
+                      outRange
+                    ]
+                  operatorValue:
+                    type: string
+                  image: 
+                   $ref: "#/components/schemas/ImageCut"
+            mapValue: 
+              type: object
+              additionalProperties: 
+                type: number
+              description: if this is not empty, it need to trigger the value to depend on key
+              example:
+                0: 1
+                1: 0
+
     TranformDetail:
       type: object
       properties:
@@ -529,7 +581,7 @@ components:
           description: 要顯示的文字
         transform:
           $ref: "#/components/schemas/TranformDetail"
-        fontStyle:
+        style:
           $ref: "#/components/schemas/FontStyle"
         align:
           type: string
@@ -575,7 +627,7 @@ components:
               type: boolean
             displayFieldName:
               type: boolean
-            displayFieldBG:
+            displayFieldBg:
               type: boolean
             title: 
               $ref: "#/components/schemas/FontStyle"
@@ -594,47 +646,71 @@ components:
               type: string
               example: 1F A庫碼頭理貨區照明
               description: the display title
+            groupId: 
+              type: string
+              example: GR_1685671380584759
+            groupName: 
+              type: string
+              example: '1F A庫 碼頭理貨區'
             fields:
               type: array
               items:
-                $ref: "#/components/schemas/GetFieldDetail"
+                allOf:
+                  - $ref: "#/components/schemas/GetFieldDetail"
+                  - type: object
+                    properties:
+                      zero:
+                        type: string
+                        example: 待機中
+                      bitTrans:
+                        type: array
+                        items:
+                          type: string
+                        description: 把value換算成16個binary digit，只要1的值有對到要顯示該值，所以會有多個值顯示
+                      
         graphical:
           type: array
           items:
             type: object
             properties:
-              field:
-                type: string
-                example: 10106@1F_engine_AVD101
-              operator:
-                type: string
-                enum: [
-                  equal,
-                  more,
-                  less,
-                  moreEqual,
-                  lessEqual,
-                  unEqual,
-                  inRange,
-                  outRange
-                ]
-              value:
-                type: string
-                example: 10~20
-                description: general number of a~b that will only happen if operator is inRange/outRange
               layer:
                 type: integer
-                enum: [1,2,3,4,5]
+                enum: [1,2,3,4]
                 description: 
                   the 1st layer will replace the image;
                   the 2nd layer will stack on the 1st layer/original image;
-                  the 3rd layer is icon layer, need to place the icon to the top of element's title;
-                  the 4th layer is icon layer, need to place the icon at the start of element's title;
-                  the 5th layer is icon layer, need to place the icon at the end of element's title;
+                  the 3rd layer is icon layer, need to place the icon to the start of element's title;
+                  the 4th layer is icon layer, need to place the icon at the end of element's title;
                   all icon layer need to handle the situation of showing multiple icon;
-                  if the element's title is not display, the 3rd layer will replace the title
               image:
                 $ref: "#/components/schemas/ImageCut"
+              rules:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: 10106@1F_engine_AVD101
+                    fieldValue: 
+                      type: number
+                      example: 10
+                    operator:
+                      type: string
+                      enum: [
+                        equal,
+                        more,
+                        less,
+                        moreEqual,
+                        lessEqual,
+                        unEqual,
+                        inRange,
+                        outRange
+                      ]
+                    operatorValue:
+                      type: string
+                      example: 10~20
+                      description: general number of a~b that will only happen if operator is inRange/outRange
 
     ImageCut:
       type: object
@@ -663,6 +739,9 @@ components:
         type: 
           type: string
           enum: [sbt, schedule]
+        icon:
+          type: string
+          example: /sbt.svg
         sourceId:
           type: string
           example: EL_1685671799046677
@@ -700,9 +779,6 @@ components:
               type: number
             lower:
               type: number
-        zero:
-          type: string
-          example: 待機中
         valueTrans:
           type: object
           additionalProperties: 
@@ -712,12 +788,7 @@ components:
             1: 低
             2: 中
             3: 高
-          description: it is a Value translator, key should be int, only will need it if type is SET_Click or SET_Binary
-        bitTrans:
-          type: array
-          items:
-            type: string
-          description: 把value換算成16個binary digit，只要1的值有對到要顯示該值，所以會有多個值顯示
+          description: it is a Value translator, key should be int, only will need it if type is SET_Click
 
     FieldsDetail:
       type: object
@@ -725,8 +796,18 @@ components:
         getFields:
           type: array
           items:
-            type: object
-            $ref: "#/components/schemas/GetFieldDetail"
+            allOf: 
+              - $ref: "#/components/schemas/GetFieldDetail"
+              - type: object 
+                properties: 
+                  zero:
+                    type: string
+                    example: 待機中
+                  bitTrans:
+                    type: array
+                    items:
+                      type: string
+                    description: 把value換算成16個binary digit，只要1的值有對到要顯示該值，所以會有多個值顯示
         setFields:
           type: array
           items:
@@ -736,7 +817,7 @@ components:
                 properties:
                   type:
                     type: string
-                    enum: [SET_Input, SET_Click, SET_TriggerValue_0, SET_TriggerValue_1, SET_Binary]
+                    enum: [SET_Input, SET_Click, SET_TriggerValue_0, SET_TriggerValue_1]
                     description: it is the fieldFormat in the documentation
                   hints:
                     type: array
@@ -910,9 +991,7 @@ components:
                               "upper": 1439,
                               "lower": 0
                           },
-                          "zero": null,
                           "valueTrans": {},
-                          "bitTrans": [],
                           "type": "SET_Input",
                           "hints": []
                       },
@@ -923,9 +1002,7 @@ components:
                           "unit": "分鐘",
                           "displayDp": 0,
                           "limit": null,
-                          "zero": null,
                           "valueTrans": {},
-                          "bitTrans": [],
                           "type": "SET_Input",
                           "hints": []
                       },
@@ -936,12 +1013,10 @@ components:
                           "unit": "",
                           "displayDp": 0,
                           "limit": null,
-                          "zero": null,
                           "valueTrans": {
                               "0": "無用",
                               "1": "除霜"
                           },
-                          "bitTrans": [],
                           "type": "SET_TriggerValue_1",
                           "hints": [
                               {
@@ -961,7 +1036,6 @@ components:
                               "upper": 12,
                               "lower": 0
                           },
-                          "zero": "",
                           "valueTrans": {
                               "0": "0次",
                               "1": "1次",
@@ -977,7 +1051,6 @@ components:
                               "11": "11次",
                               "12": "12次"
                           },
-                          "bitTrans": [],
                           "type": "SET_Click",
                           "hints": []
                       },
@@ -991,12 +1064,10 @@ components:
                               "upper": 1,
                               "lower": 0
                           },
-                          "zero": "",
                           "valueTrans": {
                               "0": "停控",
                               "1": "啓動"
                           },
-                          "bitTrans": [],
                           "type": "SET_Click",
                           "hints": [
                               {
@@ -1021,9 +1092,7 @@ components:
                               "upper": 1439,
                               "lower": 0
                           },
-                          "zero": null,
                           "valueTrans": {},
-                          "bitTrans": [],
                           "type": "SET_Input",
                           "hints": []
                       },
@@ -1034,9 +1103,7 @@ components:
                           "unit": "分鐘",
                           "displayDp": 0,
                           "limit": null,
-                          "zero": null,
                           "valueTrans": {},
-                          "bitTrans": [],
                           "type": "SET_Input",
                           "hints": []
                       },
@@ -1047,12 +1114,10 @@ components:
                           "unit": "",
                           "displayDp": 0,
                           "limit": null,
-                          "zero": null,
                           "valueTrans": {
                               "0": "無用",
                               "1": "除霜"
                           },
-                          "bitTrans": [],
                           "type": "SET_TriggerValue_1",
                           "hints": [
                               {
@@ -1072,7 +1137,6 @@ components:
                               "upper": 12,
                               "lower": 0
                           },
-                          "zero": "",
                           "valueTrans": {
                               "0": "0次",
                               "1": "1次",
@@ -1088,7 +1152,6 @@ components:
                               "11": "11次",
                               "12": "12次"
                           },
-                          "bitTrans": [],
                           "type": "SET_Click",
                           "hints": []
                       },
@@ -1102,12 +1165,10 @@ components:
                               "upper": 1,
                               "lower": 0
                           },
-                          "zero": "",
                           "valueTrans": {
                               "0": "停控",
                               "1": "啓動"
                           },
-                          "bitTrans": [],
                           "type": "SET_Click",
                           "hints": [
                               {
@@ -1190,6 +1251,9 @@ components:
         imageUrl:
           type: string
           example: area_map.png
+        bdIcon: 
+          type: string
+          example: /bd.svg
         resolution:
           $ref: "#/components/schemas/ResolutionDetail"
         contents:
@@ -1199,6 +1263,7 @@ components:
       example: 
         {
           "imageUrl": "Untitled.png",
+          "bdIcon": "/bd.svg",
           "resolution": {
               "width": 1500,
               "height": 1080
@@ -1347,7 +1412,7 @@ components:
         initialBuilding:
           type: string
           example: ""
-          description: need to call /v1/plan if this is empty
+          description: need to call /v1/layout/plan if this is empty
         imageDir: 
           type: string
           example: http://localhost:3002/image/
@@ -1355,31 +1420,23 @@ components:
         system:
           type: object
           properties:
-            logo: 
-              type: string
-              example: logo.png
             projectName: 
               type: string
               example: 沐霖監控系統
             shortProjectName:
               type: string
-              example: Scada
+              example: 02 1111 3333
+            logo: 
+              type: string
+              example: logo.png
+              description: use this to prepend the image name to get image
             attention:
               type: string
               example: 測試中
-            autoLogin:
-              type: boolean
-              example: false
             autoLogout:
               type: number
               example: 600
               description: second
-            isMonitorMode:
-              type: boolean
-              example: false
-            useVirtualKeyboard:
-              type: boolean
-              example: false
             schedules:
               type: object
               properties:
@@ -1403,62 +1460,41 @@ components:
           items:
             $ref: "#/components/schemas/SystemSettingDetail"
           description: the order is important
-          example: [
-            {
-              "name": "map",
-              "description": "平面圖及系統圖形化介面",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "warning",
-              "description": "告警系統(歷史告警、即時告警)",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "environment",
-              "description": "環境資訊系統",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "iot1004SmartTemp",
-              "description": "智能控溫",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "iot1004SmartDefrost",
-              "description": "智能除霜",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "electricityDemand",
-              "description": "需量管理",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "electricityReduction",
-              "description": "抑電管理",
-              "isSystemOpen": false,
-              "permission": ""
-            },
-            {
-              "name": "chartReport",
-              "description": "圖表系統",
-              "isSystemOpen": true,
-              "permission": ""
-            },
-            {
-              "name": "eventLog",
-              "description": "事件紀錄",
-              "isSystemOpen": true,
-              "permission": ""
-            }
-          ]
+          example: 
+            [
+                {
+                    "name": "MapSystem",
+                    "description": "平面圖及系統圖形化介面"
+                },
+                {
+                    "name": "WarningSystem",
+                    "description": "告警系統(歷史告警、即時告警)"
+                },
+                {
+                    "name": "EnvironmentSystem",
+                    "description": "環境資訊系統"
+                },
+                {
+                    "name": "IoT1004SmartTempSystem",
+                    "description": "智能控溫"
+                },
+                {
+                    "name": "IoT1004SmartDefrostSystem",
+                    "description": "智能除霜"
+                },
+                {
+                    "name": "ElectricityDemandSystem",
+                    "description": "需量管理"
+                },
+                {
+                    "name": "ChartSystem",
+                    "description": "圖表系統"
+                },
+                {
+                    "name": "EventLogSystem",
+                    "description": "事件紀錄"
+                }
+            ]
               
     SystemSettingDetail:
       type: object
@@ -1580,11 +1616,6 @@ components:
               $ref: "#/components/schemas/ElementDetail"
       example:
                 [
-                  {
-                      "id": "GC_1682306569",
-                      "name": "tab_content_groupelement_unclassified",
-                      "elements": []
-                  },
                   {
                       "id": "GR_1685671380584759",
                       "name": "1F A庫 碼頭理貨區",
@@ -3346,18 +3377,28 @@ components:
         supportNames:
           type: array
           items:
-            type: string
-          example: [S, A, B, C]
-        supportNamesDesc:
-          type: array
-          items:
-            type: string
-          example: [停止, 溫度A, 溫度B, 溫度C]
+            type: object
+            properties:
+              title: 
+                type: string
+                example: S
+              subTitle: 
+                type: string
+                example: 停止
+              color: 
+                type: string
+                example: "#E37556"
         displayColumns:
           type: array
           items:
-            type: string
-          example: [現在溫度, 啓動溫度A, 停止溫度A, 啓動溫度B, 停止溫度B, 啓動溫度C, 停止溫度C]
+            type: object
+            properties:
+              title: 
+                type: string
+                example: 現在溫度
+              color:
+                type: string
+                example: "#E37556"
         elements:
           type: array
           items:
@@ -3428,6 +3469,7 @@ components:
                     "C"
                   ],
                   supportNamesDesc: [停止, 溫度A, 溫度B, 溫度C],
+                  supportNamesColor: ["#E37556", "#52D981", "#54B6D6", "#DBCB4D"],
                   "displayColumns": [
                     "現在溫度",
                     "啓動溫度A",
@@ -4085,6 +4127,15 @@ components:
         displayDp: 
           type: integer
           example: 1
+        limit: 
+          type: object
+          properties:
+            upper:
+              type: number
+              example: 55
+            lower:
+              type: number
+              example: -20
     
     SmartModeTimeSettingField:
       type: object
@@ -4545,8 +4596,6 @@ components:
           $ref: "#/components/schemas/ReportSettingDetail"
         excelSetting:
           $ref: "#/components/schemas/ReportSettingDetail"
-        csvSetting:
-          $ref: "#/components/schemas/ReportSettingDetail"
         inputInterval:
           type: object
           properties:
@@ -4579,12 +4628,13 @@ components:
         chart: 
           type: object
           properties:
-            defaultCharts: 
+            default:
               type: array
-              items:
-                type: string
-              description: max 5 fields
-              example: ["Point1@3F_A_LCD301", Point2@3F_A_LCD301, Point3@3F_A_LCD301]
+              items: 
+                type: array
+                items:
+                  type: string 
+              example: [['Point1@3F_A_LCD301', 'Point1@3F_A_LCD302'], ['Point1@3F_B_LCD301', 'Point1@3F_B_LCD302']]             
             squareWaveFieldType: 
               type: array
               items:
@@ -4885,823 +4935,95 @@ components:
         ]
 
     SBTDetail:
-      type: array
-      items:
-        type: object
-        properties:
-          title: 
-            type: string
-          columns: 
-            type: array
-            items:
-              type: object
-              properties:
-                title: 
+      type: object
+      properties:
+        title: 
+          type: string
+          example: "冷凍庫 快速設定"
+        pages: 
+          type: array
+          items:
+            type: object
+            properties:
+              title: 
+                type: string
+              columns: 
+                type: array
+                items:
                   type: string
-                  example: 强制解除霜
-                type: 
-                  type: string
-                  enum:
-                    - BOOL
-                    - FLOAT
-                    - INT
-                  example: BOOL
-                readOnly: 
-                  type: boolean
-                  example: false
-          rows: 
-            type: array
-            items:
-              type: object
-              properties:
-                title: 
-                  type: string
-                  example: 'FI1011'
-                fields: 
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      field: 
-                        type: string
-                        example: '10414@1F_engine_AVD101'
-                      value: 
-                        type: number
-                        example: 1
-                      displayDp:
-                        type: integer
-                        example: 0
-      example: 
-        [
-          {
-            "title": "測試設定",
-            "columns": [
-                {
-                    "title": "除錯",
-                    "type": "int",
-                    "readOnly": true
-                },
-                {
-                    "title": "類比狀態",
-                    "type": "int",
-                    "readOnly": true
-                },
-                {
-                    "title": "溫度模式",
-                    "type": "int",
-                    "readOnly": true
-                },
-                {
-                    "title": "測試",
-                    "type": "float",
-                    "readOnly": false
-                }
-            ],
-            "rows": [
-                {
-                    "title": "FI1011",
-                    "fields": [
-                        {
-                          "field": "10414@1F_engine_AVD101",
-                          "value": 0,
-                          "displayDp": 0
-                        },
-                        {
-                          "field": "10401@1F_engine_AVD101",
-                          "value": 3,
-                          "displayDp": 0
-                        },
-                        {
-                          "field": "10400@1F_engine_AVD101",
-                          "value": 1,
-                          "displayDp": 0
-                        },
-                        {
-                          "field": "17461@1F_engine_AVD101",
-                          "value": 1.1,
-                          "displayDp": 0
-                        }
-                    ]
-                },
-                {
-                    "title": "FI1012",
-                    "fields": [
-                      {
-                        "field": "10414@1F_engine_AVD101",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10401@1F_engine_AVD101",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10400@1F_engine_AVD101",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "17461@1F_engine_AVD101",
-                        "value": 3.1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "FI1013",
-                    "fields": [
-                      {
-                        "field": "10414@1F_engine_AVD101",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10401@1F_engine_AVD101",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10400@1F_engine_AVD101",
-                        "value": 1,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "17461@1F_engine_AVD101",
-                        "value": 1.1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "FI1014",
-                    "fields": [
-                      {
-                        "field": "10414@1F_engine_AVD101",
-                        "value": 1,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10401@1F_engine_AVD101",
-                        "value": 5,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10400@1F_engine_AVD101",
-                        "value": 5,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "17461@1F_engine_AVD101",
-                        "value": 5.5,
-                        "displayDp": 0
-                      }
-                    ]
-                }
-            ]
-          }, 
-          {
-            "title": "照明設定",
-            "columns": [
-                {
-                    "title": "自動訊號",
-                    "type": "bool",
-                    "readOnly": true
-                },
-                {
-                    "title": "回授訊號",
-                    "type": "int",
-                    "readOnly": false
-                },
-                {
-                    "title": "群控設定",
-                    "type": "int",
-                    "readOnly": true
-                }
-            ],
-            "rows": [
-                {
-                    "title": "A冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "B冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "C冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "D冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "E冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "F冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "G冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "H冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "I冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "J冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "K冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "L冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "M冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "N冷藏庫照明",
-                    "fields": [
-                      {
-                        "field": "10001@5F_engine_lamp",
-                        "value": 0,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "10038@5F_engine_lamp",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "16385@5F_engine_lamp",
-                        "value": 2,
-                        "displayDp": 0
-                      }
-                    ]
-                }
-            ]
-          },
-          {
-            "title": "溫濕度設定",
-            "columns": [
-                {
-                    "title": "濕度",
-                    "type": "float",
-                    "readOnly": true
-                },
-                {
-                    "title": "濕度校正",
-                    "type": "int",
-                    "readOnly": false
-                },
-                {
-                    "title": "溫度",
-                    "type": "float",
-                    "readOnly": true
-                },
-                {
-                    "title": "溫度校正",
-                    "type": "int",
-                    "readOnly": false
-                },
-                {
-                    "title": "通訊異常",
-                    "type": "bool",
-                    "readOnly": true
-                }
-            ],
-            "rows": [
-                {
-                    "title": "1F庫板上溫濕度計1",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 76.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 26.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 0,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "1F庫板上溫濕度計2",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 76.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 26.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "2F庫板上溫濕度計1",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 66.66,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 22.22,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 0,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "2F庫板上溫濕度計2",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 76.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 26.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 0,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "3F庫板上溫濕度計1",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 76.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 26.88,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 2,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 0,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "3F庫板上溫濕度計2",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 50.50,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 39.39,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "4F庫板上溫濕度計1",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 90.06,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 5,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 46.79,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 5,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "4F庫板上溫濕度計2",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 50.50,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 39.39,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "5F庫板上溫濕度計1",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 50.50,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 39.39,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      }
-                    ]
-                },
-                {
-                    "title": "5F庫板上溫濕度計2",
-                    "fields": [
-                      {
-                        "field": "RH@5F_engine_RTH6",
-                        "value": 50.50,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "RH_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "Temp@5F_engine_RTH6",
-                        "value": 39.39,
-                        "displayDp": 1
-                      },
-                      {
-                        "field": "Temp_offset@5F_engine_RTH6",
-                        "value": 3,
-                        "displayDp": 0
-                      },
-                      {
-                        "field": "DEVICE_ERROR@5F_engine_RTH6",
-                        "value": 1,
-                        "displayDp": 0
-                      }
-                    ]
-                }
-            ]
-          }
-        ]
-    
+              rows: 
+                type: array
+                items:
+                  type: object
+                  properties:
+                    equipName: 
+                      type: string
+                      example: 'FI1011'
+                    fields: 
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          field: 
+                            type: string
+                            example: '10414@1F_engine_AVD101'
+                          value: 
+                            type: number
+                            example: 1
+                          type: 
+                            type: string
+                            enum:
+                              [GET, SET]
+                          format: 
+                            type: string
+                            enum: [bool, valueTrans, bitTrans, trigger0, trigger1, number]
+                            description: 
+                              (priority)
+                              if bool, show checkbox;
+                              if valueTrans, (get)show mapping value, (set)dropdown;
+                              if bitTrans, (get)show multiple value, (set)this should not happen;
+                              if trigger0 / trigger1, show button
+                              if number, show number with displayDp
+                          unit: 
+                            type: string
+                            example: "HH:mm"
+                          displayDp:
+                            type: integer
+                            example: 0
+                          limit:
+                            type: object
+                            properties:
+                              upper:
+                                type: number
+                              lower:
+                                type: number
+                          valueTrans:
+                            type: object
+                            additionalProperties: 
+                              type: string
+                            example:
+                              0: 關閉
+                              1: 低
+                              2: 中
+                              3: 高
+                          zero:
+                            type: string
+                            example: 待機中
+                          bitTrans:
+                            type: array
+                            items:
+                              type: string
+                            description: 把value換算成16個binary digit，只要1的值有對到要顯示該值，所以會有多個值顯示
+
     TVDetail:
       type: object
       properties:
         id:
           type: string
           example: "TV_0000001"
+        image: 
+          type: string
+          example: "localhost:7091/image/"
         pages:
           type: array
           items:
@@ -5810,7 +5132,7 @@ components:
                                   color: 
                                     type: string
                                     example: "#FF0000"
-                              description: it is a Value translator, key should be int, only will need it if type is SET_Click or SET_Binary
+                              description: it is a Value translator, key should be int, only will need it if type is SET_Click
                             bitTrans:
                               type: array
                               items:
@@ -5849,6 +5171,17 @@ components:
                             style:
                               type: object
                               properties:
+                                titleBackgroundColor:
+                                  type: string
+                                  example: "#58D68D"
+                                  description: RGB
+                                titleFontColor:
+                                  type: string
+                                  example: "#FFFFFF"
+                                  description: RGB
+                                titleFontSize:
+                                  type: integer
+                                  example: 18
                                 valueBackgroundColor:
                                   type: string
                                   example: "#58D68D"
@@ -5925,6 +5258,9 @@ components:
                                         type: string
                                         example: "#FFFFFF"
                                         description: RGB
+                                      fontSize:
+                                        type: integer
+                                        example: 16
                                     description: for display text    
                     footer:
                       type: object
@@ -7197,8 +6533,7 @@ components:
             enum:
               - 1
               - 2
-              - 3
-            description: 分別是1P2W, 3P3W, 3P4W
+            description: 分別是1P2W和3P3W/3P4W
               （1P2W只會有abVoltage，aCurrent，instPower，cumulativePower，powerFactor，connectError）
             example: 1
           abVoltage:
@@ -7358,7 +6693,7 @@ components:
           },
           {
             "name": "2F 電表",
-            "type": 3,
+            "type": 2,
             "abVoltage": {
               "field": "10100@1F_engine_AVD101",
               "maxValue": 600,
@@ -7487,3 +6822,13 @@ components:
         value:
           type: number
           example: 360
+
+    LoginPageDetail:
+      type: object
+      properties:
+        logo:
+          type: string
+          example: http://localhost:3002/image/bigLogo.png
+        title:
+          type: string
+          example: "環保機電監控系統"

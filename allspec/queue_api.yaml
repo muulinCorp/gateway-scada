@@ -8,11 +8,11 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /v1/queue:
+  /v1/queue/dashboard:
     get:
       tags: [queue]
-      summary: 取得系統佇列
-      operationId: get-queue
+      summary: 取得系統佇列儀表版
+      operationId: get-queue-dashboard
       security:
         - BearerAuth: []
       responses:
@@ -21,11 +21,40 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetQueue'
-        '204':
-          description: no content (參數不存在)
+                $ref: '#/components/schemas/GetQueueDashboard'
         '500':
           description: 伺服器發生錯誤
+  /v1/queue/dashboard/sse:
+    get:
+      tags: [queue]
+      summary: 取得系統佇列儀表版 SSE
+      operationId: get-queue-dashboard-sse
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GetQueueDashboard'
+  /v1/queue/equip_layout:
+    get:
+      tags: [queue]
+      summary: 取得智慧除霜設備清單
+      operationId: get-queue-equip-layout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupsDetail'
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue:
     post:
       tags: [queue]
       summary: 建立佇列群組
@@ -63,7 +92,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateQueue'
+                $ref: '#/components/schemas/GetQueueDetail'
         '500':
           description: 伺服器發生錯誤
     put:
@@ -196,55 +225,9 @@ components:
     queEquip:
       type: object
       properties:
-        name:
+        id:
           type: string
-          description: 名稱
-        state_field:
-          type: string
-          description: 狀態
-        execute_field:
-          type: string
-          description: 執行除霜
-        waiting_field:
-          type: string
-          description: 預計執行等待時間欄位
-        processID_field:
-          type: string
-          description: 除霜程序ID
-        defDelayTime_field:
-          type: string
-          description: 除霜延遲時間
-        defTime_field:
-          type: string
-          description: 除霜時間
-        defDripTime_field:
-          type: string
-          description: 除霜滴水時間
-        defDelayRemainTime_field:
-          type: string
-          description: 除霜延遲剩餘時間
-        defRemainTime_field:
-          type: string
-          description: 除霜剩餘時間
-        defDripRemainTime_field:
-          type: string
-          description: 除霜滴水剩餘時間
-        defMode_field:
-          type: string
-          description: 除霜模式
-        defStopMode_field:
-          type: string
-          description: 除霜終止模式
-        ioStatus_field:
-          type: string
-          description: 輸入/出狀態
-        forcedDef_field:
-          type: string
-          description: 強制除霜/解除霜
-        errCode_field:
-          type: string
-          description: 錯誤提示
-    GetQueue:
+    GetQueueDashboard:
       type: array
       items:
         type: object
@@ -311,6 +294,80 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/queEquip'
+    GetQueueDetail:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/CreateQueue' 
+        equip_layout:
+          $ref: '#/components/schemas/GroupsDetail'
+    ElementDetail: 
+      type: object
+      properties:
+        id: 
+          type: string
+          example: EL_1685671772617118
+        name: 
+          type: string
+          example: FI1011 
+        defrost_group:
+          type: string
+        is_selected:
+          type: boolean      
+    GroupsDetail:
+      type: array
+      items:
+        type: object
+        properties:
+          name: 
+            type: string
+            example: 1F A庫 碼頭理貨區
+          elements:
+            type: array
+            items:
+              $ref: "#/components/schemas/ElementDetail"
+      example:
+                [
+                  {
+                      "name": "1F A庫 碼頭理貨區",
+                      "elements": [
+                          {
+                              "id": "EL_1685671772617118",
+                              "name": "FI1011",
+                              "defrost_group": "",
+                              "is_selected": false
+                          },
+                          {
+                              "id": "EL_1685671799014433",
+                              "name": "FI1012",
+                              "defrost_group": "",
+                              "is_selected": false
+                          },
+                          {
+                              "id": "EL_1685671799020442",
+                              "name": "FI1013",
+                              "defrost_group": "groupA",
+                              "is_selected": false
+                          },
+                          {
+                              "id": "EL_1685671799027592",
+                              "name": "FI1014",
+                              "defrost_group": "",
+                              "is_selected": false
+                          }
+                      ]
+                  },
+                  {
+                      "name": "1F B庫 冷凍暫存區",
+                      "elements": [
+                          {
+                              "id": "EL_1685671799034036",
+                              "name": "FW1101",
+                              "defrost_group": ""
+                          }
+                      ]
+                  }
+              ]
     QueueEquipInfo:
       type: object
       properties:
