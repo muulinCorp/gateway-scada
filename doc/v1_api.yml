@@ -21,6 +21,8 @@ servers:
   description: Queue_Service
 - url: http://scada-report-svc:9080
   description: Report_Service
+- url: http://scada-event-svc:9080
+  description: Event_Service
 tags:
 - name: Scada-Auth-Api
   description: scada授權服務功能規格
@@ -32,6 +34,8 @@ tags:
   description: Scada Queue service
 - name: Report_Service
   description: 報表、數據相關服務
+- name: Event_Service
+  description: 事件管理相關服務
 - name: Schedule_Service
   description: 預約排程、固定排程及週排程功能服務
 paths:
@@ -1414,6 +1418,64 @@ paths:
           description: 伺服器發生錯誤
       security:
       - bearerAuth: []
+  /v2/event:
+    get:
+      tags:
+      - Event_Service
+      - event
+      summary: 取得事件清單
+      operationId: get-event
+      parameters:
+      - name: type
+        in: query
+        description: 類型
+        required: true
+        schema:
+          type: string
+          enum:
+          - auth_login
+          - user_control
+          - avg_persistence
+          - elec_demand_setting
+          - elec_demand_control
+          - queue_setting
+          - queue_control
+          - schedule_setting
+          - schedule_control
+      - name: start
+        in: query
+        description: 日期 (2016-07-14T00:00:00Z)
+        schema:
+          type: string
+        example: "2016-07-14T00:00:00Z"
+      - name: end
+        in: query
+        description: 日期 (2016-07-14T00:00:00Z)
+        schema:
+          type: string
+        example: "2016-07-14T00:00:00Z"
+      - name: interval
+        in: query
+        description: 依現在時間前 x 小時
+        schema:
+          type: string
+          enum:
+          - 1h, 2h, 4h, 6h, 12h, 24h
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetEventList'
+        "204":
+          description: no content
+        "403":
+          description: alert config disable
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
   /v2/report/pdf:
     post:
       tags:
@@ -2758,6 +2820,18 @@ components:
             showCompanyLogo:
               type: boolean
               example: true
+    GetEventList:
+      properties:
+        detial:
+          type: string
+        service:
+          type: string
+        summarize:
+          type: string
+        time:
+          type: string
+        type:
+          type: string
     GetExcel:
       type: object
       properties:

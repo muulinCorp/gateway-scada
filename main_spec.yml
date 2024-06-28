@@ -22,6 +22,8 @@ servers:
     description: Queue_Service
   - url: http://scada-report-svc:9080
     description: Report_Service
+  - url: http://scada-event-svc:9080
+    description: Event_Service
 
 components:
   securitySchemes:

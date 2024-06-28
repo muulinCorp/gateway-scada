@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Event_Service
+  description: 事件管理相關服務
+
+paths:
+  /v2/event:
+    get:
+      tags: [event]
+      summary: 取得事件清單
+      operationId: get-event
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: ["auth_login", "user_control", "avg_persistence", "elec_demand_setting","elec_demand_control", "queue_setting","queue_control", "schedule_setting", "schedule_control"]
+          description: 類型
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: interval
+          required: false
+          schema:
+            type: string
+            enum: ["1h, 2h, 4h, 6h, 12h, 24h"]
+          description: 依現在時間前 x 小時
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetEventList'
+        '204':
+          description: no content
+        '403':
+          description: alert config disable
+        '500':
+          description: 伺服器發生錯誤
+components:
+  schemas:
+    GetEventList:
+      properties:
+        time:
+          type: string
+        service:
+          type: string
+        type:
+          type: string
+        summarize:
+          type: string
+        detial:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
