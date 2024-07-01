@@ -211,7 +211,6 @@ paths:
             type: string
             enum:
               - all
-              - smartDefrost
               - smartTemp
       responses:
         200:
@@ -263,19 +262,22 @@ paths:
       parameters:
         - in: query
           name: groupID
-          required: true
           schema:
             type: string
         - in: query
           name: elementID
-          required: true
           schema:
             type: string
         - in: query
           name: keyword
-          required: true
           schema:
             type: string
+        - in: query
+          name: fields
+          schema:
+            type: string
+            example: 16416@1F_engine_controller+16417@1F_engine_controller
+            description: "url encode: use %2B as +, %40 as @"
       responses:
         200:
           description: "ok"
@@ -340,36 +342,6 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /v1/layout/smart/defrost:
-    get:
-      summary: get all smart defrost element
-      tags:
-        - "Smart feature"
-      operationId: get-smart-defrost-v1
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: ids
-          in: query
-          schema: 
-            type: array
-            items:
-              type: string
-          description: elementIDs
-      responses:
-        200:
-          description: "ok"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SmartDefrostDetail"
-        401: 
-          description: "Unauthorized"
-        404:
-          description: "Not Found"
-        500:
-          description: "Internal Server Error"
-  
   /v1/layout/ems:
     get:
       summary: get all ems element
@@ -385,26 +357,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EmsDetail"
-        401: 
-          description: "Unauthorized"
-        500:
-          description: "Internal Server Error"
-
-  /v1/layout/report:
-    get:
-      summary: get report
-      tags:
-        - "Report feature"
-      operationId: get-report-v1
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "ok"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ReportDetail"
         401: 
           description: "Unauthorized"
         500:
@@ -601,6 +553,15 @@ components:
           type: string
           example: "#00000000"
           description: RGBA
+        padding:
+          type: object
+          properties:
+            horizontal: 
+              type: integer
+              example: 4
+            vertical: 
+              type: integer
+              example: 2
     
     ElementContent:
       type: object
@@ -620,15 +581,52 @@ components:
           description: 資訊依靠在設備圖的哪一邊
         transform:
           $ref: "#/components/schemas/TranformDetail"
+        container: 
+          type: object
+          properties:
+            width:
+              type: number
+              example: 90
+            height: 
+              type: number
+              example: 100.5
         format:
           type: object
           properties:
+            titleContainer:
+              type: object
+              properties:
+                color:
+                  type: string
+                  example: "#34693F1F"
+                padding:
+                  type: integer
+                  example: 4
+                unTitleVertialPadding:
+                  type: integer
+                  example: 2
             displayTitle:
               type: boolean
             displayFieldName:
               type: boolean
             displayFieldBg:
               type: boolean
+            iconSize:
+              type: number
+              example: 19.2
+            spaceBetween:
+              type: object
+              properties:
+                field: 
+                  type: integer
+                  example: 2
+                icon: 
+                  type: integer
+                  example: 4
+                info: 
+                  type: integer
+                  example: 4
+              description: space that between each element (not include start & end)
             title: 
               $ref: "#/components/schemas/FontStyle"
             field:
@@ -659,6 +657,9 @@ components:
                   - $ref: "#/components/schemas/GetFieldDetail"
                   - type: object
                     properties:
+                      valueMaxWidth: 
+                        type: number
+                        example: 200
                       zero:
                         type: string
                         example: 待機中
@@ -679,9 +680,9 @@ components:
                 description: 
                   the 1st layer will replace the image;
                   the 2nd layer will stack on the 1st layer/original image;
-                  the 3rd layer is icon layer, need to place the icon to the start of element's title;
-                  the 4th layer is icon layer, need to place the icon at the end of element's title;
-                  all icon layer need to handle the situation of showing multiple icon;
+                  the 3rd layer is icon layer, need to place the icon to the start of element's title (only one);
+                  the 4th layer is icon layer, need to place the icon at the end of element's title (only two);
+                  4th layer need to handle the situation of showing multiple icon;
               image:
                 $ref: "#/components/schemas/ImageCut"
               rules:
@@ -1533,71 +1534,62 @@ components:
           name: 
             type: string
             example: 3F_A_LCD301點位
+          unit:
+            type: string
+          displayDp:
+            type: integer
+            example: 1
+          equip:
+            type: string
+          group:
+            type: string
+          trans:
+            type: object
+            additionalProperties: 
+              type: string
+            example:
+              0: 關閉
+              1: 低
+              2: 中
+              3: 高
+          isSquareWave:
+            type: boolean
+          displayType: 
+            type: string
+            enum:
+              - state
+              - realtime
+              - accumulation
           type: 
             type: string
-            enum: 
-               - alarm
-               - capacity
-               - clock
-               - co
-               - co2concentration
-               - current
-               - dimensionless
-               - electricityConsumption
-               - errorCode
-               - flow
-               - frequency
-               - height
-               - humidity
-               - illuminance
-               - noise
-               - percentage
-               - pm25
-               - power
-               - pressure
-               - status
-               - temperature
-               - time
-               - voltage
-               - weight
-               - windSpeed
-      example:
-        - field: 16416@1F_engine_controller
-          name: 1F A庫碼頭理貨區 大型顯示器連線異常
-          type: alarm
-        - field: 16417@1F_engine_controller
-          name: 1F A庫碼頭理貨區 平均庫溫
-          type: capacity
-        - field: 16418@1F_engine_controller
-          name: 1F A庫碼頭理貨區 顯示器小數位設定
-          type: clock
-        - field: 16419@1F_engine_controller
-          name: 2F A庫碼頭理貨區 大型顯示器連線異常
-          type: co
-        - field: 16420@1F_engine_controller
-          name: 2F A庫碼頭理貨區 平均庫溫
-          type: co2concentration
-        - field: 16421@1F_engine_controller
-          name: 2F A庫碼頭理貨區 顯示器小數位設定
-          type: current
-        - field: 16422@1F_engine_controller
-          name: 3F A庫碼頭理貨區 大型顯示器連線異常
-          type: dimensionless
-        - field: 16423@1F_engine_controller
-          name: 3F A庫碼頭理貨區 平均庫溫
-          type: electricityConsumption
-        - field: 16424@1F_engine_controller
-          name: 3F A庫碼頭理貨區 顯示器小數位設定
-          type: errorCode
-        - field: 16425@1F_engine_controller
-          name: 5F A庫碼頭理貨區 大型顯示器連線異常
-          type: flow
-        - field: 16426@1F_engine_controller
-          name: 5F A庫碼頭理貨區 平均庫溫
-          type: frequency
-        - field: 16427@1F_engine_controller
-          name: 5F A庫碼頭理貨區 顯示器小數位設定
-          type: humidity
+          # type: 
+          #   type: string
+          #   enum: 
+          #      - alarm
+          #      - capacity
+          #      - clock
+          #      - co
+          #      - co2concentration
+          #      - current
+          #      - dimensionless
+          #      - electricityConsumption
+          #      - errorCode
+          #      - flow
+          #      - frequency
+          #      - height
+          #      - humidity
+          #      - illuminance
+          #      - noise
+          #      - percentage
+          #      - pm25
+          #      - power
+          #      - pressure
+          #      - status
+          #      - temperature
+          #      - time
+          #      - voltage
+          #      - weight
+          #      - windSpeed
 
     GroupsDetail:
       type: array
@@ -4144,254 +4136,8 @@ components:
           type: string
           example: 17262@1F_engine_AVD101
         value:
-          type: array
-          items:
-            type: integer
-          example: [1, 1, 0, 0, 2, 2, 2, 0]
-          description: the length of array will fix to 8
-    
-    SmartDefrostDetail:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: string
-            example: EL_1685671799052678
-            description: elementID
-          serverSetting:
-            type: object
-            description: for server
-            properties:
-              state_field: 
-                type: string
-                example: 10122@1F_engine_AVD103
-              execute_field: 
-                type: string
-                example: 10123@1F_engine_AVD103
-              processID_field: 
-                type: string
-                example: 10124@1F_engine_AVD103
-              waiting_field: 
-                type: string
-                example: 10125@1F_engine_AVD103
-              defDelayTime_field: 
-                type: string
-                example: 10126@1F_engine_AVD103
-              defTime_field: 
-                type: string
-                example: 10127@1F_engine_AVD103
-              defDripTime_field: 
-                type: string
-                example: 10128@1F_engine_AVD103
-              defDelayRemainTime_field: 
-                type: string
-                example: 10129@1F_engine_AVD103
-              defRemainTime_field: 
-                type: string
-                example: 10130@1F_engine_AVD103
-              defDripRemainTime_field: 
-                type: string
-                example: 10131@1F_engine_AVD103
-              defMode_field: 
-                type: string
-                example: 10132@1F_engine_AVD103
-              defStopMode_field: 
-                type: string
-                example: 10133@1F_engine_AVD103
-              ioStatus_field: 
-                type: string
-                example: ""
-              aiStatus_field: 
-                type: string
-                example: ""
-              aoStatus_field: 
-                type: string
-                example: ""
-              diStatus_field: 
-                type: string
-                example: ""
-              doStatus_field: 
-                type: string
-                example: ""
-              forcedDef_field: 
-                type: string
-                example: 10134@1F_engine_AVD103
-              errCode_field: 
-                type: string
-                example: ""
-              errCode1_field: 
-                type: string
-                example: ""
-          # defrostSetting:
-          #   type: object
-          #   description: for client
-          #   properties:
-          #     forcedDef: 
-          #       type: string
-          #     defMode: 
-          #       type: string
-          #     defDelayTime: 
-          #       type: string
-          #     defTime: 
-          #       type: string
-          #     defDripTime: 
-          #       type: string
-          #     defStopMode: 
-          #       type: string
-          #     defStopTemp: 
-          #       type: string
-          #     defStartCurrent: 
-          #       type: string
-          #       example: ""
-          #     defFrequency: 
-          #       type: string
-          #     defScheduling_1: 
-          #       type: string
-          #     defScheduling_2: 
-          #       type: string
-          #     defScheduling_3: 
-          #       type: string
-          #     defScheduling_4: 
-          #       type: string
-          #     defScheduling_5: 
-          #       type: string
-          #     defScheduling_6: 
-          #       type: string
-          #     defScheduling_7: 
-          #       type: string
-          #     defScheduling_8: 
-          #       type: string
-          #     defScheduling_9: 
-          #       type: string
-          #     defScheduling_10: 
-          #       type: string
-          #     defScheduling_11: 
-          #       type: string
-          #     defScheduling_12: 
-          #       type: string
-          #     defStatus: 
-          #       type: string
-          #     errCode: 
-          #       type: string
-          #       example: ""
-          #     errCode1: 
-          #       type: string
-          #       example: ""
-          #     predicationTime: 
-          #       type: string
-          #     predicationDefTime: 
-          #       type: string
-          #     recDefDelayTime: 
-          #       type: string
-          #     recDefTime: 
-          #       type: string
-          #     recDripTime: 
-          #       type: string
-        example:
-          [
-            {
-              "id": "EL_1685671799052678",
-              "serverSetting": {
-                "state_field": "10122@1F_engine_AVD100",
-                "execute_field": "10123@1F_engine_AVD100",
-                "processID_field": "10124@1F_engine_AVD100",
-                "waiting_field": "10125@1F_engine_AVD100",
-                "defDelayTime_field": "10126@1F_engine_AVD100",
-                "defTime_field": "10127@1F_engine_AVD100",
-                "defDripTime_field": "10128@1F_engine_AVD100",
-                "defDelayRemainTime_field": "10129@1F_engine_AVD100",
-                "defRemainTime_field": "10130@1F_engine_AVD100",
-                "defDripRemainTime_field": "10131@1F_engine_AVD100",
-                "defMode_field": "10132@1F_engine_AVD100",
-                "defStopMode_field": "10133@1F_engine_AVD100",
-                "ioStatus_field": "",
-                "aiStatus_field": "",
-                "aoStatus_field": "",
-                "diStatus_field": "",
-                "doStatus_field": "",
-                "forcedDef_field": "10134@1F_engine_AVD100",
-                "errCode_field": "",
-                "errCode1_field": ""
-              }
-            },
-            {
-              "id": "EL_1685671799052679",
-              "serverSetting": {
-                "state_field": "10122@1F_engine_AVD101",
-                "execute_field": "10123@1F_engine_AVD101",
-                "processID_field": "10124@1F_engine_AVD101",
-                "waiting_field": "10125@1F_engine_AVD101",
-                "defDelayTime_field": "10126@1F_engine_AVD101",
-                "defTime_field": "10127@1F_engine_AVD101",
-                "defDripTime_field": "10128@1F_engine_AVD101",
-                "defDelayRemainTime_field": "10129@1F_engine_AVD101",
-                "defRemainTime_field": "10130@1F_engine_AVD101",
-                "defDripRemainTime_field": "10131@1F_engine_AVD101",
-                "defMode_field": "10132@1F_engine_AVD101",
-                "defStopMode_field": "10133@1F_engine_AVD101",
-                "ioStatus_field": "",
-                "aiStatus_field": "",
-                "aoStatus_field": "",
-                "diStatus_field": "",
-                "doStatus_field": "",
-                "forcedDef_field": "10134@1F_engine_AVD101",
-                "errCode_field": "",
-                "errCode1_field": ""
-              }
-            },
-            {
-              "id": "EL_1685671799052677",
-              "serverSetting": {
-                "state_field": "10122@1F_engine_AVD102",
-                "execute_field": "10123@1F_engine_AVD102",
-                "processID_field": "10124@1F_engine_AVD102",
-                "waiting_field": "10125@1F_engine_AVD102",
-                "defDelayTime_field": "10126@1F_engine_AVD102",
-                "defTime_field": "10127@1F_engine_AVD102",
-                "defDripTime_field": "10128@1F_engine_AVD102",
-                "defDelayRemainTime_field": "10129@1F_engine_AVD102",
-                "defRemainTime_field": "10130@1F_engine_AVD102",
-                "defDripRemainTime_field": "10131@1F_engine_AVD102",
-                "defMode_field": "10132@1F_engine_AVD102",
-                "defStopMode_field": "10133@1F_engine_AVD102",
-                "ioStatus_field": "",
-                "aiStatus_field": "",
-                "aoStatus_field": "",
-                "diStatus_field": "",
-                "doStatus_field": "",
-                "forcedDef_field": "10134@1F_engine_AVD102",
-                "errCode_field": "",
-                "errCode1_field": ""
-              }
-            },
-            {
-              "id": "EL_1685671799052676",
-              "serverSetting": {
-                "state_field": "10122@1F_engine_AVD103",
-                "execute_field": "10123@1F_engine_AVD103",
-                "processID_field": "10124@1F_engine_AVD103",
-                "waiting_field": "10125@1F_engine_AVD103",
-                "defDelayTime_field": "10126@1F_engine_AVD103",
-                "defTime_field": "10127@1F_engine_AVD103",
-                "defDripTime_field": "10128@1F_engine_AVD103",
-                "defDelayRemainTime_field": "10129@1F_engine_AVD103",
-                "defRemainTime_field": "10130@1F_engine_AVD103",
-                "defDripRemainTime_field": "10131@1F_engine_AVD103",
-                "defMode_field": "10132@1F_engine_AVD103",
-                "defStopMode_field": "10133@1F_engine_AVD103",
-                "ioStatus_field": "",
-                "aiStatus_field": "",
-                "aoStatus_field": "",
-                "diStatus_field": "",
-                "doStatus_field": "",
-                "forcedDef_field": "10134@1F_engine_AVD103",
-                "errCode_field": "",
-                "errCode1_field": ""
-              }
-            }
-          ] 
-
+          type: number
+          example: 33.3
 
     EmsDetail:
       type: object
@@ -4588,279 +4334,6 @@ components:
           type: integer
           example: 0
       description: the limit for the input textfield 
-
-    ReportDetail:
-      type: object
-      properties:
-        pdfSetting: 
-          $ref: "#/components/schemas/ReportSettingDetail"
-        excelSetting:
-          $ref: "#/components/schemas/ReportSettingDetail"
-        inputInterval:
-          type: object
-          properties:
-            time:
-              type: array
-              items:
-                type: string
-                enum:
-                  - daily
-                  - week
-                  - month
-                  - year
-              example: ['daily', 'week', 'month', 'year']
-            frequency: 
-              type: array
-              items:
-                type: string
-                enum: 
-                  - 1m
-                  - 5m
-                  - 1h
-              example: ['1m', '5m', '1h']
-        showCompanyLogo:
-          type: boolean
-          example: true
-        selectReportFieldsLimit:
-          type: integer
-          example: 25
-          description: 25~100
-        chart: 
-          type: object
-          properties:
-            default:
-              type: array
-              items: 
-                type: array
-                items:
-                  type: string 
-              example: [['Point1@3F_A_LCD301', 'Point1@3F_A_LCD302'], ['Point1@3F_B_LCD301', 'Point1@3F_B_LCD302']]             
-            squareWaveFieldType: 
-              type: array
-              items:
-                type: string
-                enum: 
-                  - alarm
-                  - capacity
-                  - clock
-                  - co
-                  - co2concentration
-                  - current
-                  - dimensionless
-                  - electricityConsumption
-                  - errorCode
-                  - flow
-                  - frequency
-                  - height
-                  - humidity
-                  - illuminance
-                  - noise
-                  - percentage
-                  - pm25
-                  - power
-                  - pressure
-                  - status
-                  - temperature
-                  - time
-                  - voltage
-                  - weight
-                  - windSpeed
-              example: ['alarm', 'status'] 
-            squareWaveFields: 
-              type: array
-              items:
-                type: string
-              example: [Point1@3F_A_LCD301]
-            fieldTypeToReportType:
-              type: array
-              items:
-                type: object
-                properties:
-                  type:
-                    type: string
-                    enum: 
-                      - alarm
-                      - capacity
-                      - clock
-                      - co
-                      - co2concentration
-                      - current
-                      - dimensionless
-                      - electricityConsumption
-                      - errorCode
-                      - flow
-                      - frequency
-                      - height
-                      - humidity
-                      - illuminance
-                      - noise
-                      - percentage
-                      - pm25
-                      - power
-                      - pressure
-                      - status
-                      - temperature
-                      - time
-                      - voltage
-                      - weight
-                      - windSpeed
-                  desc: 
-                    type: string
-                    example: 警報
-                  reportType:
-                    type: string
-                    enum:
-                      - state
-                      - realtime
-                      - accumulation
-              example: 
-                [
-                  {
-                    "id": "alarm",
-                    "chinese": "警報",
-                    "reportType": "state"
-                  },
-                  {
-                    "id": "status",
-                    "chinese": "觸發開關",
-                    "reportType": "state"
-                  },
-                  {
-                    "id": "clickSW",
-                    "chinese": "狀態",
-                    "reportType": "state"
-                  },
-                  {
-                    "id": "temperature",
-                    "chinese": "溫度",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "pressure",
-                    "chinese": "壓力",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "current",
-                    "chinese": "電流",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "voltage",
-                    "chinese": "電壓",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "electricityConsumption",
-                    "chinese": "用電量",
-                    "reportType": "accumulation"
-                  },
-                  {
-                    "id": "flow",
-                    "chinese": "流量",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "CO2concentration",
-                    "chinese": "二氧化碳濃度",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "humidity",
-                    "chinese": "濕度",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "time",
-                    "chinese": "時間",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "clock",
-                    "chinese": "時分",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "power",
-                    "chinese": "功率",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "dimensionless",
-                    "chinese": "無因次",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "percentage",
-                    "chinese": "百分比",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "pm26",
-                    "chinese": "PM2.5",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "co",
-                    "chinese": "一氧化碳",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "illuminance",
-                    "chinese": "照度",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "height",
-                    "chinese": "長度",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "weight",
-                    "chinese": "重量",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "windSpeed",
-                    "chinese": "風速",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "noise",
-                    "chinese": "噪音",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "capacity",
-                    "chinese": "容量",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "frequency",
-                    "chinese": "頻率",
-                    "reportType": "realtime"
-                  },
-                  {
-                    "id": "errorCode",
-                    "chinese": "故障代碼",
-                    "reportType": "realtime"
-                  }
-                ]
-    ReportSettingDetail:
-      type: object
-      properties:
-        enable:
-          type: boolean
-          example: true
-        download:
-          type: boolean
-          example: true
-        print:
-          type: boolean
-          example: true
-        cron:
-          type: boolean
-          example: true
 
     EventDetail:
       type: array
