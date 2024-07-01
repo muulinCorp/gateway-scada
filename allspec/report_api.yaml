@@ -199,11 +199,6 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: TYPE
-          required: true
-          schema:
-            type: string
-        - in: path
           name: KEY
           required: true
           schema:
@@ -286,6 +281,11 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
+          name: TYPE
+          required: true
+          schema:
+            type: string
+        - in: path
           name: KEY
           required: true
           schema:
@@ -299,21 +299,6 @@ paths:
           description: Gateway or Sensor not found
 components:
   schemas:
-    pdfField:
-      type: object
-      properties:
-        field:
-          type: string
-        name:
-          type: string
-        equip:
-          type: string
-        type:
-          type: string
-        unit:
-          type: string
-        displayType:
-          type: string
     excelPage:
       type: object
       properties:
@@ -328,6 +313,10 @@ components:
                 type: string
               name:
                 type: string
+              group:
+                type: string
+              equip:
+                type: string
     ReportSettingDetail:
       type: object
       properties:
@@ -335,9 +324,6 @@ components:
           type: boolean
           example: true
         download:
-          type: boolean
-          example: true
-        print:
           type: boolean
           example: true
         cron:
@@ -351,16 +337,17 @@ components:
         chart_fields:
           type: array
           items:
-            type: object
-            properties:
-              field:
-                type: string
-              type:
-                type: string
-              name:
-                type: string
-              isSquareWave:
-                type: boolean
+            $ref: "#/components/schemas/chartField"
+            # type: object
+            # properties:
+            #   field:
+            #     type: string
+            #   type:
+            #     type: string
+            #   name:
+            #     type: string
+            #   isSquareWave:
+            #     type: boolean
     SaveChartDashboard:
       type: array
       items:
@@ -375,31 +362,98 @@ components:
               $ref: "#/components/schemas/ReportSettingDetail"
             excelSetting:
               $ref: "#/components/schemas/ReportSettingDetail"
-            inputInterval:
+            pdfInput:
               type: object
               properties:
-                time:
+                interval:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/reportInputInterval"
+                  example: [
+                    { 
+                      "key": "daily",
+                      "enable": true,
+                      "desc": "日報表"
+                    },
+                    { 
+                      "key": "week",
+                      "enable": true,
+                      "desc": "周報表"
+                    },
+                    { 
+                      "key": "month",
+                      "enable": true,
+                      "desc": "月報表"
+                    },
+                    { 
+                      "key": "year",
+                      "enable": true,
+                      "desc": "年報表"
+                    }
+                  ]
+                info: 
                   type: array
                   items:
                     type: string
-                    enum:
-                      - daily
-                      - week
-                      - month
-                      - year
-                  example: ['daily', 'week', 'month', 'year']
-                frequency: 
+                  example: ["日報表:5分鐘", "周報表:30分鐘", "月報表:2小時", "年報表:1天"]
+                detailInfo:
+                  type: array
+                  items: 
+                    type: string
+                  example: ["日報表:不支援", "周報表:5分鐘", "月報表:30分鐘", "年報表:2小時"]
+            excelInput: 
+              type: object 
+              properties:
+                interval:
                   type: array
                   items:
-                    type: string
-                    enum: 
-                      - 1m
-                      - 5m
-                      - 1h
-                  example: ['1m', '5m', '1h']
+                    $ref: "#/components/schemas/reportInputInterval"
+                  example: [
+                    { 
+                      "key": "daily",
+                      "enable": true,
+                      "desc": "日報表"
+                    },
+                    { 
+                      "key": "week",
+                      "enable": true,
+                      "desc": "周報表"
+                    },
+                    { 
+                      "key": "month",
+                      "enable": true,
+                      "desc": "月報表"
+                    },
+                    { 
+                      "key": "year",
+                      "enable": true,
+                      "desc": "年報表"
+                    }
+                  ]
+                dataInterval:
+                  type: array
+                  items: 
+                    $ref: "#/components/schemas/reportInputInterval"
+                  example: [
+                    { 
+                      "key": "1m",
+                      "enable": true,
+                      "desc": "1分鐘"
+                    },
+                    { 
+                      "key": "5m",
+                      "enable": true,
+                      "desc": "5分鐘"
+                    },
+                    { 
+                      "key": "1h",
+                      "enable": true,
+                      "desc": "1小時"
+                    }
+                  ]
             showCompanyLogo:
               type: boolean
-              example: true
+              example: true  
             selectReportFieldsLimit:
               type: integer
               example: 25
@@ -415,6 +469,16 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/chartField"
+    reportInputInterval:
+      type: object
+      properties:
+        key: 
+          type: string
+        enable:
+          type: boolean
+          example: true
+        desc: 
+          type: string
     chartField:
       type: object
       properties:
@@ -422,8 +486,25 @@ components:
           type: string
         name:
           type: string
+          # example: 溫度
+        group: 
+          type: string
+        equip: 
+          type: string
         type:
           type: string
+        unit: 
+          type: string 
+        displayDp:
+          type: integer
+          example: 0
+        trans:
+          type: object
+          properties:
+            "1":
+              type: string
+            "0":
+              type: string
         isSquareWave:
           type: boolean
     GetDataChart:
@@ -451,6 +532,8 @@ components:
           type: string
         name:
           type: string
+        group: 
+          type: string
         equip:
           type: string
         type:
@@ -462,11 +545,13 @@ components:
           enum: ["realtime", "state", "accumulation"]
         trans:
           type: object
-          properties:
-            "1":
-              type: string
-            "0":
-              type: string
+          additionalProperties: 
+            type: string
+          example:
+            0: 關閉
+            1: 低
+            2: 中
+            3: 高
     GetReport:
       type: object
       properties:
@@ -557,7 +642,7 @@ components:
         fields:
           type: array
           items:
-            $ref: '#/components/schemas/pdfField'
+            $ref: '#/components/schemas/report_field'
         interval:
           type: string
           enum: ["daily", "week", "month", "year"]
@@ -572,18 +657,21 @@ components:
         fields:
           - "field": "Average_Temp@1F_K_avgTemp"
             "name": "中文說明"
+            "group": "庫名"
             "equip": "設備名稱"
             "type": "電壓"
             "unit": "kW"
             "displayType": "realtime"
           - "field": "Average_Temp@1F_K_avgTemp"
             "name": "中文說明"
+            "group": "庫名"
             "equip": "設備名稱"
             "type": "電壓"
             "unit": "kW"
             "displayType": "accumulation"
           - "field": "Average_Temp@1F_K_avgTemp"
             "name": "中文說明"
+            "group": "庫名"
             "equip": "設備名稱"
             "type": "電壓"
             "unit": "kW"
@@ -594,7 +682,7 @@ components:
         interval: "month"
         show: true
         detail: true
-        cronFormat: "0 0 0 * * *"
+        cronFormat: "0 0 0 * *"
     GetReportPdfCronList:
       type: array
       items:
@@ -607,7 +695,7 @@ components:
           fields:
             type: array
             items:
-              $ref: '#/components/schemas/pdfField'
+              $ref: '#/components/schemas/report_field'
           interval:
             type: string
             enum: ["daily", "week", "month", "year"]
@@ -643,7 +731,7 @@ components:
                 "name": "中文說明"
         dataInterval: "1m"
         interval: "month"
-        cronFormat: "0 0 0 * * *"
+        cronFormat: "0 0 0 * *"
     GetReportExcelCronList:
       type: array
       items:
