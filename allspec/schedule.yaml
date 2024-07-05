@@ -5,59 +5,35 @@ info:
   description: 預約排程、固定排程及週排程功能服務
 
 paths:
-  /v1/scenario:
+  /v1/scenario/{ID}:
     get:
       tags: [schedule]
-      summary: 取得腳本設定
+      summary: 取得腳本設定清單
       operationId: get-scenario-list
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          example: 1
+          description: element ID
       responses:
         '200':
           description: success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetScenarioList'
+                $ref: '#/components/schemas/GetScenarioOptions'
+        '401':
+          description: 驗證失敗
+        '404':
+          description: 資料不存在
         '500':
           description: 伺服器發生錯誤
-    post:
-      tags: [schedule]
-      summary: 建立腳本
-      operationId: create-scenario
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateScenario'
-      responses:
-        '200':
-          description: success
-        '400':
-          description: 無效的輸入
-        '500':
-          description: 伺服器發生錯誤
-  /v1/scenario/{NAME}:
-    delete:
-      tags: [schedule]
-      summary: 刪除腳本設定
-      operationId: delete-scenario
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: NAME
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: success
-        '500':
-          description: 伺服器發生錯誤
-  /v1/schedule/{NAME}:
+  /v2/schedule/{NAME}:
     get:
       tags: [schedule]
       summary: 取得行程詳細
@@ -212,17 +188,31 @@ components:
       type: object
       properties:
         time:
-          type: array
-          items:
-            type: string
-          description: 二個時間
-          example: ["08:00:00+08:00", "08:50:00+08:00"]
+          type: string
+          description: 開始時間
+          example: "08:00:00+08:00"
         act:
           type: array
           items:
             type: string
-          description: 二個模式
-          example: ["class", "afterClass"]
+          description: action key
+          example: ["close_light", "open_air_conditioner"]
+    intervalAct:
+      type: object
+      properties:
+        start:
+          $ref: '#/components/schemas/timeAct'
+        end:
+          $ref: '#/components/schemas/timeAct'
+    GetScenarioOptions:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          value:
+            type: string
     GetReservationDetail:
       type: array
       items:
@@ -238,31 +228,31 @@ components:
         mon:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         tue:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         wed:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         thu:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         fri:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         sat:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         sun:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
     CreateWeekSchedule:
       type: array
       items:
@@ -372,41 +362,6 @@ components:
                 act: mode1
                 currentWeek: 32
                 lastExecuteTime: "2020-08-29T00:00:00+08:00"
-    GetScenarioList:
-      type: array
-      items:
-        type: object
-        properties:
-          name:
-            type: string
-          delayMins:
-            type: integer
-          cmdSet:
-            type: array
-            items:
-              type: object
-              properties:
-                funcName:
-                  type: string
-                value:
-                  type: number
-    CreateScenario:
-      type: object
-      properties:
-        name:
-          type: string
-        delayMins:
-          type: integer
-        cmdSet:
-          type: array
-          items:
-            type: object
-            properties:
-              funcName:
-                type: string
-              value:
-                type: number
-          description: 指令集
   securitySchemes:
     bearerAuth:
       type: http

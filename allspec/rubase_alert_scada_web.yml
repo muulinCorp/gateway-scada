@@ -1,0 +1,422 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Early_Warning_Service
+  description: 預警功能服務
+
+paths:
+  /v2/warning/setting:
+    post:
+      tags: [ews]
+      summary: 建立預警
+      operationId: create-warning-conf
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarning'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: permission denied
+        '500':
+          description: 伺服器發生錯誤
+    get:
+      tags: [ews]
+      summary: 取得預警設定列表
+      operationId: get-warning-setting-list
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWarningSettingList'
+        '204':
+          description: no content
+        '401':
+          description: permission denied
+        '500':
+          description: 伺服器發生錯誤
+  /v2/warning/setting/{ID}:
+    get:
+      tags: [ews]
+      summary: 取得預警設定詳情
+      operationId: get-warning-setting-detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWarningSettingDetail'
+        '204':
+          description: no content
+    put:
+      tags: [ews]
+      summary: 更新預警
+      operationId: update-warning-setting
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarning'
+      responses:
+        '200':
+          description: success
+        '401':
+          description: permission denied
+        '404':
+          description: not found
+        '500':
+          description: 伺服器發生錯誤
+    delete:
+      tags: [ews]
+      summary: 刪除預警
+      operationId: delete-warning-setting
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '401':
+          description: permission denied
+        '404':
+          description: not found
+        '500':
+          description: 伺服器發生錯誤
+  /v2/warning/setting/{ID}/enable:
+    put:
+      tags: [ews]
+      summary: 預警開關
+      operationId: update-warning-setting-enable
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enable:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: not found
+  /v2/warning/setting/{ID}/condition/enable:
+    put:
+      tags: [ews]
+      summary: 預警開關
+      operationId: update-warning-setting-condition-enable
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                index:
+                  type: integer
+                enable:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '404':
+          description: not found
+  /v2/warning/realtime:
+    get:
+      tags: [ews]
+      summary: 取得即時預警清單
+      operationId: get-warning-realtime
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarningRealtime'
+        '204':
+          description: no content
+        '401':
+          description: permission denied
+        '500':
+          description: 伺服器發生錯誤
+  /v2/warning/realtime/confirmation:
+    post:
+      tags: [ews]
+      summary: 即時告警確認
+      operationId: realtime-warning-confirmation
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: permission denied
+  /v2/warning:
+    get:
+      tags: [ews]
+      summary: 取得歷史預警清單
+      operationId: get-warning
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: field
+          required: true
+          schema:
+            type: string
+          description: 欄位
+          example: "fieldA%2BfieldB"
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: ["connErr", "alert", "alarm"]
+          description: 類型
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarning'
+        '204':
+          description: no content
+        '401':
+          description: permission denied
+components:
+  schemas:
+    fieldInfo:
+      type: object
+      properties:
+        field:
+          type: string
+        name:
+          type: string
+    logical:
+      type: object
+      properties:
+        op:
+          type: string
+        value:
+          type: number
+    condition:
+      type: object
+      properties:
+        enable:
+          type: boolean
+        timeRange:
+          type: object
+          properties:
+            start:
+              type: string
+            end:
+              type: string
+        week_days:
+          type: array
+          items:
+            type: integer
+        frequency:
+          type: object
+          properties:
+            minutes:
+              type: integer
+            times:
+              type: integer
+        logicals:
+          type: array
+          items:
+            $ref: '#/components/schemas/logical'
+    CreateWarning:
+      type: object
+      properties:
+        name:
+          type: string
+        enable:
+          type: boolean
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/condition'
+        apply_fields:
+          type: array
+          items:
+            type: string
+    GetWarningSettingList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          enable:
+            type: boolean
+          conditions:
+            type: array
+            items:
+              $ref: '#/components/schemas/condition'
+    GetWarningSettingDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        enable:
+          type: boolean
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/condition'
+        apply_fields:
+          type: array
+          items:
+            type: string
+    GetWarningRealtime:
+      type: object
+      properties:
+        key:
+          type: string
+        time:
+          type: string
+        name:
+          type: string
+          description: 預警名稱
+        state:
+          type: string
+        type:
+          type: string
+        field_info:
+          $ref: '#/components/schemas/fieldInfo'
+        condition:
+          $ref: '#/components/schemas/condition'
+        is_viewed:
+          type: boolean
+        view_logs:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+              account:
+                type: string
+    GetWarning:
+      type: object
+      properties:
+        start_time:
+          type: string
+          example: "2016-07-14T00:00:00Z"
+        end_time:
+          type: string
+          example: "2016-07-14T00:00:00Z"
+        duration:
+          type: integer
+          example: 3
+          description: 單位為分鐘
+        name:
+          type: string
+          description: 預警名稱
+        type:
+          type: string
+          description: 預警類型
+        field_info:
+          $ref: '#/components/schemas/fieldInfo'
+        condition:
+          $ref: '#/components/schemas/condition'
+        view_logs:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+              account:
+                type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

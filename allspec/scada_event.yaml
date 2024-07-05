@@ -47,7 +47,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetEventList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetEventList'
         '204':
           description: no content
         '403':
@@ -66,7 +68,7 @@ components:
           type: string
         summarize:
           type: string
-        detial:
+        detail:
           type: string
   securitySchemes:
     bearerAuth:

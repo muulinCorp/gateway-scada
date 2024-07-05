@@ -34,6 +34,8 @@ tags:
   description: Scada Queue service
 - name: Report_Service
   description: 報表、數據相關服務
+- name: Early_Warning_Service
+  description: 預約排程、固定排程及週排程功能服務
 - name: Event_Service
   description: 事件管理相關服務
 - name: Schedule_Service
@@ -234,19 +236,22 @@ paths:
       parameters:
       - name: groupID
         in: query
-        required: true
         schema:
           type: string
       - name: elementID
         in: query
-        required: true
         schema:
           type: string
       - name: keyword
         in: query
-        required: true
         schema:
           type: string
+      - name: fields
+        in: query
+        schema:
+          type: string
+          description: 'url encode: use %2B as +, %40 as @'
+          example: 16416@1F_engine_controller+16417@1F_engine_controller
       responses:
         "200":
           description: ok
@@ -279,7 +284,6 @@ paths:
           type: string
           enum:
           - all
-          - smartDefrost
           - smartTemp
       responses:
         "200":
@@ -463,56 +467,6 @@ paths:
                 $ref: '#/components/schemas/PreloadDetail'
         "401":
           description: Unauthorized
-        "500":
-          description: Internal Server Error
-      security:
-      - bearerAuth: []
-  /v1/layout/report:
-    get:
-      tags:
-      - Scada_Layout_Service
-      - Report feature
-      summary: get report
-      operationId: get-report-v1
-      responses:
-        "200":
-          description: ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReportDetail'
-        "401":
-          description: Unauthorized
-        "500":
-          description: Internal Server Error
-      security:
-      - bearerAuth: []
-  /v1/layout/smart/defrost:
-    get:
-      tags:
-      - Scada_Layout_Service
-      - Smart feature
-      summary: get all smart defrost element
-      operationId: get-smart-defrost-v1
-      parameters:
-      - name: ids
-        in: query
-        description: elementIDs
-        schema:
-          type: array
-          items:
-            type: string
-      responses:
-        "200":
-          description: ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SmartDefrostDetail'
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
         "500":
           description: Internal Server Error
       security:
@@ -910,6 +864,11 @@ paths:
       summary: 刪除pdf/excel報表排程
       operationId: delete-report-cron
       parameters:
+      - name: TYPE
+        in: path
+        required: true
+        schema:
+          type: string
       - name: KEY
         in: path
         required: true
@@ -1098,11 +1057,6 @@ paths:
       summary: 更新pdf cron設定
       operationId: update-pdf-report-cron
       parameters:
-      - name: TYPE
-        in: path
-        required: true
-        schema:
-          type: string
       - name: KEY
         in: path
         required: true
@@ -1174,114 +1128,32 @@ paths:
           description: 伺服器發生錯誤
       security:
       - bearerAuth: []
-  /v1/scenario:
+  /v1/scenario/{ID}:
     get:
       tags:
       - Schedule_Service
       - schedule
-      summary: 取得腳本設定
+      summary: 取得腳本設定清單
       operationId: get-scenario-list
+      parameters:
+      - name: ID
+        in: path
+        description: element ID
+        required: true
+        schema:
+          type: string
+        example: 1
       responses:
         "200":
           description: success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetScenarioList'
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-    post:
-      tags:
-      - Schedule_Service
-      - schedule
-      summary: 建立腳本
-      operationId: create-scenario
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateScenario'
-      responses:
-        "200":
-          description: success
-        "400":
-          description: 無效的輸入
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-  /v1/scenario/{NAME}:
-    delete:
-      tags:
-      - Schedule_Service
-      - schedule
-      summary: 刪除腳本設定
-      operationId: delete-scenario
-      parameters:
-      - name: NAME
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: success
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-  /v1/schedule/{NAME}:
-    get:
-      tags:
-      - Schedule_Service
-      - schedule
-      summary: 取得行程詳細
-      operationId: get-schedule-detail
-      parameters:
-      - name: NAME
-        in: path
-        required: true
-        schema:
-          type: string
-        example: A_1F_A105@A
-      responses:
-        "200":
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetScheduleDetail'
-        "204":
-          description: no content (行程不存在)
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-    post:
-      tags:
-      - Schedule_Service
-      - schedule
-      summary: 建立/更新行程
-      operationId: create-schedule
-      parameters:
-      - name: NAME
-        in: path
-        required: true
-        schema:
-          type: string
-        example: A_1F_A105@A
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GetScheduleDetail'
-      responses:
-        "200":
-          description: success
-        "400":
-          description: 無效的輸入
+                $ref: '#/components/schemas/GetScenarioOptions'
+        "401":
+          description: 驗證失敗
+        "404":
+          description: 資料不存在
         "500":
           description: 伺服器發生錯誤
       security:
@@ -1467,7 +1339,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetEventList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetEventList'
         "204":
           description: no content
         "403":
@@ -1495,6 +1369,340 @@ paths:
           description: invalid input
         "500":
           description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+  /v2/schedule/{NAME}:
+    get:
+      tags:
+      - Schedule_Service
+      - schedule
+      summary: 取得行程詳細
+      operationId: get-schedule-detail
+      parameters:
+      - name: NAME
+        in: path
+        required: true
+        schema:
+          type: string
+        example: A_1F_A105@A
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduleDetail'
+        "204":
+          description: no content (行程不存在)
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Schedule_Service
+      - schedule
+      summary: 建立/更新行程
+      operationId: create-schedule
+      parameters:
+      - name: NAME
+        in: path
+        required: true
+        schema:
+          type: string
+        example: A_1F_A105@A
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetScheduleDetail'
+      responses:
+        "200":
+          description: success
+        "400":
+          description: 無效的輸入
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+  /v2/warning:
+    get:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 取得歷史預警清單
+      operationId: get-warning
+      parameters:
+      - name: field
+        in: query
+        description: 欄位
+        required: true
+        schema:
+          type: string
+        example: fieldA%2BfieldB
+      - name: type
+        in: query
+        description: 類型
+        required: true
+        schema:
+          type: string
+          enum:
+          - connErr
+          - alert
+          - alarm
+      - name: start
+        in: query
+        description: 日期 (2016-07-14T00:00:00Z)
+        schema:
+          type: string
+        example: "2016-07-14T00:00:00Z"
+      - name: end
+        in: query
+        description: 日期 (2016-07-14T00:00:00Z)
+        schema:
+          type: string
+        example: "2016-07-14T00:00:00Z"
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarning'
+        "204":
+          description: no content
+        "401":
+          description: permission denied
+      security:
+      - bearerAuth: []
+  /v2/warning/realtime:
+    get:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 取得即時預警清單
+      operationId: get-warning-realtime
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarningRealtime'
+        "204":
+          description: no content
+        "401":
+          description: permission denied
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+  /v2/warning/realtime/confirmation:
+    post:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 即時告警確認
+      operationId: realtime-warning-confirmation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "401":
+          description: permission denied
+      security:
+      - bearerAuth: []
+  /v2/warning/setting:
+    get:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 取得預警設定列表
+      operationId: get-warning-setting-list
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWarningSettingList'
+        "204":
+          description: no content
+        "401":
+          description: permission denied
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 建立預警
+      operationId: create-warning-conf
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarning'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "401":
+          description: permission denied
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+  /v2/warning/setting/{ID}:
+    delete:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 刪除預警
+      operationId: delete-warning-setting
+      parameters:
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: success
+        "401":
+          description: permission denied
+        "404":
+          description: not found
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+    get:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 取得預警設定詳情
+      operationId: get-warning-setting-detail
+      parameters:
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWarningSettingDetail'
+        "204":
+          description: no content
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 更新預警
+      operationId: update-warning-setting
+      parameters:
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarning'
+      responses:
+        "200":
+          description: success
+        "401":
+          description: permission denied
+        "404":
+          description: not found
+        "500":
+          description: 伺服器發生錯誤
+      security:
+      - bearerAuth: []
+  /v2/warning/setting/{ID}/condition/enable:
+    put:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 預警開關
+      operationId: update-warning-setting-condition-enable
+      parameters:
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enable:
+                  type: boolean
+                index:
+                  type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "404":
+          description: not found
+      security:
+      - bearerAuth: []
+  /v2/warning/setting/{ID}/enable:
+    put:
+      tags:
+      - Early_Warning_Service
+      - ews
+      summary: 預警開關
+      operationId: update-warning-setting-enable
+      parameters:
+      - name: ID
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enable:
+                  type: boolean
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid Input
+        "404":
+          description: not found
       security:
       - bearerAuth: []
 components:
@@ -1550,7 +1758,7 @@ components:
     CreateReportExcelCron:
       type: object
       example:
-        cronFormat: 0 0 0 * * *
+        cronFormat: 0 0 0 * *
         dataInterval: 1m
         fileName: 檔案名稱
         interval: month
@@ -1584,24 +1792,27 @@ components:
     CreateReportPdfCron:
       type: object
       example:
-        cronFormat: 0 0 0 * * *
+        cronFormat: 0 0 0 * *
         detail: true
         fields:
         - displayType: realtime
           equip: 設備名稱
           field: Average_Temp@1F_K_avgTemp
+          group: 庫名
           name: 中文說明
           type: 電壓
           unit: kW
         - displayType: accumulation
           equip: 設備名稱
           field: Average_Temp@1F_K_avgTemp
+          group: 庫名
           name: 中文說明
           type: 電壓
           unit: kW
         - displayType: state
           equip: 設備名稱
           field: Average_Temp@1F_K_avgTemp
+          group: 庫名
           name: 中文說明
           trans:
             "0": 關閉
@@ -1619,7 +1830,7 @@ components:
         fields:
           type: array
           items:
-            $ref: '#/components/schemas/pdfField'
+            $ref: '#/components/schemas/report_field'
         fileName:
           type: string
         interval:
@@ -1631,21 +1842,19 @@ components:
           - year
         show:
           type: boolean
-    CreateScenario:
+    CreateWarning:
       type: object
       properties:
-        cmdSet:
+        apply_fields:
           type: array
-          description: 指令集
           items:
-            type: object
-            properties:
-              funcName:
-                type: string
-              value:
-                type: number
-        delayMins:
-          type: integer
+            type: string
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/condition'
+        enable:
+          type: boolean
         name:
           type: string
     CreateWeekSchedule:
@@ -1947,6 +2156,15 @@ components:
           - LEFT
           - CENTER
           - RIGHT
+        container:
+          type: object
+          properties:
+            height:
+              type: number
+              example: 100.5
+            width:
+              type: number
+              example: 90
         format:
           type: object
           properties:
@@ -1958,8 +2176,36 @@ components:
               type: boolean
             field:
               $ref: '#/components/schemas/FontStyle'
+            iconSize:
+              type: number
+              example: 19.2
+            spaceBetween:
+              type: object
+              description: space that between each element (not include start & end)
+              properties:
+                field:
+                  type: integer
+                  example: 2
+                icon:
+                  type: integer
+                  example: 4
+                info:
+                  type: integer
+                  example: 4
             title:
               $ref: '#/components/schemas/FontStyle'
+            titleContainer:
+              type: object
+              properties:
+                color:
+                  type: string
+                  example: '#34693F1F'
+                padding:
+                  type: integer
+                  example: 4
+                unTitleVertialPadding:
+                  type: integer
+                  example: 2
             unit:
               $ref: '#/components/schemas/FontStyle'
         graphical:
@@ -1973,10 +2219,10 @@ components:
                 type: integer
                 description: the 1st layer will replace the image; the 2nd layer will
                   stack on the 1st layer/original image; the 3rd layer is icon layer,
-                  need to place the icon to the start of element's title; the 4th
-                  layer is icon layer, need to place the icon at the end of element's
-                  title; all icon layer need to handle the situation of showing multiple
-                  icon;
+                  need to place the icon to the start of element's title (only one);
+                  the 4th layer is icon layer, need to place the icon at the end of
+                  element's title (only two); 4th layer need to handle the situation
+                  of showing multiple icon;
                 enum:
                 - 1
                 - 2
@@ -2029,6 +2275,9 @@ components:
                       description: 把value換算成16個binary digit，只要1的值有對到要顯示該值，所以會有多個值顯示
                       items:
                         type: string
+                    valueMaxWidth:
+                      type: number
+                      example: 200
                     zero:
                       type: string
                       example: 待機中
@@ -2616,80 +2865,43 @@ components:
                   - SET_TriggerValue_1
     FieldsResponse:
       type: array
-      example:
-      - field: 16416@1F_engine_controller
-        name: 1F A庫碼頭理貨區 大型顯示器連線異常
-        type: alarm
-      - field: 16417@1F_engine_controller
-        name: 1F A庫碼頭理貨區 平均庫溫
-        type: capacity
-      - field: 16418@1F_engine_controller
-        name: 1F A庫碼頭理貨區 顯示器小數位設定
-        type: clock
-      - field: 16419@1F_engine_controller
-        name: 2F A庫碼頭理貨區 大型顯示器連線異常
-        type: co
-      - field: 16420@1F_engine_controller
-        name: 2F A庫碼頭理貨區 平均庫溫
-        type: co2concentration
-      - field: 16421@1F_engine_controller
-        name: 2F A庫碼頭理貨區 顯示器小數位設定
-        type: current
-      - field: 16422@1F_engine_controller
-        name: 3F A庫碼頭理貨區 大型顯示器連線異常
-        type: dimensionless
-      - field: 16423@1F_engine_controller
-        name: 3F A庫碼頭理貨區 平均庫溫
-        type: electricityConsumption
-      - field: 16424@1F_engine_controller
-        name: 3F A庫碼頭理貨區 顯示器小數位設定
-        type: errorCode
-      - field: 16425@1F_engine_controller
-        name: 5F A庫碼頭理貨區 大型顯示器連線異常
-        type: flow
-      - field: 16426@1F_engine_controller
-        name: 5F A庫碼頭理貨區 平均庫溫
-        type: frequency
-      - field: 16427@1F_engine_controller
-        name: 5F A庫碼頭理貨區 顯示器小數位設定
-        type: humidity
       items:
         type: object
         properties:
+          displayDp:
+            type: integer
+            example: 1
+          displayType:
+            type: string
+            enum:
+            - state
+            - realtime
+            - accumulation
+          equip:
+            type: string
           field:
             type: string
             example: Point5@3F_A_LCD301
+          group:
+            type: string
+          isSquareWave:
+            type: boolean
           name:
             type: string
             example: 3F_A_LCD301點位
+          trans:
+            type: object
+            example:
+              "0": 關閉
+              "1": 低
+              "2": 中
+              "3": 高
+            additionalProperties:
+              type: string
           type:
             type: string
-            enum:
-            - alarm
-            - capacity
-            - clock
-            - co
-            - co2concentration
-            - current
-            - dimensionless
-            - electricityConsumption
-            - errorCode
-            - flow
-            - frequency
-            - height
-            - humidity
-            - illuminance
-            - noise
-            - percentage
-            - pm25
-            - power
-            - pressure
-            - status
-            - temperature
-            - time
-            - voltage
-            - weight
-            - windSpeed
+          unit:
+            type: string
     FloorDetail:
       type: object
       properties:
@@ -2735,6 +2947,15 @@ components:
           type: string
           description: RGBA
           example: '#00000000'
+        padding:
+          type: object
+          properties:
+            horizontal:
+              type: integer
+              example: 4
+            vertical:
+              type: integer
+              example: 2
         size:
           type: integer
           example: 20
@@ -2780,37 +3001,80 @@ components:
         configs:
           type: object
           properties:
-            excelSetting:
-              $ref: '#/components/schemas/ReportSettingDetail'
-            inputInterval:
+            excelInput:
               type: object
               properties:
-                frequency:
+                dataInterval:
                   type: array
                   example:
-                  - 1m
-                  - 5m
-                  - 1h
+                  - desc: 1分鐘
+                    enable: true
+                    key: 1m
+                  - desc: 5分鐘
+                    enable: true
+                    key: 5m
+                  - desc: 1小時
+                    enable: true
+                    key: 1h
                   items:
-                    type: string
-                    enum:
-                    - 1m
-                    - 5m
-                    - 1h
-                time:
+                    $ref: '#/components/schemas/reportInputInterval'
+                interval:
                   type: array
                   example:
-                  - daily
-                  - week
-                  - month
-                  - year
+                  - desc: 日報表
+                    enable: true
+                    key: daily
+                  - desc: 周報表
+                    enable: true
+                    key: week
+                  - desc: 月報表
+                    enable: true
+                    key: month
+                  - desc: 年報表
+                    enable: true
+                    key: year
+                  items:
+                    $ref: '#/components/schemas/reportInputInterval'
+            excelSetting:
+              $ref: '#/components/schemas/ReportSettingDetail'
+            pdfInput:
+              type: object
+              properties:
+                detailInfo:
+                  type: array
+                  example:
+                  - 日報表:不支援
+                  - 周報表:5分鐘
+                  - 月報表:30分鐘
+                  - 年報表:2小時
                   items:
                     type: string
-                    enum:
-                    - daily
-                    - week
-                    - month
-                    - year
+                info:
+                  type: array
+                  example:
+                  - 日報表:5分鐘
+                  - 周報表:30分鐘
+                  - 月報表:2小時
+                  - 年報表:1天
+                  items:
+                    type: string
+                interval:
+                  type: array
+                  example:
+                  - desc: 日報表
+                    enable: true
+                    key: daily
+                  - desc: 周報表
+                    enable: true
+                    key: week
+                  - desc: 月報表
+                    enable: true
+                    key: month
+                  - desc: 年報表
+                    enable: true
+                    key: year
+                  items:
+                    $ref: '#/components/schemas/reportInputInterval'
             pdfSetting:
               $ref: '#/components/schemas/ReportSettingDetail'
             selectReportFieldsLimit:
@@ -2822,7 +3086,7 @@ components:
               example: true
     GetEventList:
       properties:
-        detial:
+        detail:
           type: string
         service:
           type: string
@@ -3049,7 +3313,7 @@ components:
           fields:
             type: array
             items:
-              $ref: '#/components/schemas/pdfField'
+              $ref: '#/components/schemas/report_field'
           fileName:
             type: string
           interval:
@@ -3067,23 +3331,14 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/reversDateTimeAct'
-    GetScenarioList:
+    GetScenarioOptions:
       type: array
       items:
         type: object
         properties:
-          cmdSet:
-            type: array
-            items:
-              type: object
-              properties:
-                funcName:
-                  type: string
-                value:
-                  type: number
-          delayMins:
-            type: integer
-          name:
+          key:
+            type: string
+          value:
             type: string
     GetScheduleDetail:
       type: object
@@ -3096,31 +3351,124 @@ components:
         fri:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         mon:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         sat:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         sun:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         thu:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         tue:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
         wed:
           type: array
           items:
-            $ref: '#/components/schemas/timeAct'
+            $ref: '#/components/schemas/intervalAct'
+    GetWarning:
+      type: object
+      properties:
+        condition:
+          $ref: '#/components/schemas/condition'
+        duration:
+          type: integer
+          description: 單位為分鐘
+          example: 3
+        end_time:
+          type: string
+          example: "2016-07-14T00:00:00Z"
+        field_info:
+          $ref: '#/components/schemas/fieldInfo'
+        name:
+          type: string
+          description: 預警名稱
+        start_time:
+          type: string
+          example: "2016-07-14T00:00:00Z"
+        type:
+          type: string
+          description: 預警類型
+        view_logs:
+          type: array
+          items:
+            type: object
+            properties:
+              account:
+                type: string
+              time:
+                type: string
+    GetWarningRealtime:
+      type: object
+      properties:
+        condition:
+          $ref: '#/components/schemas/condition'
+        field_info:
+          $ref: '#/components/schemas/fieldInfo'
+        is_viewed:
+          type: boolean
+        key:
+          type: string
+        name:
+          type: string
+          description: 預警名稱
+        state:
+          type: string
+        time:
+          type: string
+        type:
+          type: string
+        view_logs:
+          type: array
+          items:
+            type: object
+            properties:
+              account:
+                type: string
+              time:
+                type: string
+    GetWarningSettingDetail:
+      type: object
+      properties:
+        apply_fields:
+          type: array
+          items:
+            type: string
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/condition'
+        enable:
+          type: boolean
+        id:
+          type: string
+        name:
+          type: string
+    GetWarningSettingList:
+      type: array
+      items:
+        type: object
+        properties:
+          conditions:
+            type: array
+            items:
+              $ref: '#/components/schemas/condition'
+          enable:
+            type: boolean
+          id:
+            type: string
+          name:
+            type: string
     GetWeekSchedule:
       type: array
       items:
@@ -3557,223 +3905,6 @@ components:
               type: string
           value:
             type: number
-    ReportDetail:
-      type: object
-      properties:
-        chart:
-          type: object
-          properties:
-            default:
-              type: array
-              example:
-              - - Point1@3F_A_LCD301
-                - Point1@3F_A_LCD302
-              - - Point1@3F_B_LCD301
-                - Point1@3F_B_LCD302
-              items:
-                type: array
-                items:
-                  type: string
-            fieldTypeToReportType:
-              type: array
-              example:
-              - chinese: 警報
-                id: alarm
-                reportType: state
-              - chinese: 觸發開關
-                id: status
-                reportType: state
-              - chinese: 狀態
-                id: clickSW
-                reportType: state
-              - chinese: 溫度
-                id: temperature
-                reportType: realtime
-              - chinese: 壓力
-                id: pressure
-                reportType: realtime
-              - chinese: 電流
-                id: current
-                reportType: realtime
-              - chinese: 電壓
-                id: voltage
-                reportType: realtime
-              - chinese: 用電量
-                id: electricityConsumption
-                reportType: accumulation
-              - chinese: 流量
-                id: flow
-                reportType: realtime
-              - chinese: 二氧化碳濃度
-                id: CO2concentration
-                reportType: realtime
-              - chinese: 濕度
-                id: humidity
-                reportType: realtime
-              - chinese: 時間
-                id: time
-                reportType: realtime
-              - chinese: 時分
-                id: clock
-                reportType: realtime
-              - chinese: 功率
-                id: power
-                reportType: realtime
-              - chinese: 無因次
-                id: dimensionless
-                reportType: realtime
-              - chinese: 百分比
-                id: percentage
-                reportType: realtime
-              - chinese: PM2.5
-                id: pm26
-                reportType: realtime
-              - chinese: 一氧化碳
-                id: co
-                reportType: realtime
-              - chinese: 照度
-                id: illuminance
-                reportType: realtime
-              - chinese: 長度
-                id: height
-                reportType: realtime
-              - chinese: 重量
-                id: weight
-                reportType: realtime
-              - chinese: 風速
-                id: windSpeed
-                reportType: realtime
-              - chinese: 噪音
-                id: noise
-                reportType: realtime
-              - chinese: 容量
-                id: capacity
-                reportType: realtime
-              - chinese: 頻率
-                id: frequency
-                reportType: realtime
-              - chinese: 故障代碼
-                id: errorCode
-                reportType: realtime
-              items:
-                type: object
-                properties:
-                  desc:
-                    type: string
-                    example: 警報
-                  reportType:
-                    type: string
-                    enum:
-                    - state
-                    - realtime
-                    - accumulation
-                  type:
-                    type: string
-                    enum:
-                    - alarm
-                    - capacity
-                    - clock
-                    - co
-                    - co2concentration
-                    - current
-                    - dimensionless
-                    - electricityConsumption
-                    - errorCode
-                    - flow
-                    - frequency
-                    - height
-                    - humidity
-                    - illuminance
-                    - noise
-                    - percentage
-                    - pm25
-                    - power
-                    - pressure
-                    - status
-                    - temperature
-                    - time
-                    - voltage
-                    - weight
-                    - windSpeed
-            squareWaveFieldType:
-              type: array
-              example:
-              - alarm
-              - status
-              items:
-                type: string
-                enum:
-                - alarm
-                - capacity
-                - clock
-                - co
-                - co2concentration
-                - current
-                - dimensionless
-                - electricityConsumption
-                - errorCode
-                - flow
-                - frequency
-                - height
-                - humidity
-                - illuminance
-                - noise
-                - percentage
-                - pm25
-                - power
-                - pressure
-                - status
-                - temperature
-                - time
-                - voltage
-                - weight
-                - windSpeed
-            squareWaveFields:
-              type: array
-              example:
-              - Point1@3F_A_LCD301
-              items:
-                type: string
-        excelSetting:
-          $ref: '#/components/schemas/ReportSettingDetail'
-        inputInterval:
-          type: object
-          properties:
-            frequency:
-              type: array
-              example:
-              - 1m
-              - 5m
-              - 1h
-              items:
-                type: string
-                enum:
-                - 1m
-                - 5m
-                - 1h
-            time:
-              type: array
-              example:
-              - daily
-              - week
-              - month
-              - year
-              items:
-                type: string
-                enum:
-                - daily
-                - week
-                - month
-                - year
-        pdfSetting:
-          $ref: '#/components/schemas/ReportSettingDetail'
-        selectReportFieldsLimit:
-          type: integer
-          description: 25~100
-          example: 25
-        showCompanyLogo:
-          type: boolean
-          example: true
     ReportSettingDetail:
       type: object
       properties:
@@ -3784,9 +3915,6 @@ components:
           type: boolean
           example: true
         enable:
-          type: boolean
-          example: true
-        print:
           type: boolean
           example: true
     ResolutionDetail:
@@ -3887,168 +4015,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/userChart'
-    SmartDefrostDetail:
-      type: array
-      items:
-        type: object
-        example:
-        - id: EL_1685671799052678
-          serverSetting:
-            aiStatus_field: ""
-            aoStatus_field: ""
-            defDelayRemainTime_field: 10129@1F_engine_AVD100
-            defDelayTime_field: 10126@1F_engine_AVD100
-            defDripRemainTime_field: 10131@1F_engine_AVD100
-            defDripTime_field: 10128@1F_engine_AVD100
-            defMode_field: 10132@1F_engine_AVD100
-            defRemainTime_field: 10130@1F_engine_AVD100
-            defStopMode_field: 10133@1F_engine_AVD100
-            defTime_field: 10127@1F_engine_AVD100
-            diStatus_field: ""
-            doStatus_field: ""
-            errCode_field: ""
-            errCode1_field: ""
-            execute_field: 10123@1F_engine_AVD100
-            forcedDef_field: 10134@1F_engine_AVD100
-            ioStatus_field: ""
-            processID_field: 10124@1F_engine_AVD100
-            state_field: 10122@1F_engine_AVD100
-            waiting_field: 10125@1F_engine_AVD100
-        - id: EL_1685671799052679
-          serverSetting:
-            aiStatus_field: ""
-            aoStatus_field: ""
-            defDelayRemainTime_field: 10129@1F_engine_AVD101
-            defDelayTime_field: 10126@1F_engine_AVD101
-            defDripRemainTime_field: 10131@1F_engine_AVD101
-            defDripTime_field: 10128@1F_engine_AVD101
-            defMode_field: 10132@1F_engine_AVD101
-            defRemainTime_field: 10130@1F_engine_AVD101
-            defStopMode_field: 10133@1F_engine_AVD101
-            defTime_field: 10127@1F_engine_AVD101
-            diStatus_field: ""
-            doStatus_field: ""
-            errCode_field: ""
-            errCode1_field: ""
-            execute_field: 10123@1F_engine_AVD101
-            forcedDef_field: 10134@1F_engine_AVD101
-            ioStatus_field: ""
-            processID_field: 10124@1F_engine_AVD101
-            state_field: 10122@1F_engine_AVD101
-            waiting_field: 10125@1F_engine_AVD101
-        - id: EL_1685671799052677
-          serverSetting:
-            aiStatus_field: ""
-            aoStatus_field: ""
-            defDelayRemainTime_field: 10129@1F_engine_AVD102
-            defDelayTime_field: 10126@1F_engine_AVD102
-            defDripRemainTime_field: 10131@1F_engine_AVD102
-            defDripTime_field: 10128@1F_engine_AVD102
-            defMode_field: 10132@1F_engine_AVD102
-            defRemainTime_field: 10130@1F_engine_AVD102
-            defStopMode_field: 10133@1F_engine_AVD102
-            defTime_field: 10127@1F_engine_AVD102
-            diStatus_field: ""
-            doStatus_field: ""
-            errCode_field: ""
-            errCode1_field: ""
-            execute_field: 10123@1F_engine_AVD102
-            forcedDef_field: 10134@1F_engine_AVD102
-            ioStatus_field: ""
-            processID_field: 10124@1F_engine_AVD102
-            state_field: 10122@1F_engine_AVD102
-            waiting_field: 10125@1F_engine_AVD102
-        - id: EL_1685671799052676
-          serverSetting:
-            aiStatus_field: ""
-            aoStatus_field: ""
-            defDelayRemainTime_field: 10129@1F_engine_AVD103
-            defDelayTime_field: 10126@1F_engine_AVD103
-            defDripRemainTime_field: 10131@1F_engine_AVD103
-            defDripTime_field: 10128@1F_engine_AVD103
-            defMode_field: 10132@1F_engine_AVD103
-            defRemainTime_field: 10130@1F_engine_AVD103
-            defStopMode_field: 10133@1F_engine_AVD103
-            defTime_field: 10127@1F_engine_AVD103
-            diStatus_field: ""
-            doStatus_field: ""
-            errCode_field: ""
-            errCode1_field: ""
-            execute_field: 10123@1F_engine_AVD103
-            forcedDef_field: 10134@1F_engine_AVD103
-            ioStatus_field: ""
-            processID_field: 10124@1F_engine_AVD103
-            state_field: 10122@1F_engine_AVD103
-            waiting_field: 10125@1F_engine_AVD103
-        properties:
-          id:
-            type: string
-            description: elementID
-            example: EL_1685671799052678
-          serverSetting:
-            type: object
-            description: for server
-            properties:
-              aiStatus_field:
-                type: string
-                example: ""
-              aoStatus_field:
-                type: string
-                example: ""
-              defDelayRemainTime_field:
-                type: string
-                example: 10129@1F_engine_AVD103
-              defDelayTime_field:
-                type: string
-                example: 10126@1F_engine_AVD103
-              defDripRemainTime_field:
-                type: string
-                example: 10131@1F_engine_AVD103
-              defDripTime_field:
-                type: string
-                example: 10128@1F_engine_AVD103
-              defMode_field:
-                type: string
-                example: 10132@1F_engine_AVD103
-              defRemainTime_field:
-                type: string
-                example: 10130@1F_engine_AVD103
-              defStopMode_field:
-                type: string
-                example: 10133@1F_engine_AVD103
-              defTime_field:
-                type: string
-                example: 10127@1F_engine_AVD103
-              diStatus_field:
-                type: string
-                example: ""
-              doStatus_field:
-                type: string
-                example: ""
-              errCode_field:
-                type: string
-                example: ""
-              errCode1_field:
-                type: string
-                example: ""
-              execute_field:
-                type: string
-                example: 10123@1F_engine_AVD103
-              forcedDef_field:
-                type: string
-                example: 10134@1F_engine_AVD103
-              ioStatus_field:
-                type: string
-                example: ""
-              processID_field:
-                type: string
-                example: 10124@1F_engine_AVD103
-              state_field:
-                type: string
-                example: 10122@1F_engine_AVD103
-              waiting_field:
-                type: string
-                example: 10125@1F_engine_AVD103
     SmartModeTimeSettingField:
       type: object
       properties:
@@ -4056,19 +4022,8 @@ components:
           type: string
           example: 17262@1F_engine_AVD101
         value:
-          type: array
-          description: the length of array will fix to 8
-          example:
-          - 1
-          - 1
-          - 0
-          - 0
-          - 2
-          - 2
-          - 2
-          - 0
-          items:
-            type: integer
+          type: number
+          example: 33.3
     SmartTempDetail:
       type: object
       example:
@@ -6056,14 +6011,57 @@ components:
     chartField:
       type: object
       properties:
+        displayDp:
+          type: integer
+          example: 0
+        equip:
+          type: string
         field:
+          type: string
+        group:
           type: string
         isSquareWave:
           type: boolean
         name:
           type: string
+        trans:
+          type: object
+          properties:
+            "0":
+              type: string
+            "1":
+              type: string
         type:
           type: string
+        unit:
+          type: string
+    condition:
+      type: object
+      properties:
+        enable:
+          type: boolean
+        frequency:
+          type: object
+          properties:
+            minutes:
+              type: integer
+            times:
+              type: integer
+        logicals:
+          type: array
+          items:
+            $ref: '#/components/schemas/logical'
+        timeRange:
+          type: object
+          properties:
+            end:
+              type: string
+            start:
+              type: string
+        week_days:
+          type: array
+          items:
+            type: integer
     excelPage:
       type: object
       properties:
@@ -6072,7 +6070,11 @@ components:
           items:
             type: object
             properties:
+              equip:
+                type: string
               field:
+                type: string
+              group:
                 type: string
               name:
                 type: string
@@ -6089,21 +6091,27 @@ components:
         name:
           type: string
           example: A架
-    pdfField:
+    fieldInfo:
       type: object
       properties:
-        displayType:
-          type: string
-        equip:
-          type: string
         field:
           type: string
         name:
           type: string
-        type:
+    intervalAct:
+      type: object
+      properties:
+        end:
+          $ref: '#/components/schemas/timeAct'
+        start:
+          $ref: '#/components/schemas/timeAct'
+    logical:
+      type: object
+      properties:
+        op:
           type: string
-        unit:
-          type: string
+        value:
+          type: number
     queEquip:
       type: object
       properties:
@@ -6137,18 +6145,32 @@ components:
           type: string
         field:
           type: string
+        group:
+          type: string
         name:
           type: string
         trans:
           type: object
-          properties:
-            "0":
-              type: string
-            "1":
-              type: string
+          example:
+            "0": 關閉
+            "1": 低
+            "2": 中
+            "3": 高
+          additionalProperties:
+            type: string
         type:
           type: string
         unit:
+          type: string
+    reportInputInterval:
+      type: object
+      properties:
+        desc:
+          type: string
+        enable:
+          type: boolean
+          example: true
+        key:
           type: string
     reversDateTimeAct:
       type: object
@@ -6170,36 +6192,23 @@ components:
       properties:
         act:
           type: array
-          description: 二個模式
+          description: action key
           example:
-          - class
-          - afterClass
+          - close_light
+          - open_air_conditioner
           items:
             type: string
         time:
-          type: array
-          description: 二個時間
-          example:
-          - 08:00:00+08:00
-          - 08:50:00+08:00
-          items:
-            type: string
+          type: string
+          description: 開始時間
+          example: 08:00:00+08:00
     userChart:
       type: object
       properties:
         chart_fields:
           type: array
           items:
-            type: object
-            properties:
-              field:
-                type: string
-              isSquareWave:
-                type: boolean
-              name:
-                type: string
-              type:
-                type: string
+            $ref: '#/components/schemas/chartField'
         name:
           type: string
   securitySchemes:
