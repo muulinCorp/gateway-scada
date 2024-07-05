@@ -1250,46 +1250,6 @@ paths:
           description: interval server error
       security:
       - bearerAuth: []
-  /v1/weekSchedule:
-    get:
-      tags:
-      - Schedule_Service
-      - schedule
-      summary: 取得周排程清單
-      operationId: get-week-schedule
-      responses:
-        "200":
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetWeekSchedule'
-        "204":
-          description: no content (參數不存在)
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-    post:
-      tags:
-      - Schedule_Service
-      - schedule
-      summary: 建立周排程
-      operationId: create-week-schedule
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateWeekSchedule'
-      responses:
-        "200":
-          description: success
-        "400":
-          description: 無效的輸入
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
   /v2/event:
     get:
       tags:
@@ -1873,57 +1833,6 @@ components:
           type: boolean
         name:
           type: string
-    CreateWeekSchedule:
-      type: array
-      items:
-        type: object
-        properties:
-          cycle:
-            type: integer
-          items:
-            type: array
-            example:
-            - act: mode1
-              display: 自定義雙數周名稱
-              enable: true
-              name: A_104
-              start_date: "2021-06-21T00:00:00+08:00"
-              time: 08:00:00+08:00
-              weekly_intervals: 2
-            - act: mode1
-              display: 自定義單數周名稱
-              enable: true
-              name: A_104
-              start_date: ""
-              time: 08:00:00+08:00
-              weekly_intervals: 1
-            - act: mode1
-              display: 自定義每周執行名稱
-              enable: true
-              name: A_104
-              start_date: ""
-              time: 08:00:00+08:00
-              weekly_intervals: 0
-            items:
-              type: object
-              properties:
-                act:
-                  type: string
-                display:
-                  type: string
-                enable:
-                  type: boolean
-                name:
-                  type: string
-                start_date:
-                  type: string
-                  description: 週啟始日 (只允許星期日、一的日期)
-                time:
-                  type: string
-                weekly_intervals:
-                  type: integer
-          name:
-            type: string
     ElectricDetail:
       type: array
       example:
@@ -3488,64 +3397,6 @@ components:
             type: boolean
           id:
             type: string
-          name:
-            type: string
-    GetWeekSchedule:
-      type: array
-      items:
-        type: object
-        properties:
-          cycle:
-            type: integer
-          items:
-            type: array
-            example:
-            - act: mode1
-              current_week: 32
-              display: 自定義雙數周名稱
-              enable: true
-              last_execute_time: "2020-08-29T00:00:00+08:00"
-              name: A_104
-              start_date: "2020-08-29T00:00:00+08:00"
-              time: 08:00:00+08:00
-              weekly_intervals: 2
-            - act: mode1
-              current_week: 32
-              display: 自定義單數周名稱
-              enable: true
-              last_execute_time: "2020-08-29T00:00:00+08:00"
-              name: A_104
-              start_date: ""
-              time: 08:00:00+08:00
-              weekly_intervals: 1
-            - act: mode1
-              current_week: 32
-              display: 自定義每周執行名稱
-              enable: true
-              last_execute_time: "2020-08-29T00:00:00+08:00"
-              name: A_104
-              start_date: ""
-              time: 08:00:00+08:00
-              weekly_intervals: 0
-            items:
-              type: object
-              properties:
-                act:
-                  type: string
-                current_week:
-                  type: integer
-                enable:
-                  type: boolean
-                last_execute_time:
-                  type: string
-                name:
-                  type: string
-                start_date:
-                  type: string
-                time:
-                  type: string
-                weekly_intervals:
-                  type: integer
           name:
             type: string
     GroupsDetail:
