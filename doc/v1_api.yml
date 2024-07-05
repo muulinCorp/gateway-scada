@@ -35,7 +35,7 @@ tags:
 - name: Report_Service
   description: 報表、數據相關服務
 - name: Early_Warning_Service
-  description: 預約排程、固定排程及週排程功能服務
+  description: 預警功能服務
 - name: Event_Service
   description: 事件管理相關服務
 - name: Schedule_Service
@@ -1371,7 +1371,7 @@ paths:
           description: 伺服器發生錯誤
       security:
       - bearerAuth: []
-  /v2/schedule/{NAME}:
+  /v2/schedule/{NAME}/{TYPE}:
     get:
       tags:
       - Schedule_Service
@@ -1384,7 +1384,15 @@ paths:
         required: true
         schema:
           type: string
-        example: A_1F_A105@A
+        example: A_1F_A105
+      - name: TYPE
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - A
+          - B
       responses:
         "200":
           description: success
@@ -1410,7 +1418,15 @@ paths:
         required: true
         schema:
           type: string
-        example: A_1F_A105@A
+        example: A_1F_A105
+      - name: TYPE
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - A
+          - B
       requestBody:
         content:
           application/json:
@@ -1871,23 +1887,23 @@ components:
               display: 自定義雙數周名稱
               enable: true
               name: A_104
-              startDate: "2021-06-21T00:00:00+08:00"
+              start_date: "2021-06-21T00:00:00+08:00"
               time: 08:00:00+08:00
-              weeklyIntervals: 2
+              weekly_intervals: 2
             - act: mode1
               display: 自定義單數周名稱
               enable: true
               name: A_104
-              startDate: ""
+              start_date: ""
               time: 08:00:00+08:00
-              weeklyIntervals: 1
+              weekly_intervals: 1
             - act: mode1
               display: 自定義每周執行名稱
               enable: true
               name: A_104
-              startDate: ""
+              start_date: ""
               time: 08:00:00+08:00
-              weeklyIntervals: 0
+              weekly_intervals: 0
             items:
               type: object
               properties:
@@ -1899,12 +1915,12 @@ components:
                   type: boolean
                 name:
                   type: string
-                startDate:
+                start_date:
                   type: string
                   description: 週啟始日 (只允許星期日、一的日期)
                 time:
                   type: string
-                weeklyIntervals:
+                weekly_intervals:
                   type: integer
           name:
             type: string
@@ -3343,11 +3359,16 @@ components:
     GetScheduleDetail:
       type: object
       properties:
-        applyDate:
-          type: array
-          description: 排程適用期間
-          items:
-            type: string
+        apply_date:
+          type: object
+          properties:
+            end:
+              type: string
+              description: 排程適用期間
+            start:
+              type: string
+              description: 排程適用期間
+              example: "2020-09-20T08:00:00+08:00"
         fri:
           type: array
           items:
@@ -3480,50 +3501,50 @@ components:
             type: array
             example:
             - act: mode1
-              currentWeek: 32
+              current_week: 32
               display: 自定義雙數周名稱
               enable: true
-              lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              last_execute_time: "2020-08-29T00:00:00+08:00"
               name: A_104
-              startDate: "2020-08-29T00:00:00+08:00"
+              start_date: "2020-08-29T00:00:00+08:00"
               time: 08:00:00+08:00
-              weeklyIntervals: 2
+              weekly_intervals: 2
             - act: mode1
-              currentWeek: 32
+              current_week: 32
               display: 自定義單數周名稱
               enable: true
-              lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              last_execute_time: "2020-08-29T00:00:00+08:00"
               name: A_104
-              startDate: ""
+              start_date: ""
               time: 08:00:00+08:00
-              weeklyIntervals: 1
+              weekly_intervals: 1
             - act: mode1
-              currentWeek: 32
+              current_week: 32
               display: 自定義每周執行名稱
               enable: true
-              lastExecuteTime: "2020-08-29T00:00:00+08:00"
+              last_execute_time: "2020-08-29T00:00:00+08:00"
               name: A_104
-              startDate: ""
+              start_date: ""
               time: 08:00:00+08:00
-              weeklyIntervals: 0
+              weekly_intervals: 0
             items:
               type: object
               properties:
                 act:
                   type: string
-                currentWeek:
+                current_week:
                   type: integer
                 enable:
                   type: boolean
-                lastExecuteTime:
+                last_execute_time:
                   type: string
                 name:
                   type: string
-                startDate:
+                start_date:
                   type: string
                 time:
                   type: string
-                weeklyIntervals:
+                weekly_intervals:
                   type: integer
           name:
             type: string
