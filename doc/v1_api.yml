@@ -1411,8 +1411,7 @@ paths:
       parameters:
       - name: field
         in: query
-        description: 欄位
-        required: true
+        description: 欄位 (未指定時為所有欄位)
         schema:
           type: string
         example: fieldA%2BfieldB
@@ -5982,6 +5981,14 @@ components:
       properties:
         op:
           type: string
+          enum:
+          - =
+          - '!='
+          - '>'
+          - <
+          - '>='
+          - <=
+          - '&='
         value:
           type: number
     queEquip:
