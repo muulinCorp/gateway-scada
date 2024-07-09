@@ -225,10 +225,10 @@ paths:
       parameters:
         - in: query
           name: field
-          required: true
+          required: false
           schema:
             type: string
-          description: 欄位
+          description: 欄位 (未指定時為所有欄位)
           example: "fieldA%2BfieldB"
         - in: query
           name: type
@@ -278,6 +278,7 @@ components:
       properties:
         op:
           type: string
+          enum: ['=', '!=', '>', '<', '>=', '<=', '&=']
         value:
           type: number
     condition:
