@@ -4342,68 +4342,75 @@ components:
         properties:
           type:
             type: string
-            enum:
-              - login
-              - user_control
-              - set_electricity_demand
-              - avg_persistence
-              - queRemote
-              - emsDemandMgr
-              - schedule
-              - newProcess
-            example: 'login'
-          service:
-            type: string
             enum: 
-              - api
-              - que
-              - ems
-              - scm
-            example: 'api'
+              - "auth_login"
+              - "user_control"
+              - "avg_persistence"
+              - "elec_demand_setting"
+              - "elec_demand_control"
+              - "queue_setting"
+              - "queue_control"
+              - "schedule_setting"
+              - "schedule_control"
+          desc: 
+            type: string
+          # service:
+          #   type: string
+          #   enum: 
+          #     - api
+          #     - que
+          #     - ems
+          #     - scm
+          #   example: 'api'
           enable:
             type: boolean
             example: true
       example:
         [
           {
-            "type": "login",
-            "service": "api",
+            "type": "auth_login",
+            "desc": "登入記錄",
             "enable": true
           },
           {
             "type": "user_control",
-            "service": "api",
-            "enable": true
-          },
-          {
-            "type": "set_electricity_demand",
-            "service": "api",
+            "desc": "遠端控制記錄",
             "enable": true
           },
           {
             "type": "avg_persistence",
-            "service": "api",
-            "enable": true
-          },
-          {
-            "type": "queRemote",
-            "service": "que",
+            "desc": "平均溫度修改記錄",
             "enable": false
           },
           {
-            "type": "emsDemandMgr",
-            "service": "ems",
+            "type": "elec_demand_setting",
+            "desc": "需量管理設定記錄",
             "enable": true
           },
           {
-            "type": "schedule",
-            "service": "scm",
+            "type": "elec_demand_control",
+            "desc": "需量管理控制記錄",
             "enable": true
           },
           {
-            "type": "newProcess",
-            "service": "scm",
-            "enable": false
+            "type": "queue_setting",
+            "desc": "智慧除霜更動記錄",
+            "enable": true
+          },
+          {
+            "type": "queue_control",
+            "desc": "智慧除霜控制記錄",
+            "enable": true
+          },
+          {
+            "type": "schedule_setting",
+            "desc": "設備排程更動記錄",
+            "enable": true
+          },
+          {
+            "type": "schedule_control",
+            "desc": "設備排程控制記錄",
+            "enable": true
           }
         ]
 
