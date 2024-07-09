@@ -2388,56 +2388,53 @@ components:
     EventDetail:
       type: array
       example:
-      - enable: true
-        service: api
-        type: login
-      - enable: true
-        service: api
+      - desc: 登入記錄
+        enable: true
+        type: auth_login
+      - desc: 遠端控制記錄
+        enable: true
         type: user_control
-      - enable: true
-        service: api
-        type: set_electricity_demand
-      - enable: true
-        service: api
+      - desc: 平均溫度修改記錄
+        enable: false
         type: avg_persistence
-      - enable: false
-        service: que
-        type: queRemote
-      - enable: true
-        service: ems
-        type: emsDemandMgr
-      - enable: true
-        service: scm
-        type: schedule
-      - enable: false
-        service: scm
-        type: newProcess
+      - desc: 需量管理設定記錄
+        enable: true
+        type: elec_demand_setting
+      - desc: 需量管理控制記錄
+        enable: true
+        type: elec_demand_control
+      - desc: 智慧除霜更動記錄
+        enable: true
+        type: queue_setting
+      - desc: 智慧除霜控制記錄
+        enable: true
+        type: queue_control
+      - desc: 設備排程更動記錄
+        enable: true
+        type: schedule_setting
+      - desc: 設備排程控制記錄
+        enable: true
+        type: schedule_control
       items:
         type: object
         properties:
+          desc:
+            type: string
           enable:
             type: boolean
             example: true
-          service:
-            type: string
-            enum:
-            - api
-            - que
-            - ems
-            - scm
-            example: api
           type:
             type: string
             enum:
-            - login
+            - auth_login
             - user_control
-            - set_electricity_demand
             - avg_persistence
-            - queRemote
-            - emsDemandMgr
-            - schedule
-            - newProcess
-            example: login
+            - elec_demand_setting
+            - elec_demand_control
+            - queue_setting
+            - queue_control
+            - schedule_setting
+            - schedule_control
     FieldsDetail:
       type: object
       example:
