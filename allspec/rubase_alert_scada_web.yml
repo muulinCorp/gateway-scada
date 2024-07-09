@@ -291,8 +291,10 @@ components:
           properties:
             start:
               type: string
+              example: "00:00:00Z"
             end:
               type: string
+              example: "23:59:59Z"
         week_days:
           type: array
           items:
