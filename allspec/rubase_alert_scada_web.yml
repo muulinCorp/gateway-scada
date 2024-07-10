@@ -317,6 +317,8 @@ components:
           type: string
         enable:
           type: boolean
+        unit: 
+          type: string
         conditions:
           type: array
           items:
@@ -336,6 +338,8 @@ components:
             type: string
           enable:
             type: boolean
+          unit: 
+            type: string
           conditions:
             type: array
             items:
