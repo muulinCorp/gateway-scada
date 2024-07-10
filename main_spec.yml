@@ -10,20 +10,22 @@ info:
 servers:
   - url: https://api-dev.oosa.life 
     description: Dev API
-  - url: http://scada-auth-svc:9080
+  - url: http://auth-svc:9080
     description: Scada-Auth-Api
-  - url: http://scada-com2scada-svc:9080
+  - url: http://com2scada-svc:9080
     description: Com2Scada
-  - url: http://scada-layout-svc:9080
+  - url: http://layout-svc:9080
     description: Scada_Layout_Service
-  - url: http://scada-schedule-svc:9080
+  - url: http://schedule-svc:9080
     description: Schedule_Service
-  - url: http://scada-queue-svc:9080
+  - url: http://queue-svc:9080
     description: Queue_Service
-  - url: http://scada-report-svc:9080
+  - url: http://report-svc:9080
     description: Report_Service
-  - url: http://scada-event-svc:9080
+  - url: http://event-svc:9080
     description: Event_Service
+  - url: http://rubase-alert-svc:9080
+    description: Early_Warning_Service
 
 components:
   securitySchemes:
