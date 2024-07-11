@@ -269,8 +269,12 @@ components:
         apply_fields:
           type: array
           items:
-            type: string
-    
+            type: object
+            properties:
+              field:
+                type: string
+              name:
+                type: string
   securitySchemes:
     bearerAuth:
       type: http
