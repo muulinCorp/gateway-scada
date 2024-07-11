@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "name": "tv-gateway",
+  "name": "scada-gateway",
   "port": 8080,
   "cache_ttl": "3600s",
   "timeout": "3s",
@@ -47,8 +47,7 @@
     "input_headers": [
         "User-Agent",
         "Authorization",
-        "Content-Type",
-        "X-Channel"
+        "Content-Type"
     ],
     {{if $endpoint.input_querys}}"input_query_strings": {{ marshal $endpoint.input_querys }},{{end}}
     "output_encoding": "no-op",

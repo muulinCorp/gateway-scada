@@ -56,8 +56,144 @@ paths:
           description: alert config disable
         '500':
           description: 伺服器發生錯誤
+  /v2/warning/realtime:
+    get:
+      tags: [ews]
+      summary: 取得即時預警清單
+      operationId: get-warning-realtime
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarningRealtime'
+        '204':
+          description: no content
+        '401':
+          description: permission denied
+        '500':
+          description: 伺服器發生錯誤
+  /v2/warning/realtime/confirmation:
+    post:
+      tags: [ews]
+      summary: 即時告警確認
+      operationId: realtime-warning-confirmation
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: permission denied
+  /v2/warning:
+    get:
+      tags: [ews]
+      summary: 取得歷史預警清單
+      operationId: get-warning
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: field
+          required: false
+          schema:
+            type: string
+          description: 欄位 (未指定時為所有欄位)
+          example: "fieldA%2BfieldB"
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: ["connErr", "alert", "alarm"]
+          description: 類型
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+          description: 日期 (2016-07-14T00:00:00Z)
+          example: "2016-07-14T00:00:00Z"
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetWarning'
+        '204':
+          description: no content
+        '401':
+          description: permission denied
 components:
   schemas:
+    fieldInfo:
+      type: object
+      properties:
+        field:
+          type: string
+        name:
+          type: string
+    logical:
+      type: object
+      properties:
+        op:
+          type: string
+          enum: ['=', '!=', '>', '<', '>=', '<=', '&=']
+        value:
+          type: number
+    condition:
+      type: object
+      properties:
+        enable:
+          type: boolean
+        timeRange:
+          type: object
+          properties:
+            start:
+              type: string
+              example: "00:00:00Z"
+            end:
+              type: string
+              example: "23:59:59Z"
+        week_days:
+          type: array
+          items:
+            type: integer
+        frequency:
+          type: object
+          properties:
+            minutes:
+              type: integer
+            times:
+              type: integer
+        logicals:
+          type: array
+          items:
+            $ref: '#/components/schemas/logical'
     GetEventList:
       properties:
         time:
@@ -70,6 +206,71 @@ components:
           type: string
         detail:
           type: string
+    GetWarningRealtime:
+      type: object
+      properties:
+        key:
+          type: string
+        time:
+          type: string
+        name:
+          type: string
+          description: 預警名稱
+        type:
+          type: string
+        field_info:
+          $ref: '#/components/schemas/fieldInfo'
+        detail:
+          type: object
+          properties:
+            condition:
+              $ref: '#/components/schemas/condition'
+        is_viewed:
+          type: boolean
+        view_logs:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+              account:
+                type: string
+    GetWarning:
+      type: object
+      properties:
+        start_time:
+          type: string
+          example: "2016-07-14T00:00:00Z"
+        end_time:
+          type: string
+          example: "2016-07-14T00:00:00Z"
+        duration:
+          type: integer
+          example: 3
+          description: 單位為分鐘
+        name:
+          type: string
+          description: 預警名稱
+        type:
+          type: string
+          description: 預警類型
+        field_info:
+          $ref: '#/components/schemas/fieldInfo'
+        detail:
+          type: object
+          properties:
+            condition:
+              $ref: '#/components/schemas/condition'
+        view_logs:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+              account:
+                type: string
   securitySchemes:
     bearerAuth:
       type: http

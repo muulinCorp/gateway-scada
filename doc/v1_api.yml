@@ -1406,7 +1406,7 @@ paths:
   /v2/warning:
     get:
       tags:
-      - Early_Warning_Service
+      - Event_Service
       - ews
       summary: 取得歷史預警清單
       operationId: get-warning
@@ -1457,7 +1457,7 @@ paths:
   /v2/warning/realtime:
     get:
       tags:
-      - Early_Warning_Service
+      - Event_Service
       - ews
       summary: 取得即時預警清單
       operationId: get-warning-realtime
@@ -1481,7 +1481,7 @@ paths:
   /v2/warning/realtime/confirmation:
     post:
       tags:
-      - Early_Warning_Service
+      - Event_Service
       - ews
       summary: 即時告警確認
       operationId: realtime-warning-confirmation
@@ -1825,7 +1825,12 @@ components:
         apply_fields:
           type: array
           items:
-            type: string
+            type: object
+            properties:
+              field:
+                type: string
+              name:
+                type: string
         conditions:
           type: array
           items:
@@ -1833,6 +1838,8 @@ components:
         enable:
           type: boolean
         name:
+          type: string
+        unit:
           type: string
     ElectricDetail:
       type: array
@@ -3307,8 +3314,11 @@ components:
     GetWarning:
       type: object
       properties:
-        condition:
-          $ref: '#/components/schemas/condition'
+        detail:
+          type: object
+          properties:
+            condition:
+              $ref: '#/components/schemas/condition'
         duration:
           type: integer
           description: 單位為分鐘
@@ -3339,8 +3349,11 @@ components:
     GetWarningRealtime:
       type: object
       properties:
-        condition:
-          $ref: '#/components/schemas/condition'
+        detail:
+          type: object
+          properties:
+            condition:
+              $ref: '#/components/schemas/condition'
         field_info:
           $ref: '#/components/schemas/fieldInfo'
         is_viewed:
@@ -3350,8 +3363,6 @@ components:
         name:
           type: string
           description: 預警名稱
-        state:
-          type: string
         time:
           type: string
         type:
@@ -3382,6 +3393,8 @@ components:
           type: string
         name:
           type: string
+        unit:
+          type: string
     GetWarningSettingList:
       type: array
       items:
@@ -3396,6 +3409,8 @@ components:
           id:
             type: string
           name:
+            type: string
+          unit:
             type: string
     GroupsDetail:
       type: array
