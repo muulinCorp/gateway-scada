@@ -72,6 +72,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GetWarningRealtime'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/WarningRealtimeExample'
         '204':
           description: no content
         '401':
@@ -144,6 +147,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GetWarning'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/WarningListExample'
         '204':
           description: no content
         '401':
@@ -222,6 +228,7 @@ components:
           $ref: '#/components/schemas/fieldInfo'
         detail:
           type: object
+          description: 依照不同類型會有不同的欄位
           properties:
             condition:
               $ref: '#/components/schemas/condition'
@@ -236,6 +243,13 @@ components:
                 type: string
               account:
                 type: string
+    rubaseDetail:
+      type: object
+      properties:
+        condition:
+              $ref: '#/components/schemas/condition'
+    emptyDetail:
+      type: object
     GetWarning:
       type: object
       properties:
@@ -258,10 +272,10 @@ components:
         field_info:
           $ref: '#/components/schemas/fieldInfo'
         detail:
-          type: object
-          properties:
-            condition:
-              $ref: '#/components/schemas/condition'
+          oneOf:
+            - $ref: '#/components/schemas/rubaseDetail'
+            - $ref: '#/components/schemas/emptyDetail'
+            
         view_logs:
           type: array
           items:
@@ -271,6 +285,85 @@ components:
                 type: string
               account:
                 type: string
+  examples:
+    WarningRealtimeExample:
+      value:
+        - key: "this-is-key"
+          time: "2016-07-14T00:00:00Z"
+          name: 預警名稱
+          type: rubase-alert
+          field_info:
+            field: field
+            name: 中文名稱
+          detail:
+            condition:
+              timeRange:
+                start: "00:00:00Z"
+                end: "23:59:59Z"
+              week_days: [0,1,2,3,4,5,6]
+              frequency:
+                minutes: 0
+                times: 0
+              logicals:
+                - op: =
+                  value: 0
+          is_viewed: true
+          view_logs:
+            - time: "2016-07-14T00:00:00Z"
+              account: "account"
+        - key: "this-is-key2"
+          time: "2016-07-14T00:00:00Z"
+          name: 欄位xxxx斷線
+          type: other
+          field_info:
+            field: field
+            name: 中文名稱
+          detail:
+            "error": "xxxxx斷線"
+          is_viewed: false
+          view_logs:
+            - time: "2016-07-14T00:00:00Z"
+              account: "ppp"
+      summary: A sample warning realtime
+    WarningListExample:
+      value:
+        - start_time: "2016-07-14T00:00:00Z"
+          end_time: "2016-07-14T00:00:00Z"
+          duration: 3
+          name: 預警名稱
+          type: rubase-alert
+          field_info:
+            field: field
+            name: 中文名稱
+          detail:
+            condition:
+              timeRange:
+                start: "00:00:00Z"
+                end: "23:59:59Z"
+              week_days: [0,1,2,3,4,5,6]
+              frequency:
+                minutes: 0
+                times: 0
+              logicals:
+                - op: =
+                  value: 0
+          view_logs:
+            - time: "2016-07-14T00:00:00Z"
+              account: "account"
+        - start_time: "2016-07-14T00:00:00Z"
+          end_time: "2016-07-14T00:00:00Z"
+          duration: 3
+          name: 欄位xxxx斷線
+          type: other
+          field_info:
+            field: field
+            name: 中文名稱
+          detail:
+            "error": "xxxxx斷線"
+          view_logs:
+            - time: "2016-07-14T00:00:00Z"
+              account: "account"
+      summary: A sample warning list
   securitySchemes:
     bearerAuth:
       type: http

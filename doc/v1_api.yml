@@ -1448,6 +1448,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GetWarning'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/WarningListExample'
         "204":
           description: no content
         "401":
@@ -1470,6 +1473,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GetWarningRealtime'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/WarningRealtimeExample'
         "204":
           description: no content
         "401":
@@ -3315,10 +3321,9 @@ components:
       type: object
       properties:
         detail:
-          type: object
-          properties:
-            condition:
-              $ref: '#/components/schemas/condition'
+          oneOf:
+          - $ref: '#/components/schemas/rubaseDetail'
+          - $ref: '#/components/schemas/emptyDetail'
         duration:
           type: integer
           description: 單位為分鐘
@@ -3351,6 +3356,7 @@ components:
       properties:
         detail:
           type: object
+          description: 依照不同類型會有不同的欄位
           properties:
             condition:
               $ref: '#/components/schemas/condition'
@@ -5949,6 +5955,8 @@ components:
           type: array
           items:
             type: integer
+    emptyDetail:
+      type: object
     excelPage:
       type: object
       properties:
@@ -6082,6 +6090,11 @@ components:
           type: string
           description: 執行時間
           example: "2020-09-20T08:00:00+08:00"
+    rubaseDetail:
+      type: object
+      properties:
+        condition:
+          $ref: '#/components/schemas/condition'
     timeAct:
       type: object
       properties:
@@ -6111,3 +6124,96 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  examples:
+    WarningListExample:
+      summary: A sample warning list
+      value:
+      - detail:
+          condition:
+            frequency:
+              minutes: 0
+              times: 0
+            logicals:
+            - op: =
+              value: 0
+            timeRange:
+              end: 23:59:59Z
+              start: 00:00:00Z
+            week_days:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+        duration: 3
+        end_time: "2016-07-14T00:00:00Z"
+        field_info:
+          field: field
+          name: 中文名稱
+        name: 預警名稱
+        start_time: "2016-07-14T00:00:00Z"
+        type: rubase-alert
+        view_logs:
+        - account: account
+          time: "2016-07-14T00:00:00Z"
+      - detail:
+          error: xxxxx斷線
+        duration: 3
+        end_time: "2016-07-14T00:00:00Z"
+        field_info:
+          field: field
+          name: 中文名稱
+        name: 欄位xxxx斷線
+        start_time: "2016-07-14T00:00:00Z"
+        type: other
+        view_logs:
+        - account: account
+          time: "2016-07-14T00:00:00Z"
+    WarningRealtimeExample:
+      summary: A sample warning realtime
+      value:
+      - detail:
+          condition:
+            frequency:
+              minutes: 0
+              times: 0
+            logicals:
+            - op: =
+              value: 0
+            timeRange:
+              end: 23:59:59Z
+              start: 00:00:00Z
+            week_days:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+        field_info:
+          field: field
+          name: 中文名稱
+        is_viewed: true
+        key: this-is-key
+        name: 預警名稱
+        time: "2016-07-14T00:00:00Z"
+        type: rubase-alert
+        view_logs:
+        - account: account
+          time: "2016-07-14T00:00:00Z"
+      - detail:
+          error: xxxxx斷線
+        field_info:
+          field: field
+          name: 中文名稱
+        is_viewed: false
+        key: this-is-key2
+        name: 欄位xxxx斷線
+        time: "2016-07-14T00:00:00Z"
+        type: other
+        view_logs:
+        - account: ppp
+          time: "2016-07-14T00:00:00Z"
