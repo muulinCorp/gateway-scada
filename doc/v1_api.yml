@@ -5947,7 +5947,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/logical'
-        timeRange:
+        time_range:
           type: object
           properties:
             end:
@@ -6141,7 +6141,7 @@ components:
             logicals:
             - op: =
               value: 0
-            timeRange:
+            time_range:
               end: 23:59:59Z
               start: 00:00:00Z
             week_days:
@@ -6187,7 +6187,7 @@ components:
             logicals:
             - op: =
               value: 0
-            timeRange:
+            time_range:
               end: 23:59:59Z
               start: 00:00:00Z
             week_days:

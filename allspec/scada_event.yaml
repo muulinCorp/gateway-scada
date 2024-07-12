@@ -176,7 +176,7 @@ components:
       properties:
         enable:
           type: boolean
-        timeRange:
+        time_range:
           type: object
           properties:
             start:
@@ -297,7 +297,7 @@ components:
             name: 中文名稱
           detail:
             condition:
-              timeRange:
+              time_range:
                 start: "00:00:00Z"
                 end: "23:59:59Z"
               week_days: [0,1,2,3,4,5,6]
@@ -337,7 +337,7 @@ components:
             name: 中文名稱
           detail:
             condition:
-              timeRange:
+              time_range:
                 start: "00:00:00Z"
                 end: "23:59:59Z"
               week_days: [0,1,2,3,4,5,6]
