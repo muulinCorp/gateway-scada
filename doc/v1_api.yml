@@ -1420,7 +1420,6 @@ paths:
       - name: type
         in: query
         description: 類型 (預警、告警、欄位斷線)
-        required: true
         schema:
           type: string
           enum:
