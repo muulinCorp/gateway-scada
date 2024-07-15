@@ -1419,14 +1419,14 @@ paths:
         example: fieldA%2BfieldB
       - name: type
         in: query
-        description: 類型
+        description: 類型 (預警、告警、欄位斷線)
         required: true
         schema:
           type: string
           enum:
-          - connErr
-          - alert
+          - rubase-alert
           - alarm
+          - com2scada
       - name: start
         in: query
         description: 日期 (2016-07-14T00:00:00Z)
@@ -3323,6 +3323,7 @@ components:
         detail:
           oneOf:
           - $ref: '#/components/schemas/rubaseDetail'
+          - $ref: '#/components/schemas/alarmDetail'
           - $ref: '#/components/schemas/emptyDetail'
         duration:
           type: integer
@@ -5904,6 +5905,11 @@ components:
         10102@1F_engine_AVD101: 開啓
       additionalProperties:
         type: string
+    alarmDetail:
+      type: object
+      properties:
+        error_msg:
+          type: string
     chartField:
       type: object
       properties:
@@ -6164,15 +6170,28 @@ components:
         - account: account
           time: "2016-07-14T00:00:00Z"
       - detail:
-          error: xxxxx斷線
+          error_msg: xxxxx
         duration: 3
         end_time: "2016-07-14T00:00:00Z"
         field_info:
           field: field
           name: 中文名稱
-        name: 欄位xxxx斷線
+        name: 告警警名稱
         start_time: "2016-07-14T00:00:00Z"
-        type: other
+        type: alarm
+        view_logs:
+        - account: account
+          time: "2016-07-14T00:00:00Z"
+      - detail:
+          msg: 欄位斷線
+        duration: 3
+        end_time: "2016-07-14T00:00:00Z"
+        field_info:
+          field: field
+          name: 中文名稱
+        name: 欄位斷線
+        start_time: "2016-07-14T00:00:00Z"
+        type: com2scada
         view_logs:
         - account: account
           time: "2016-07-14T00:00:00Z"
@@ -6210,15 +6229,28 @@ components:
         - account: account
           time: "2016-07-14T00:00:00Z"
       - detail:
-          error: xxxxx斷線
+          error_msg: xxxxx
+        field_info:
+          field: field
+          name: 中文名稱
+        is_viewed: true
+        key: this-is-key
+        name: 告警警名稱
+        time: "2016-07-14T00:00:00Z"
+        type: alarm
+        view_logs:
+        - account: account
+          time: "2016-07-14T00:00:00Z"
+      - detail:
+          msg: 欄位斷線
         field_info:
           field: field
           name: 中文名稱
         is_viewed: false
         key: this-is-key2
-        name: 欄位xxxx斷線
+        name: 欄位斷線
         time: "2016-07-14T00:00:00Z"
-        type: other
+        type: com2scada
         view_logs:
         - account: ppp
           time: "2016-07-14T00:00:00Z"
