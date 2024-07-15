@@ -119,7 +119,7 @@ paths:
           example: "fieldA%2BfieldB"
         - in: query
           name: type
-          required: true
+          required: false
           schema:
             type: string
             enum: ["rubase-alert", "alarm", "com2scada"]
