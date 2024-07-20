@@ -251,7 +251,7 @@
       "description": "取得報表常用欄位",
       "endpoint": "/web/report/favorite",
       "method": "GET",
-      "backend": "/v1/report/favorite",
+      "backend": "/v2/report/favorite",
       "host": [
         "http://report-svc:9080"
       ]
