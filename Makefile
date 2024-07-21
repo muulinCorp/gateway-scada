@@ -24,14 +24,21 @@ gen-conf: gen-setting-json
 
 merge-spec:
 	docker run -it \
-	-v $$PWD:/workdir 94peter/openapi-cli:v1.3 /main ms \
+	-v $$PWD:/workdir 94peter/openapi-cli:v1.4 /main ms \
 	-main /workdir/main_spec.yml \
 	-mergeDir /workdir/allspec/ \
-	-output /workdir/doc/v1_api.yml
+	-output /workdir/doc/v1_api.yml \
+	-version-replace web
 
-gen-setting-json: merge-spec
+gen-setting-json:
 	docker run -it \
-	-v $$PWD:/workdir 94peter/openapi-cli:v1.3 /main togs \
-	-spec /workdir/doc/v1_api.yml \
+	-v $$PWD:/workdir 94peter/openapi-cli:v1.4 /main ms \
+	-main /workdir/main_spec.yml \
+	-mergeDir /workdir/allspec/ \
+	-output /workdir/doc/temp_web_api.yml
+	docker run -it \
+	-v $$PWD:/workdir 94peter/openapi-cli:v1.4 /main togs \
+	-spec /workdir/doc/temp_web_api.yml \
 	-output /workdir/settings/endpoint.json \
 	-version-replace web
+	rm ./doc/temp_web_api.yml

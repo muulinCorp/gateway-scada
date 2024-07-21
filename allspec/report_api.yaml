@@ -80,7 +80,7 @@ paths:
           description: invalid input
         '500':
           description: 伺服器發生錯誤
-  /v2/report/pdf:
+  /v1/report/pdf:
     post:
       tags: [report]
       summary: 取得數據報表
@@ -118,7 +118,7 @@ paths:
           description: invalid input
         '500':
           description: 伺服器發生錯誤
-  /v1/report/favorite:
+  /v2/report/favorite:
     post:
       tags: [report]
       summary: 建立報表常用欄位
@@ -213,7 +213,7 @@ paths:
           description: OK
         '400':
           description: Invalid Input
-  /v1/report/excel/cron:
+  /v2/report/excel/cron:
     post:
       tags: [report]
       summary: 建立excel報表排程
@@ -304,6 +304,7 @@ components:
       properties:
         name:
           type: string
+          example: 分頁名稱
         fields:
           type: array
           items:
@@ -311,12 +312,16 @@ components:
             properties:
               field:
                 type: string
+                example: fiel_dname
               name:
                 type: string
+                example: 欄位中文名
               group:
                 type: string
+                example: 群組名稱
               equip:
                 type: string
+                example: 設備名稱
     ReportSettingDetail:
       type: object
       properties:
@@ -486,7 +491,6 @@ components:
           type: string
         name:
           type: string
-          # example: 溫度
         group: 
           type: string
         equip: 
@@ -497,7 +501,6 @@ components:
           type: string 
         displayDp:
           type: integer
-          example: 0
         trans:
           type: object
           properties:
@@ -507,6 +510,18 @@ components:
               type: string
         isSquareWave:
           type: boolean
+      example:
+        field: field_name
+        name: 欄位名稱
+        group: 群組名稱
+        equip: 設備名稱
+        type: field_type
+        unit: ˚C
+        displayDp: 0
+        trans:
+          '0': 正常
+          '1': 警報
+        isSquareWave: true
     GetDataChart:
       type: object
       properties:
@@ -530,16 +545,22 @@ components:
       properties:
         field:
           type: string
+          example: field_name
         name:
           type: string
+          example: 欄位名稱
         group: 
           type: string
+          example: 群組名稱
         equip:
           type: string
+          example: 設備名稱
         type:
           type: string
+          example: field_type
         unit:
           type: string
+          example: ˚C
         displayType:
           type: string
           enum: ["realtime", "state", "accumulation"]
@@ -630,6 +651,7 @@ components:
         properties:
           favouriteName:
             type: string
+            example: 常用報表欄位名稱
           fields:
             type: array
             items:
@@ -690,8 +712,10 @@ components:
         properties:
           key:
             type: string
+            example: fb2c4869-5238-4ea5-994c-677666927ea1
           fileName:
             type: string
+            example: 檔案名稱
           fields:
             type: array
             items:
@@ -705,6 +729,7 @@ components:
             type: boolean
           cronFormat:
             type: string
+            example: "0 0 0 * *"
     CreateReportExcelCron:
       type: object
       properties:
@@ -739,19 +764,23 @@ components:
         properties:
           key:
             type: string
+            example: fb2c4869-5238-4ea5-994c-677666927ea1
           fileName:
             type: string
+            example: excel/每日excel報表
           pages:
             type: array
             items:
               $ref: '#/components/schemas/excelPage'
           dataInterval:
             type: string
+            enum: ["1m", "5m", "1h"]
           interval:
             type: string
             enum: ["daily", "week", "month", "year"]
           cronFormat:
             type: string
+            example: "0 0 0 * *"
   securitySchemes:
     bearerAuth:
       type: http

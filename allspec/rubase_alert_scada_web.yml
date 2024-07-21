@@ -17,6 +17,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateWarning'
+            examples:
+              CorrectExample:
+                $ref: '#/components/examples/CreateWarning'
       responses:
         '200':
           description: OK
@@ -27,6 +30,7 @@ paths:
                 properties:
                   id:
                     type: string
+                    example: fb2c4869-5238-4ea5-994c-677666927ea1
         '400':
           description: Invalid Input
         '401':
@@ -46,6 +50,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetWarningSettingList'
+              examples:
+                CorrectExample:
+                  $ref: '#/components/examples/GetWarningSettingList'
         '204':
           description: no content
         '401':
@@ -72,6 +79,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetWarningSettingDetail'
+              examples:
+                CorrectExample:
+                  $ref: '#/components/examples/GetWarningSettingDetail'
         '204':
           description: no content
     put:
@@ -91,6 +101,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateWarning'
+            examples:
+              CorrectExample:
+                $ref: '#/components/examples/CreateWarning'
       responses:
         '200':
           description: success
@@ -282,6 +295,81 @@ components:
                 type: string
               name:
                 type: string
+  examples:
+    CreateWarning:
+      value:
+        name: Temperature Sensor
+        enable: true
+        unit: ˚C
+        conditions:
+        - enable: true
+          timeRange:
+            start: "08:00:00Z"
+            end: "17:00:00Z"
+          week_days:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+          frequency:
+            minutes: 15
+            times: 0
+          logicals:
+            - op: ">"
+              value: 25
+        apply_fields:
+          - field: temperature
+            name: Temperature Sensor
+    GetWarningSettingList:
+      value:
+        - id: fb2c4869-5238-4ea5-994c-677666927ea1
+          name: Temperature Sensor
+          enable: true
+          unit: ˚C
+          conditions:
+          - enable: true
+            timeRange:
+              start: "08:00:00Z"
+              end: "17:00:00Z"
+            week_days:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+            frequency:
+              minutes: 15
+              times: 0
+            logicals:
+              - op: ">"
+                value: 25
+          apply_fields:
+          - field: temperature
+            name: Temperature Sensor
+    GetWarningSettingDetail:
+      value:
+        - id: fb2c4869-5238-4ea5-994c-677666927ea1
+          name: Temperature Sensor
+          enable: true
+          unit: ˚C
+          conditions:
+            - enable: true
+              timeRange:
+                start: "08:00:00Z"
+                end: "17:00:00Z"
+              week_days:
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+              frequency:
+                minutes: 15
+                times: 0
+              logicals:
+                - op: ">"
+                  value: 25
   securitySchemes:
     bearerAuth:
       type: http
