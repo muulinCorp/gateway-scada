@@ -1,6 +1,240 @@
 {
   "group": [
     {
+      "description": "取得PDF報表欄位群組清單",
+      "endpoint": "/web/report/pdf/cron",
+      "method": "GET",
+      "backend": "/v1/report/pdf/cron",
+      "host": [
+        "http://report-svc:9080"
+      ]
+    },
+    {
+      "description": "建立PDF報表排程",
+      "endpoint": "/web/report/pdf/cron",
+      "method": "POST",
+      "backend": "/v1/report/pdf/cron",
+      "host": [
+        "http://report-svc:9080"
+      ]
+    },
+    {
+      "description": "建立預警",
+      "endpoint": "/web/warning/setting",
+      "method": "POST",
+      "backend": "/v2/warning/setting",
+      "host": [
+        "http://rubase-alert-svc:9080"
+      ]
+    },
+    {
+      "description": "取得預警設定列表",
+      "endpoint": "/web/warning/setting",
+      "method": "GET",
+      "backend": "/v2/warning/setting",
+      "host": [
+        "http://rubase-alert-svc:9080"
+      ]
+    },
+    {
+      "description": "Get login page layout",
+      "endpoint": "/web/layout/loginpage",
+      "method": "GET",
+      "backend": "/v1/layout/loginpage",
+      "host": [
+        "http://layout-svc:9080"
+      ]
+    },
+    {
+      "description": "get group and element with type",
+      "endpoint": "/web/layout/group",
+      "method": "GET",
+      "backend": "/v1/layout/group",
+      "host": [
+        "http://layout-svc:9080"
+      ],
+      "input_querys": [
+        "type"
+      ]
+    },
+    {
+      "description": "移動設備群組",
+      "endpoint": "/web/queue/_move",
+      "method": "PUT",
+      "backend": "/v1/queue/_move",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
+      "description": "取得queue明細",
+      "endpoint": "/web/queue/{ID}",
+      "method": "GET",
+      "backend": "/v1/queue/{ID}",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
+      "description": "更新queue",
+      "endpoint": "/web/queue/{ID}",
+      "method": "PUT",
+      "backend": "/v1/queue/{ID}",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
+      "description": "刪除queue",
+      "endpoint": "/web/queue/{ID}",
+      "method": "DELETE",
+      "backend": "/v1/queue/{ID}",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
+      "description": "遠端控制",
+      "endpoint": "/web/controller",
+      "method": "POST",
+      "backend": "/v1/controller",
+      "host": [
+        "http://com2scada-svc:9080"
+      ]
+    },
+    {
+      "description": "取得Excel報表",
+      "endpoint": "/web/report/excel",
+      "method": "POST",
+      "backend": "/v1/report/excel",
+      "host": [
+        "http://report-svc:9080"
+      ]
+    },
+    {
+      "description": "取得queue設備資訊",
+      "endpoint": "/web/queue/equip/{NAME}",
+      "method": "GET",
+      "backend": "/v1/queue/equip/{NAME}",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
+      "description": "刪除預警",
+      "endpoint": "/web/warning/setting/{ID}",
+      "method": "DELETE",
+      "backend": "/v2/warning/setting/{ID}",
+      "host": [
+        "http://rubase-alert-svc:9080"
+      ]
+    },
+    {
+      "description": "取得預警設定詳情",
+      "endpoint": "/web/warning/setting/{ID}",
+      "method": "GET",
+      "backend": "/v2/warning/setting/{ID}",
+      "host": [
+        "http://rubase-alert-svc:9080"
+      ]
+    },
+    {
+      "description": "更新預警",
+      "endpoint": "/web/warning/setting/{ID}",
+      "method": "PUT",
+      "backend": "/v2/warning/setting/{ID}",
+      "host": [
+        "http://rubase-alert-svc:9080"
+      ]
+    },
+    {
+      "description": "修改密碼",
+      "endpoint": "/web/pwd",
+      "method": "PUT",
+      "backend": "/v1/pwd",
+      "host": [
+        "http://auth-svc:9080"
+      ]
+    },
+    {
+      "description": "get event setting (type dropdown list)",
+      "endpoint": "/web/layout/event",
+      "method": "GET",
+      "backend": "/v1/layout/event",
+      "host": [
+        "http://layout-svc:9080"
+      ]
+    },
+    {
+      "description": "get fields by groupID, elementID, and also keyword",
+      "endpoint": "/web/layout/fields",
+      "method": "GET",
+      "backend": "/v1/layout/fields",
+      "host": [
+        "http://layout-svc:9080"
+      ],
+      "input_querys": [
+        "groupID",
+        "elementID",
+        "keyword",
+        "fields"
+      ]
+    },
+    {
+      "description": "取得excel報表欄位群組清單",
+      "endpoint": "/web/report/excel/cron",
+      "method": "GET",
+      "backend": "/v2/report/excel/cron",
+      "host": [
+        "http://report-svc:9080"
+      ]
+    },
+    {
+      "description": "建立excel報表排程",
+      "endpoint": "/web/report/excel/cron",
+      "method": "POST",
+      "backend": "/v2/report/excel/cron",
+      "host": [
+        "http://report-svc:9080"
+      ]
+    },
+    {
+      "description": "get electric power information",
+      "endpoint": "/web/layout/electric",
+      "method": "GET",
+      "backend": "/v1/layout/electric",
+      "host": [
+        "http://layout-svc:9080"
+      ]
+    },
+    {
+      "description": "取得智慧除霜設備清單",
+      "endpoint": "/web/queue/equip_layout",
+      "method": "GET",
+      "backend": "/v1/queue/equip_layout",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
+      "description": "即時告警確認",
+      "endpoint": "/web/warning/realtime/confirmation",
+      "method": "POST",
+      "backend": "/v2/warning/realtime/confirmation",
+      "host": [
+        "http://event-svc:9080"
+      ]
+    },
+    {
+      "description": "Get sbt pages detail by using sbtID",
+      "endpoint": "/web/layout/plan/sbt/{ID}",
+      "method": "GET",
+      "backend": "/v1/layout/plan/sbt/{ID}",
+      "host": [
+        "http://layout-svc:9080"
+      ]
+    },
+    {
       "description": "佇列log",
       "endpoint": "/web/queue/log",
       "method": "GET",
@@ -14,39 +248,21 @@
       ]
     },
     {
-      "description": "即時告警確認",
-      "endpoint": "/web/warning/realtime/confirmation",
-      "method": "POST",
-      "backend": "/v2/warning/realtime/confirmation",
-      "host": [
-        "http://event-svc:9080"
-      ]
-    },
-    {
-      "description": "更新excel Cron設定",
-      "endpoint": "/web/report/excel/cron/{KEY}",
-      "method": "PUT",
-      "backend": "/v1/report/excel/cron/{KEY}",
+      "description": "刪除pdf/excel報表排程",
+      "endpoint": "/web/report/{TYPE}/cron/{KEY}",
+      "method": "DELETE",
+      "backend": "/v1/report/{TYPE}/cron/{KEY}",
       "host": [
         "http://report-svc:9080"
       ]
     },
     {
-      "description": "取得行程詳細",
-      "endpoint": "/web/schedule/{NAME}/{TYPE}",
-      "method": "GET",
-      "backend": "/v2/schedule/{NAME}/{TYPE}",
+      "description": "更新pdf cron設定",
+      "endpoint": "/web/report/pdf/cron/{KEY}",
+      "method": "PUT",
+      "backend": "/v1/report/pdf/cron/{KEY}",
       "host": [
-        "http://schedule-svc:9080"
-      ]
-    },
-    {
-      "description": "建立/更新行程",
-      "endpoint": "/web/schedule/{NAME}/{TYPE}",
-      "method": "POST",
-      "backend": "/v2/schedule/{NAME}/{TYPE}",
-      "host": [
-        "http://schedule-svc:9080"
+        "http://report-svc:9080"
       ]
     },
     {
@@ -77,100 +293,19 @@
       ]
     },
     {
-      "description": "登入",
-      "endpoint": "/web/login",
-      "method": "POST",
-      "backend": "/v1/login",
-      "host": [
-        "http://auth-svc:9080"
-      ]
-    },
-    {
-      "description": "Floor-SSE",
-      "endpoint": "/web/sse/{FLOOR_ID}",
+      "description": "Get floor list by using BuildingID",
+      "endpoint": "/web/layout/plan/building/{ID}/floor",
       "method": "GET",
-      "backend": "/v1/sse/{FLOOR_ID}",
-      "host": [
-        "http://com2scada-svc:9080"
-      ]
-    },
-    {
-      "description": "取得Excel報表",
-      "endpoint": "/web/report/excel",
-      "method": "POST",
-      "backend": "/v1/report/excel",
-      "host": [
-        "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "遠端控制",
-      "endpoint": "/web/controller",
-      "method": "POST",
-      "backend": "/v1/controller",
-      "host": [
-        "http://com2scada-svc:9080"
-      ]
-    },
-    {
-      "description": "取得事件清單",
-      "endpoint": "/web/event",
-      "method": "GET",
-      "backend": "/v2/event",
-      "host": [
-        "http://event-svc:9080"
-      ],
-      "input_querys": [
-        "type",
-        "start",
-        "end",
-        "interval"
-      ]
-    },
-    {
-      "description": "取得數據報表",
-      "endpoint": "/web/report/pdf",
-      "method": "POST",
-      "backend": "/v2/report/pdf",
-      "host": [
-        "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "Get sbt pages detail by using sbtID",
-      "endpoint": "/web/layout/plan/sbt/{ID}",
-      "method": "GET",
-      "backend": "/v1/layout/plan/sbt/{ID}",
+      "backend": "/v1/layout/plan/building/{ID}/floor",
       "host": [
         "http://layout-svc:9080"
       ]
     },
     {
-      "description": "get all ems element",
-      "endpoint": "/web/layout/ems",
+      "description": "Get floor detail by using BuildingID and floorID",
+      "endpoint": "/web/layout/plan/building/{ID}/floor/{floorID}",
       "method": "GET",
-      "backend": "/v1/layout/ems",
-      "host": [
-        "http://layout-svc:9080"
-      ]
-    },
-    {
-      "description": "get group and element with type",
-      "endpoint": "/web/layout/group",
-      "method": "GET",
-      "backend": "/v1/layout/group",
-      "host": [
-        "http://layout-svc:9080"
-      ],
-      "input_querys": [
-        "type"
-      ]
-    },
-    {
-      "description": "get smart temperature with groupID",
-      "endpoint": "/web/layout/smart/temperature/{ID}",
-      "method": "GET",
-      "backend": "/v1/layout/smart/temperature/{ID}",
+      "backend": "/v1/layout/plan/building/{ID}/floor/{floorID}",
       "host": [
         "http://layout-svc:9080"
       ]
@@ -188,37 +323,10 @@
       ]
     },
     {
-      "description": "取得PDF報表欄位群組清單",
-      "endpoint": "/web/report/pdf/cron",
-      "method": "GET",
-      "backend": "/v1/report/pdf/cron",
-      "host": [
-        "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "建立PDF報表排程",
-      "endpoint": "/web/report/pdf/cron",
-      "method": "POST",
-      "backend": "/v1/report/pdf/cron",
-      "host": [
-        "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "get electric power information",
-      "endpoint": "/web/layout/electric",
-      "method": "GET",
-      "backend": "/v1/layout/electric",
-      "host": [
-        "http://layout-svc:9080"
-      ]
-    },
-    {
-      "description": "更新pdf cron設定",
-      "endpoint": "/web/report/pdf/cron/{KEY}",
+      "description": "更新excel Cron設定",
+      "endpoint": "/web/report/excel/cron/{KEY}",
       "method": "PUT",
-      "backend": "/v1/report/pdf/cron/{KEY}",
+      "backend": "/v1/report/excel/cron/{KEY}",
       "host": [
         "http://report-svc:9080"
       ]
@@ -233,30 +341,12 @@
       ]
     },
     {
-      "description": "取得預警設定詳情",
-      "endpoint": "/web/warning/setting/{ID}",
-      "method": "GET",
-      "backend": "/v2/warning/setting/{ID}",
+      "description": "登入",
+      "endpoint": "/web/login",
+      "method": "POST",
+      "backend": "/v1/login",
       "host": [
-        "http://rubase-alert-svc:9080"
-      ]
-    },
-    {
-      "description": "更新預警",
-      "endpoint": "/web/warning/setting/{ID}",
-      "method": "PUT",
-      "backend": "/v2/warning/setting/{ID}",
-      "host": [
-        "http://rubase-alert-svc:9080"
-      ]
-    },
-    {
-      "description": "刪除預警",
-      "endpoint": "/web/warning/setting/{ID}",
-      "method": "DELETE",
-      "backend": "/v2/warning/setting/{ID}",
-      "host": [
-        "http://rubase-alert-svc:9080"
+        "http://auth-svc:9080"
       ]
     },
     {
@@ -269,108 +359,89 @@
       ]
     },
     {
-      "description": "Get floor list by using BuildingID",
-      "endpoint": "/web/layout/plan/building/{ID}/floor",
-      "method": "GET",
-      "backend": "/v1/layout/plan/building/{ID}/floor",
-      "host": [
-        "http://layout-svc:9080"
-      ]
-    },
-    {
-      "description": "刪除pdf/excel報表排程",
-      "endpoint": "/web/report/{TYPE}/cron/{KEY}",
-      "method": "DELETE",
-      "backend": "/v1/report/{TYPE}/cron/{KEY}",
-      "host": [
-        "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "取得智慧除霜設備清單",
-      "endpoint": "/web/queue/equip_layout",
-      "method": "GET",
-      "backend": "/v1/queue/equip_layout",
-      "host": [
-        "http://queue-svc:9080"
-      ]
-    },
-    {
-      "description": "取得excel報表欄位群組清單",
-      "endpoint": "/web/report/excel/cron",
-      "method": "GET",
-      "backend": "/v1/report/excel/cron",
-      "host": [
-        "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "建立excel報表排程",
-      "endpoint": "/web/report/excel/cron",
+      "description": "取得遠端控制Token",
+      "endpoint": "/web/token/remote",
       "method": "POST",
-      "backend": "/v1/report/excel/cron",
+      "backend": "/v1/token/remote",
+      "host": [
+        "http://auth-svc:9080"
+      ]
+    },
+    {
+      "description": "Get plan",
+      "endpoint": "/web/layout/plan",
+      "method": "GET",
+      "backend": "/v1/layout/plan",
+      "host": [
+        "http://layout-svc:9080"
+      ]
+    },
+    {
+      "description": "取得數據報表",
+      "endpoint": "/web/report/pdf",
+      "method": "POST",
+      "backend": "/v1/report/pdf",
       "host": [
         "http://report-svc:9080"
       ]
     },
     {
-      "description": "get event setting (type dropdown list)",
-      "endpoint": "/web/layout/event",
+      "description": "get smart temperature with groupID",
+      "endpoint": "/web/layout/smart/temperature/{ID}",
       "method": "GET",
-      "backend": "/v1/layout/event",
+      "backend": "/v1/layout/smart/temperature/{ID}",
       "host": [
         "http://layout-svc:9080"
       ]
     },
     {
-      "description": "Get login page layout",
-      "endpoint": "/web/layout/loginpage",
+      "description": "取得預約排程",
+      "endpoint": "/web/reservation/{NAME}",
       "method": "GET",
-      "backend": "/v1/layout/loginpage",
+      "backend": "/v1/reservation/{NAME}",
       "host": [
-        "http://layout-svc:9080"
+        "http://schedule-svc:9080"
       ]
     },
     {
-      "description": "get fields by groupID, elementID, and also keyword",
-      "endpoint": "/web/layout/fields",
-      "method": "GET",
-      "backend": "/v1/layout/fields",
+      "description": "建立預約排程",
+      "endpoint": "/web/reservation/{NAME}",
+      "method": "POST",
+      "backend": "/v1/reservation/{NAME}",
       "host": [
-        "http://layout-svc:9080"
+        "http://schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "取得數據趨勢圖(一分鐘一筆)",
+      "endpoint": "/web/chart",
+      "method": "GET",
+      "backend": "/v1/chart",
+      "host": [
+        "http://report-svc:9080"
       ],
       "input_querys": [
-        "groupID",
-        "elementID",
-        "keyword",
-        "fields"
+        "fields",
+        "date",
+        "interval"
       ]
     },
     {
-      "description": "Get preload data",
-      "endpoint": "/web/layout/preload",
+      "description": "建立/更新行程",
+      "endpoint": "/web/schedule/{NAME}/{TYPE}",
+      "method": "POST",
+      "backend": "/v2/schedule/{NAME}/{TYPE}",
+      "host": [
+        "http://schedule-svc:9080"
+      ]
+    },
+    {
+      "description": "取得行程詳細",
+      "endpoint": "/web/schedule/{NAME}/{TYPE}",
       "method": "GET",
-      "backend": "/v1/layout/preload",
+      "backend": "/v2/schedule/{NAME}/{TYPE}",
       "host": [
-        "http://layout-svc:9080"
-      ]
-    },
-    {
-      "description": "取得系統佇列儀表版",
-      "endpoint": "/web/queue/dashboard",
-      "method": "GET",
-      "backend": "/v1/queue/dashboard",
-      "host": [
-        "http://queue-svc:9080"
-      ]
-    },
-    {
-      "description": "預警開關",
-      "endpoint": "/web/warning/setting/{ID}/enable",
-      "method": "PUT",
-      "backend": "/v2/warning/setting/{ID}/enable",
-      "host": [
-        "http://rubase-alert-svc:9080"
+        "http://schedule-svc:9080"
       ]
     },
     {
@@ -389,62 +460,54 @@
       ]
     },
     {
+      "description": "預警開關",
+      "endpoint": "/web/warning/setting/{ID}/enable",
+      "method": "PUT",
+      "backend": "/v2/warning/setting/{ID}/enable",
+      "host": [
+        "http://rubase-alert-svc:9080"
+      ]
+    },
+    {
+      "description": "get all ems element",
+      "endpoint": "/web/layout/ems",
+      "method": "GET",
+      "backend": "/v1/layout/ems",
+      "host": [
+        "http://layout-svc:9080"
+      ]
+    },
+    {
+      "description": "取得事件清單",
+      "endpoint": "/web/event",
+      "method": "GET",
+      "backend": "/v2/event",
+      "host": [
+        "http://event-svc:9080"
+      ],
+      "input_querys": [
+        "type",
+        "start",
+        "end",
+        "interval"
+      ]
+    },
+    {
+      "description": "取得系統佇列儀表版 SSE",
+      "endpoint": "/web/queue/dashboard/sse",
+      "method": "GET",
+      "backend": "/v1/queue/dashboard/sse",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
       "description": "使用者註冊",
       "endpoint": "/web/register",
       "method": "POST",
       "backend": "/v1/register",
       "host": [
         "http://auth-svc:9080"
-      ]
-    },
-    {
-      "description": "刪除queue",
-      "endpoint": "/web/queue/{ID}",
-      "method": "DELETE",
-      "backend": "/v1/queue/{ID}",
-      "host": [
-        "http://queue-svc:9080"
-      ]
-    },
-    {
-      "description": "取得queue明細",
-      "endpoint": "/web/queue/{ID}",
-      "method": "GET",
-      "backend": "/v1/queue/{ID}",
-      "host": [
-        "http://queue-svc:9080"
-      ]
-    },
-    {
-      "description": "更新queue",
-      "endpoint": "/web/queue/{ID}",
-      "method": "PUT",
-      "backend": "/v1/queue/{ID}",
-      "host": [
-        "http://queue-svc:9080"
-      ]
-    },
-    {
-      "description": "取得數據趨勢圖(一分鐘一筆)",
-      "endpoint": "/web/chart",
-      "method": "GET",
-      "backend": "/v1/chart",
-      "host": [
-        "http://report-svc:9080"
-      ],
-      "input_querys": [
-        "fields",
-        "date",
-        "interval"
-      ]
-    },
-    {
-      "description": "Get Element's fields detail by using ElementID (sourceID)",
-      "endpoint": "/web/layout/element/{ID}",
-      "method": "GET",
-      "backend": "/v1/layout/element/{ID}",
-      "host": [
-        "http://layout-svc:9080"
       ]
     },
     {
@@ -457,10 +520,19 @@
       ]
     },
     {
+      "description": "取得系統佇列儀表版",
+      "endpoint": "/web/queue/dashboard",
+      "method": "GET",
+      "backend": "/v1/queue/dashboard",
+      "host": [
+        "http://queue-svc:9080"
+      ]
+    },
+    {
       "description": "取得報表常用欄位",
       "endpoint": "/web/report/favorite",
       "method": "GET",
-      "backend": "/v1/report/favorite",
+      "backend": "/v2/report/favorite",
       "host": [
         "http://report-svc:9080"
       ]
@@ -469,18 +541,9 @@
       "description": "建立報表常用欄位",
       "endpoint": "/web/report/favorite",
       "method": "POST",
-      "backend": "/v1/report/favorite",
+      "backend": "/v2/report/favorite",
       "host": [
         "http://report-svc:9080"
-      ]
-    },
-    {
-      "description": "Get plan",
-      "endpoint": "/web/layout/plan",
-      "method": "GET",
-      "backend": "/v1/layout/plan",
-      "host": [
-        "http://layout-svc:9080"
       ]
     },
     {
@@ -496,93 +559,30 @@
       ]
     },
     {
-      "description": "取得遠端控制Token",
-      "endpoint": "/web/token/remote",
-      "method": "POST",
-      "backend": "/v1/token/remote",
-      "host": [
-        "http://auth-svc:9080"
-      ]
-    },
-    {
-      "description": "移動設備群組",
-      "endpoint": "/web/queue/_move",
-      "method": "PUT",
-      "backend": "/v1/queue/_move",
-      "host": [
-        "http://queue-svc:9080"
-      ]
-    },
-    {
-      "description": "Get floor detail by using BuildingID and floorID",
-      "endpoint": "/web/layout/plan/building/{ID}/floor/{floorID}",
+      "description": "Get Element's fields detail by using ElementID (sourceID)",
+      "endpoint": "/web/layout/element/{ID}",
       "method": "GET",
-      "backend": "/v1/layout/plan/building/{ID}/floor/{floorID}",
+      "backend": "/v1/layout/element/{ID}",
       "host": [
         "http://layout-svc:9080"
       ]
     },
     {
-      "description": "修改密碼",
-      "endpoint": "/web/pwd",
-      "method": "PUT",
-      "backend": "/v1/pwd",
-      "host": [
-        "http://auth-svc:9080"
-      ]
-    },
-    {
-      "description": "取得queue設備資訊",
-      "endpoint": "/web/queue/equip/{NAME}",
+      "description": "Get preload data",
+      "endpoint": "/web/layout/preload",
       "method": "GET",
-      "backend": "/v1/queue/equip/{NAME}",
+      "backend": "/v1/layout/preload",
       "host": [
-        "http://queue-svc:9080"
+        "http://layout-svc:9080"
       ]
     },
     {
-      "description": "取得預警設定列表",
-      "endpoint": "/web/warning/setting",
+      "description": "Floor-SSE",
+      "endpoint": "/web/sse/{FLOOR_ID}",
       "method": "GET",
-      "backend": "/v2/warning/setting",
+      "backend": "/v1/sse/{FLOOR_ID}",
       "host": [
-        "http://rubase-alert-svc:9080"
-      ]
-    },
-    {
-      "description": "建立預警",
-      "endpoint": "/web/warning/setting",
-      "method": "POST",
-      "backend": "/v2/warning/setting",
-      "host": [
-        "http://rubase-alert-svc:9080"
-      ]
-    },
-    {
-      "description": "建立預約排程",
-      "endpoint": "/web/reservation/{NAME}",
-      "method": "POST",
-      "backend": "/v1/reservation/{NAME}",
-      "host": [
-        "http://schedule-svc:9080"
-      ]
-    },
-    {
-      "description": "取得預約排程",
-      "endpoint": "/web/reservation/{NAME}",
-      "method": "GET",
-      "backend": "/v1/reservation/{NAME}",
-      "host": [
-        "http://schedule-svc:9080"
-      ]
-    },
-    {
-      "description": "取得系統佇列儀表版 SSE",
-      "endpoint": "/web/queue/dashboard/sse",
-      "method": "GET",
-      "backend": "/v1/queue/dashboard/sse",
-      "host": [
-        "http://queue-svc:9080"
+        "http://com2scada-svc:9080"
       ]
     }
   ]
