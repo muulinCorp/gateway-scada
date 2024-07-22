@@ -5,7 +5,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: 1.0.1
 servers:
 - url: https://api-dev.oosa.life
   description: Dev API
@@ -115,6 +115,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: invalid input
         "500":
@@ -939,6 +943,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: Invalid Input
         "404":
@@ -960,6 +968,11 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
         "400":
           description: invalid input
         "500":
@@ -1000,6 +1013,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: Invalid Input
         "404":
@@ -1027,6 +1044,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: Invalid Input
       security:
@@ -1065,6 +1086,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: Invalid Input
         "404":
@@ -1086,6 +1111,11 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
         "400":
           description: invalid input
         "500":
@@ -1126,6 +1156,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: Invalid Input
         "404":
@@ -1153,6 +1187,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         "400":
           description: Invalid Input
       security:
@@ -1739,6 +1777,9 @@ components:
       type: array
       items:
         type: object
+        required:
+        - favouriteName
+        - fields
         properties:
           favouriteName:
             type: string
@@ -1770,6 +1811,12 @@ components:
           - field: Average_Temp@1F_K_avgTemp
             name: 中文說明
           name: 頁面名稱
+      required:
+      - fileName
+      - pages
+      - dataInterval
+      - interval
+      - cronFormat
       properties:
         cronFormat:
           type: string
@@ -1825,6 +1872,13 @@ components:
         fileName: 檔案名稱
         interval: month
         show: true
+      required:
+      - fileName
+      - fields
+      - interval
+      - show
+      - detail
+      - cronFormat
       properties:
         cronFormat:
           type: string
@@ -2929,6 +2983,9 @@ components:
         - - "2018-08-29T03:48:38Z"
           - 7115
           - -2678
+      required:
+      - columns
+      - values
       properties:
         columns:
           type: array
@@ -2942,6 +2999,9 @@ components:
               type: string
     GetDataChartDashboard:
       type: object
+      required:
+      - configs
+      - charts
       properties:
         charts:
           type: array
@@ -2956,6 +3016,13 @@ components:
                 type: string
         configs:
           type: object
+          required:
+          - pdfSetting
+          - excelSetting
+          - pdfInput
+          - excelInput
+          - showCompanyLogo
+          - selectReportFieldsLimit
           properties:
             excelInput:
               type: object
@@ -3054,6 +3121,11 @@ components:
           type: string
     GetExcel:
       type: object
+      required:
+      - timeRange
+      - pages
+      - dataInterval
+      - fileName
       properties:
         dataInterval:
           type: string
@@ -3206,6 +3278,13 @@ components:
         interval: month
         show: true
         time: "2016-07-14T00:00:00+08:00"
+      required:
+      - interval
+      - time
+      - format
+      - show
+      - detail
+      - fields
       properties:
         detail:
           type: boolean
@@ -3237,6 +3316,13 @@ components:
       type: array
       items:
         type: object
+        required:
+        - key
+        - fileName
+        - pages
+        - dataInterval
+        - interval
+        - cronFormat
         properties:
           cronFormat:
             type: string
@@ -3268,6 +3354,14 @@ components:
       type: array
       items:
         type: object
+        required:
+        - key
+        - fileName
+        - fields
+        - interval
+        - show
+        - detail
+        - cronFormat
         properties:
           cronFormat:
             type: string
@@ -3834,6 +3928,10 @@ components:
             type: number
     ReportSettingDetail:
       type: object
+      required:
+      - enable
+      - download
+      - cron
       properties:
         cron:
           type: boolean
@@ -5954,6 +6052,16 @@ components:
           "1": 警報
         type: field_type
         unit: ˚C
+      required:
+      - field
+      - name
+      - group
+      - equip
+      - type
+      - unit
+      - displayDp
+      - trans
+      - isSquareWave
       properties:
         displayDp:
           type: integer
@@ -6011,11 +6119,19 @@ components:
       type: object
     excelPage:
       type: object
+      required:
+      - name
+      - fields
       properties:
         fields:
           type: array
           items:
             type: object
+            required:
+            - field
+            - name
+            - group
+            - equip
             properties:
               equip:
                 type: string
@@ -6094,6 +6210,15 @@ components:
           description: 預計執行等待時間(分)
     report_field:
       type: object
+      required:
+      - field
+      - name
+      - group
+      - equip
+      - type
+      - unit
+      - displayType
+      - trans
       properties:
         displayType:
           type: string
@@ -6130,6 +6255,10 @@ components:
           example: ˚C
     reportInputInterval:
       type: object
+      required:
+      - key
+      - enable
+      - desc
       properties:
         desc:
           type: string
@@ -6175,6 +6304,9 @@ components:
           example: 08:00:00+08:00
     userChart:
       type: object
+      required:
+      - name
+      - chart_fields
       properties:
         chart_fields:
           type: array

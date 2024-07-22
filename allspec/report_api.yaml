@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
+  version: 1.0.1
   title: Report_Service
   description: 報表、數據相關服務
 
@@ -35,6 +35,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: invalid input
         '500':
@@ -95,6 +99,11 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
         '400':
           description: invalid input
         '500':
@@ -114,6 +123,11 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
         '400':
           description: invalid input
         '500':
@@ -133,6 +147,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string  
         '400':
           description: Invalid Input
         '404':
@@ -169,6 +187,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: Invalid Input
         '404':
@@ -211,6 +233,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: Invalid Input
   /v2/report/excel/cron:
@@ -228,6 +254,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: Invalid Input
         '404':
@@ -270,6 +300,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: Invalid Input
   /v1/report/{TYPE}/cron/{KEY}:
@@ -293,6 +327,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: Invalid Input
         '404':
@@ -322,6 +360,14 @@ components:
               equip:
                 type: string
                 example: 設備名稱
+            required:
+            - field
+            - name
+            - group
+            - equip
+      required:
+      - name
+      - fields
     ReportSettingDetail:
       type: object
       properties:
@@ -334,6 +380,10 @@ components:
         cron:
           type: boolean
           example: true
+      required:
+      - enable
+      - download
+      - cron
     userChart:
       type: object
       properties:
@@ -343,16 +393,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/chartField"
-            # type: object
-            # properties:
-            #   field:
-            #     type: string
-            #   type:
-            #     type: string
-            #   name:
-            #     type: string
-            #   isSquareWave:
-            #     type: boolean
+      required:
+      - name
+      - chart_fields
     SaveChartDashboard:
       type: array
       items:
@@ -463,6 +506,13 @@ components:
               type: integer
               example: 25
               description: 25~100
+          required:
+          - pdfSetting
+          - excelSetting
+          - pdfInput
+          - excelInput
+          - showCompanyLogo
+          - selectReportFieldsLimit
         charts:
           type: array
           items:
@@ -474,6 +524,9 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/chartField"
+      required:
+      - configs
+      - charts
     reportInputInterval:
       type: object
       properties:
@@ -484,6 +537,10 @@ components:
           example: true
         desc: 
           type: string
+      required:
+      - key
+      - enable
+      - desc
     chartField:
       type: object
       properties:
@@ -510,6 +567,16 @@ components:
               type: string
         isSquareWave:
           type: boolean
+      required:
+        - field
+        - name
+        - group
+        - equip
+        - type
+        - unit
+        - displayDp
+        - trans
+        - isSquareWave
       example:
         field: field_name
         name: 欄位名稱
@@ -535,6 +602,9 @@ components:
             type: array
             items:
               type: string
+      required:
+        - columns
+        - values
       example:
         columns: ["time", "1_1_ModePV", "1_1_TempPV"]
         values:
@@ -573,6 +643,15 @@ components:
             1: 低
             2: 中
             3: 高
+      required:
+        - field
+        - name
+        - group
+        - equip
+        - type
+        - unit
+        - displayType
+        - trans
     GetReport:
       type: object
       properties:
@@ -596,7 +675,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/report_field"
-            
+      required:
+        - interval
+        - time
+        - format
+        - show
+        - detail
+        - fields   
       example:
         interval: "month"
         time: "2016-07-14T00:00:00+08:00"
@@ -644,6 +729,11 @@ components:
           enum: ["1m", "5m", "1h"]
         fileName:
           type: string
+      required:
+        - timeRange
+        - pages
+        - dataInterval
+        - fileName
     CreateFavoriteReport:
       type: array
       items:
@@ -656,6 +746,9 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/report_field'
+        required:
+          - favouriteName
+          - fields
     CreateReportPdfCron:
       type: object
       properties:
@@ -674,6 +767,13 @@ components:
           type: boolean
         cronFormat:
           type: string
+      required:
+        - fileName
+        - fields
+        - interval
+        - show
+        - detail
+        - cronFormat
       example:
         fileName: "檔案名稱"
         fields:
@@ -730,6 +830,14 @@ components:
           cronFormat:
             type: string
             example: "0 0 0 * *"
+        required:
+          - key
+          - fileName
+          - fields
+          - interval
+          - show
+          - detail
+          - cronFormat
     CreateReportExcelCron:
       type: object
       properties:
@@ -747,6 +855,12 @@ components:
           enum: ["daily", "week", "month", "year"]
         cronFormat:
           type: string
+      required:
+        - fileName
+        - pages
+        - dataInterval
+        - interval
+        - cronFormat
       example:
         fileName: "檔案名稱"
         pages:
@@ -781,6 +895,13 @@ components:
           cronFormat:
             type: string
             example: "0 0 0 * *"
+        required:
+        - key
+        - fileName
+        - pages
+        - dataInterval
+        - interval
+        - cronFormat
   securitySchemes:
     bearerAuth:
       type: http
