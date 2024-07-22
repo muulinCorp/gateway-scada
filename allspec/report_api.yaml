@@ -524,6 +524,9 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/chartField"
+            required:
+            - name
+            - chart_fields
       required:
       - configs
       - charts

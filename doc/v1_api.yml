@@ -3007,6 +3007,9 @@ components:
           type: array
           items:
             type: object
+            required:
+            - name
+            - chart_fields
             properties:
               chart_fields:
                 type: array
