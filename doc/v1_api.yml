@@ -993,6 +993,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetReportExcelCronList'
+        "204":
+          description: No Content
         "400":
           description: Invalid Input
         "404":
