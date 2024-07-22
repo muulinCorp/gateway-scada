@@ -3146,11 +3146,16 @@ components:
             $ref: '#/components/schemas/excelPage'
         timeRange:
           type: object
+          required:
+          - start
+          - end
           properties:
             end:
               type: string
+              example: "2016-07-14T00:00:00+08:00"
             start:
               type: string
+              example: "2016-07-14T00:00:00+08:00"
     GetFieldDetail:
       type: object
       properties:

@@ -723,8 +723,13 @@ components:
           properties:
             start:
               type: string
+              example: "2016-07-14T00:00:00+08:00"
             end:
               type: string
+              example: "2016-07-14T00:00:00+08:00"
+          required:
+            - start
+            - end
         pages:
           type: array
           items:
