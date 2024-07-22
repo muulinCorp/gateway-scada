@@ -281,7 +281,7 @@ paths:
           description: Invalid Input
         '404':
           description: Gateway or Sensor not found
-  /v1/report/excel/cron/{KEY}:
+  /v2/report/excel/cron/{KEY}:
     put:
       tags: [report]
       summary: 更新excel Cron設定
