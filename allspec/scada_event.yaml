@@ -52,10 +52,22 @@ paths:
                   $ref: '#/components/schemas/GetEventList'
         '204':
           description: no content
+          content:
+            text/plain:
+              schema:
+                type: string
         '403':
           description: alert config disable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v2/warning/realtime:
     get:
       tags: [ews]
@@ -77,10 +89,22 @@ paths:
                   $ref: '#/components/examples/WarningRealtimeExample'
         '204':
           description: no content
+          content:
+            text/plain:
+              schema:
+                type: string
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v2/warning/realtime/confirmation:
     post:
       tags: [ews]
@@ -100,8 +124,22 @@ paths:
           description: OK
         '400':
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '500':
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v2/warning:
     get:
       tags: [ews]
@@ -152,10 +190,42 @@ paths:
                   $ref: '#/components/examples/WarningListExample'
         '204':
           description: no content
+          content:
+            text/plain:
+              schema:
+                type: string
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '500':
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
 components:
   schemas:
+    ErrorsResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        service:
+          type: string
+        status:
+          type: integer
+          format: int32
+      required:
+        - error
+        - status
+        - service
+      example:
+        error: "this is error message"
+        status: 400
+        service: "scada"
     fieldInfo:
       type: object
       properties:
@@ -163,6 +233,9 @@ components:
           type: string
         name:
           type: string
+      required:
+        - field
+        - name
     logical:
       type: object
       properties:
@@ -171,6 +244,9 @@ components:
           enum: ['=', '!=', '>', '<', '>=', '<=', '&=']
         value:
           type: number
+      required:
+        - op
+        - value
     condition:
       type: object
       properties:
@@ -200,6 +276,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/logical'
+      required:
+        - enable
+        - time_range
+        - week_days
+        - frequency
+        - logicals
     GetEventList:
       properties:
         time:
@@ -212,6 +294,12 @@ components:
           type: string
         detail:
           type: string
+      required:
+        - time
+        - service
+        - type
+        - summarize
+        - detail
     GetWarningRealtime:
       type: object
       properties:
@@ -243,6 +331,18 @@ components:
                 type: string
               account:
                 type: string
+            required:
+              - time
+              - account
+      required:
+        - key
+        - time
+        - name
+        - type
+        - field_info
+        - detail
+        - is_viewed
+        - view_logs
     rubaseDetail:
       type: object
       properties:
@@ -253,6 +353,8 @@ components:
       properties:
         error_msg:
           type: string
+      required:
+        - error_msg
     emptyDetail:
       type: object
     GetWarning:
@@ -291,6 +393,18 @@ components:
                 type: string
               account:
                 type: string
+            required:
+              - time
+              - account
+      required:
+        - start_time
+        - end_time
+        - duration
+        - name
+        - type
+        - field_info
+        - detail
+        - view_logs
   examples:
     WarningRealtimeExample:
       value:

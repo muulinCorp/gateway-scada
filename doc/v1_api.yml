@@ -199,10 +199,22 @@ paths:
                   $ref: '#/components/schemas/GetEventList'
         "204":
           description: no content
+          content:
+            text/plain:
+              schema:
+                type: string
         "403":
           description: alert config disable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/layout/electric:
@@ -1567,8 +1579,22 @@ paths:
                   $ref: '#/components/examples/WarningListExample'
         "204":
           description: no content
+          content:
+            text/plain:
+              schema:
+                type: string
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "500":
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning/realtime:
@@ -1592,10 +1618,22 @@ paths:
                   $ref: '#/components/examples/WarningRealtimeExample'
         "204":
           description: no content
+          content:
+            text/plain:
+              schema:
+                type: string
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning/realtime/confirmation:
@@ -1617,8 +1655,22 @@ paths:
           description: OK
         "400":
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "500":
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning/setting:
@@ -3206,6 +3258,12 @@ components:
               type: boolean
               example: true
     GetEventList:
+      required:
+      - time
+      - service
+      - type
+      - summarize
+      - detail
       properties:
         detail:
           type: string
@@ -3546,6 +3604,15 @@ components:
             $ref: '#/components/schemas/intervalAct'
     GetWarning:
       type: object
+      required:
+      - start_time
+      - end_time
+      - duration
+      - name
+      - type
+      - field_info
+      - detail
+      - view_logs
       properties:
         detail:
           oneOf:
@@ -3574,6 +3641,9 @@ components:
           type: array
           items:
             type: object
+            required:
+            - time
+            - account
             properties:
               account:
                 type: string
@@ -3581,6 +3651,15 @@ components:
                 type: string
     GetWarningRealtime:
       type: object
+      required:
+      - key
+      - time
+      - name
+      - type
+      - field_info
+      - detail
+      - is_viewed
+      - view_logs
       properties:
         detail:
           type: object
@@ -3605,6 +3684,9 @@ components:
           type: array
           items:
             type: object
+            required:
+            - time
+            - account
             properties:
               account:
                 type: string
@@ -6138,6 +6220,8 @@ components:
         type: string
     alarmDetail:
       type: object
+      required:
+      - error_msg
       properties:
         error_msg:
           type: string
@@ -6191,6 +6275,12 @@ components:
           type: string
     condition:
       type: object
+      required:
+      - enable
+      - time_range
+      - week_days
+      - frequency
+      - logicals
       properties:
         enable:
           type: boolean
@@ -6264,6 +6354,9 @@ components:
           example: A架
     fieldInfo:
       type: object
+      required:
+      - field
+      - name
       properties:
         field:
           type: string
@@ -6278,6 +6371,9 @@ components:
           $ref: '#/components/schemas/timeAct'
     logical:
       type: object
+      required:
+      - op
+      - value
       properties:
         op:
           type: string
