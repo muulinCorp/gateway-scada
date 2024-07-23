@@ -236,6 +236,16 @@ components:
       required:
         - field
         - name
+    frequency:
+      type: object
+      properties:
+        minutes:
+          type: integer
+        times:
+          type: integer
+      required:
+        - minutes
+        - times
     logical:
       type: object
       properties:
@@ -266,12 +276,7 @@ components:
           items:
             type: integer
         frequency:
-          type: object
-          properties:
-            minutes:
-              type: integer
-            times:
-              type: integer
+          $ref: '#/components/schemas/frequency'
         logicals:
           type: array
           items:
@@ -347,7 +352,32 @@ components:
       type: object
       properties:
         condition:
-          $ref: '#/components/schemas/condition'
+          type: object
+          properties:
+            time_range:
+              type: object
+              properties:
+                start:
+                  type: string
+                  example: "00:00:00Z"
+                end:
+                  type: string
+                  example: "23:59:59Z"
+            week_days:
+              type: array
+              items:
+                type: integer
+            frequency:
+              $ref: '#/components/schemas/frequency'
+            logicals:
+              type: array
+              items:
+                $ref: '#/components/schemas/logical'
+          required:
+            - time_range
+            - week_days
+            - frequency
+            - logicals
       required:
         - condition
     alarmDetail:
