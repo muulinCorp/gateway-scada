@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
-  title: Scada-Auth-Api
+  version: 1.0.1
+  title: Scada-Auth-Service
   description: scada授權服務功能規格
 
 paths:
@@ -23,6 +23,9 @@ paths:
                   type: string
                   description: 密碼
                   example: 1234
+              required:
+                - account
+                - pwd
       responses:
         '200':
           description: 回傳使用者Token，做API使用者驗證
@@ -41,16 +44,33 @@ paths:
                     type: string
                     enum: [user, admin]
                     description: 權限
+                required:
+                  - refresh
+                  - token
+                  - permission
                 example:
                   refresh: 85NIXszWOzL6oSJuSdIMBOCSOnQHrOqeROfAy_vAwtyU9Asd2t9PE9WDubG0YNceb8czjmeQxDNj2uS_mC6YiNAwmOUkfgVeQnuM8xiItKM4qTwkWFSOHIqrn7UqyggJGYosA-ilF9PpKBRiqm-EKvS_ptioNQHe3wtDHJS1YgpXtGtzoyIamCVBxUXJSukczRdKfh5xjdtD-1zDOVsHWM6WUkhfGUK1qew-vgSuXBiT0uEzqpDLt-mawQqDH3kZgiReTc3mmxkSlY2Eiq5Z6yf6UyCkpnd_C0R3lEe6rw==
                   token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
                   permission: user
         '400':
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '404':
           description: 使用者帳號或密碼錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+                  
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v1/pwd:
     put:
       summary: 修改密碼
@@ -69,15 +89,31 @@ paths:
                   example: 1234
                 new:
                   type: string
-                  description: 新密碼
+                  description: 舊密碼
                   example: 5678
+              required:
+                - old
+                - new
       responses:
         '200':
           description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
         '400':
           description: invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v1/token/remote:
     post:
       summary: 取得遠端控制Token
@@ -94,6 +130,8 @@ paths:
                   type: string
                   description: 使用者帳號
                   example: 1234
+              required:
+                - pwd
       responses:
         '200':
           description: ok
@@ -105,12 +143,22 @@ paths:
                   token:
                     type: string
                     description: 身份驗證
+                required:
+                  - token
                 example:
                   token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
         '400':
           description: invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v1/token/refresh:
     get:
       summary: 更新access token
@@ -132,12 +180,22 @@ paths:
                   token:
                     type: string
                     description: 身份驗證
+                required:
+                  - token
                 example:
                   token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
         '400':
           description: invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v1/register:
     post:
       summary: 使用者註冊
@@ -164,16 +222,53 @@ paths:
                   type: string
                   description: 驗證碼
                   example: 1234
+              required:
+                - account
+                - pwd
+                - perm
+                - key
       responses:
         '200':
           description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
         '400':
           description: invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    ErrorsResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        service:
+          type: string
+        status:
+          type: integer
+          format: int32
+      required:
+        - error
+        - status
+        - service
+      example:
+        error: "this is error message"
+        status: 400
+        service: "scada"

@@ -5,7 +5,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.1
+  version: 1.0.2
 servers:
 - url: https://api-dev.oosa.life
   description: Dev API
@@ -26,7 +26,7 @@ servers:
 - url: http://rubase-alert-svc:9080
   description: Early_Warning_Service
 tags:
-- name: Scada-Auth-Api
+- name: Scada-Auth-Service
   description: scada授權服務功能規格
 - name: Com2Scada
   description: Scada connect with Communicate service
@@ -592,7 +592,7 @@ paths:
   /web/login:
     post:
       tags:
-      - Scada-Auth-Api
+      - Scada-Auth-Service
       summary: 登入
       operationId: login
       requestBody:
@@ -600,6 +600,9 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+              - account
+              - pwd
               properties:
                 account:
                   type: string
@@ -620,6 +623,10 @@ paths:
                   permission: user
                   refresh: 85NIXszWOzL6oSJuSdIMBOCSOnQHrOqeROfAy_vAwtyU9Asd2t9PE9WDubG0YNceb8czjmeQxDNj2uS_mC6YiNAwmOUkfgVeQnuM8xiItKM4qTwkWFSOHIqrn7UqyggJGYosA-ilF9PpKBRiqm-EKvS_ptioNQHe3wtDHJS1YgpXtGtzoyIamCVBxUXJSukczRdKfh5xjdtD-1zDOVsHWM6WUkhfGUK1qew-vgSuXBiT0uEzqpDLt-mawQqDH3kZgiReTc3mmxkSlY2Eiq5Z6yf6UyCkpnd_C0R3lEe6rw==
                   token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
+                required:
+                - refresh
+                - token
+                - permission
                 properties:
                   permission:
                     type: string
@@ -635,14 +642,26 @@ paths:
                     description: access token
         "400":
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "404":
           description: 使用者帳號或密碼錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /web/pwd:
     put:
       tags:
-      - Scada-Auth-Api
+      - Scada-Auth-Service
       summary: 修改密碼
       operationId: change-password
       requestBody:
@@ -650,10 +669,13 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+              - old
+              - new
               properties:
                 new:
                   type: string
-                  description: 新密碼
+                  description: 舊密碼
                   example: 5678
                 old:
                   type: string
@@ -662,10 +684,23 @@ paths:
       responses:
         "200":
           description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
         "400":
           description: invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/queue:
@@ -888,7 +923,7 @@ paths:
   /web/register:
     post:
       tags:
-      - Scada-Auth-Api
+      - Scada-Auth-Service
       summary: 使用者註冊
       operationId: register
       requestBody:
@@ -896,6 +931,11 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+              - account
+              - pwd
+              - perm
+              - key
               properties:
                 account:
                   type: string
@@ -918,10 +958,23 @@ paths:
       responses:
         "200":
           description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
         "400":
           description: invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /web/report/{TYPE}/cron/{KEY}:
     delete:
       tags:
@@ -1382,7 +1435,7 @@ paths:
   /web/token/refresh:
     get:
       tags:
-      - Scada-Auth-Api
+      - Scada-Auth-Service
       summary: 更新access token
       operationId: refresh-token
       parameters:
@@ -1400,18 +1453,28 @@ paths:
                 type: object
                 example:
                   token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
+                required:
+                - token
                 properties:
                   token:
                     type: string
                     description: 身份驗證
         "400":
           description: invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /web/token/remote:
     post:
       tags:
-      - Scada-Auth-Api
+      - Scada-Auth-Service
       summary: 取得遠端控制Token
       operationId: get-remote-token
       requestBody:
@@ -1419,6 +1482,8 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+              - pwd
               properties:
                 pwd:
                   type: string
@@ -1433,14 +1498,24 @@ paths:
                 type: object
                 example:
                   token: eyJhbGciOiJSUzI1NiIsImtpZCI6Im1sLXY1IiwidHlwIjoiSldUIn0.eyJleHAiOjE3MTY4ODE0ODAsImlhdCI6MTcxNjg3Nzg4MCwiaXNzIjoibG9jYWxob3N0OjIwODAiLCJwZXIiOiJhZG1pbiIsInN1YiI6ImFkbWluIn0.DAqGvadU3WPoGTfGoAL4s1DBVZi1V0ocpYO3M4jjbRDnZ8OzXs9riV8Zc7uUIeqWi9tINzVbTKos1j1j1Fi7zt9E8o7k41_KeVdgRKL8cnnzaypmocg4y4NLwdXZEyl0svN9X1VBq2kMoRlxxqXTQstDiSLtW8iIFNkt518zB9R8jSgaswH4srYGXYJjOs7maq4o8etjQKgHBA-6UMR3OrgkALt3W_5z3SGM3wSg-HX8a0K3CSzr_MAaOJbozLmq5jGktTFjZAGIoMxI29VE-5HpMIRecKMLB6CW84gO9527cVpLWG3uiH-URT1jwr3_oQHO_ycpExThvLK71WUugw
+                required:
+                - token
                 properties:
                   token:
                     type: string
                     description: 身份驗證
         "400":
           description: invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: interval server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning:
@@ -2476,6 +2551,24 @@ components:
         upper:
           type: integer
           example: 100
+    ErrorsResponse:
+      type: object
+      example:
+        error: this is error message
+        service: scada
+        status: 400
+      required:
+      - error
+      - status
+      - service
+      properties:
+        error:
+          type: string
+        service:
+          type: string
+        status:
+          type: integer
+          format: int32
     EventDetail:
       type: array
       example:
