@@ -1550,7 +1550,7 @@ paths:
         schema:
           type: string
           enum:
-          - rubase-alert
+          - rubase_alert
           - alarm
           - com2scada
       - name: start
@@ -3615,7 +3615,7 @@ components:
       - view_logs
       properties:
         detail:
-          oneOf:
+          anyOf:
           - $ref: '#/components/schemas/rubaseDetail'
           - $ref: '#/components/schemas/alarmDetail'
           - $ref: '#/components/schemas/com2scadaDetail'
@@ -3662,7 +3662,7 @@ components:
       - view_logs
       properties:
         detail:
-          oneOf:
+          anyOf:
           - $ref: '#/components/schemas/rubaseDetail'
           - $ref: '#/components/schemas/alarmDetail'
           - $ref: '#/components/schemas/com2scadaDetail'
@@ -3680,7 +3680,7 @@ components:
         type:
           type: string
           enum:
-          - rubase-alert
+          - rubase_alert
           - alarm
           - com2scada
         view_logs:

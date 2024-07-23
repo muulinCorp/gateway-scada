@@ -160,7 +160,7 @@ paths:
           required: false
           schema:
             type: string
-            enum: ["rubase-alert", "alarm", "com2scada"]
+            enum: ["rubase_alert", "alarm", "com2scada"]
           description: 類型 (預警、告警、欄位斷線)
         - in: query
           name: start
@@ -312,11 +312,11 @@ components:
           description: 預警名稱
         type:
           type: string
-          enum: ["rubase-alert", "alarm", "com2scada"]
+          enum: ["rubase_alert", "alarm", "com2scada"]
         field_info:
           $ref: '#/components/schemas/fieldInfo'
         detail:
-          oneOf:
+          anyOf:
             - $ref: '#/components/schemas/rubaseDetail'
             - $ref: '#/components/schemas/alarmDetail'
             - $ref: '#/components/schemas/com2scadaDetail'
@@ -391,11 +391,10 @@ components:
         field_info:
           $ref: '#/components/schemas/fieldInfo'
         detail:
-          oneOf:
+          anyOf:
             - $ref: '#/components/schemas/rubaseDetail'
             - $ref: '#/components/schemas/alarmDetail'
-            - $ref: '#/components/schemas/com2scadaDetail'
-            
+            - $ref: '#/components/schemas/com2scadaDetail'      
         view_logs:
           type: array
           items:
