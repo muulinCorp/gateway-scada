@@ -3618,7 +3618,7 @@ components:
           oneOf:
           - $ref: '#/components/schemas/rubaseDetail'
           - $ref: '#/components/schemas/alarmDetail'
-          - $ref: '#/components/schemas/emptyDetail'
+          - $ref: '#/components/schemas/com2scadaDetail'
         duration:
           type: integer
           description: 單位為分鐘
@@ -3662,11 +3662,10 @@ components:
       - view_logs
       properties:
         detail:
-          type: object
-          description: 依照不同類型會有不同的欄位
-          properties:
-            condition:
-              $ref: '#/components/schemas/condition'
+          oneOf:
+          - $ref: '#/components/schemas/rubaseDetail'
+          - $ref: '#/components/schemas/alarmDetail'
+          - $ref: '#/components/schemas/com2scadaDetail'
         field_info:
           $ref: '#/components/schemas/fieldInfo'
         is_viewed:
@@ -3680,6 +3679,10 @@ components:
           type: string
         type:
           type: string
+          enum:
+          - rubase-alert
+          - alarm
+          - com2scada
         view_logs:
           type: array
           items:
@@ -6273,6 +6276,16 @@ components:
           type: string
         unit:
           type: string
+    com2scadaDetail:
+      type: object
+      required:
+      - connect_info
+      - error_msg
+      properties:
+        connect_info:
+          type: string
+        error_msg:
+          type: string
     condition:
       type: object
       required:
@@ -6483,6 +6496,8 @@ components:
           example: "2020-09-20T08:00:00+08:00"
     rubaseDetail:
       type: object
+      required:
+      - condition
       properties:
         condition:
           $ref: '#/components/schemas/condition'

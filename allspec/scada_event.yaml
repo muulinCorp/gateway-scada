@@ -312,14 +312,14 @@ components:
           description: 預警名稱
         type:
           type: string
+          enum: ["rubase-alert", "alarm", "com2scada"]
         field_info:
           $ref: '#/components/schemas/fieldInfo'
         detail:
-          type: object
-          description: 依照不同類型會有不同的欄位
-          properties:
-            condition:
-              $ref: '#/components/schemas/condition'
+          oneOf:
+            - $ref: '#/components/schemas/rubaseDetail'
+            - $ref: '#/components/schemas/alarmDetail'
+            - $ref: '#/components/schemas/com2scadaDetail'
         is_viewed:
           type: boolean
         view_logs:
@@ -347,13 +347,25 @@ components:
       type: object
       properties:
         condition:
-              $ref: '#/components/schemas/condition'
+          $ref: '#/components/schemas/condition'
+      required:
+        - condition
     alarmDetail:
       type: object
       properties:
         error_msg:
           type: string
       required:
+        - error_msg
+    com2scadaDetail:
+      type: object
+      properties:
+        connect_info:
+          type: string
+        error_msg:
+          type: string
+      required:
+        - connect_info
         - error_msg
     emptyDetail:
       type: object
@@ -382,7 +394,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/rubaseDetail'
             - $ref: '#/components/schemas/alarmDetail'
-            - $ref: '#/components/schemas/emptyDetail'
+            - $ref: '#/components/schemas/com2scadaDetail'
             
         view_logs:
           type: array
