@@ -345,7 +345,7 @@ components:
       properties:
         enable:
           type: boolean
-        timeRange:
+        time_range:
           $ref: '#/components/schemas/timeRange'
         week_days:
           type: array
@@ -359,7 +359,7 @@ components:
             $ref: '#/components/schemas/logical'
       required:
         - enable
-        - timeRange
+        - time_range
         - week_days
         - frequency
         - logicals
@@ -452,7 +452,7 @@ components:
         unit: ˚C
         conditions:
         - enable: true
-          timeRange:
+          time_range:
             start: "08:00:00Z"
             end: "17:00:00Z"
           week_days:
@@ -478,7 +478,7 @@ components:
           unit: ˚C
           conditions:
           - enable: true
-            timeRange:
+            time_range:
               start: "08:00:00Z"
               end: "17:00:00Z"
             week_days:
@@ -504,7 +504,7 @@ components:
           unit: ˚C
           conditions:
             - enable: true
-              timeRange:
+              time_range:
                 start: "08:00:00Z"
                 end: "17:00:00Z"
               week_days:

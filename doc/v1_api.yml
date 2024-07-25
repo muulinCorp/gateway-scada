@@ -6726,7 +6726,7 @@ components:
           logicals:
           - op: '>'
             value: 25
-          timeRange:
+          time_range:
             end: 17:00:00Z
             start: 08:00:00Z
           week_days:
@@ -6748,7 +6748,7 @@ components:
           logicals:
           - op: '>'
             value: 25
-          timeRange:
+          time_range:
             end: 17:00:00Z
             start: 08:00:00Z
           week_days:
@@ -6774,7 +6774,7 @@ components:
           logicals:
           - op: '>'
             value: 25
-          timeRange:
+          time_range:
             end: 17:00:00Z
             start: 08:00:00Z
           week_days:
