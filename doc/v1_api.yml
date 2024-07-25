@@ -1694,8 +1694,16 @@ paths:
           description: no content
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
     post:
@@ -1719,16 +1727,30 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - id
                 properties:
                   id:
                     type: string
                     example: fb2c4869-5238-4ea5-994c-677666927ea1
         "400":
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning/setting/{ID}:
@@ -1749,10 +1771,22 @@ paths:
           description: success
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "404":
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
     get:
@@ -1779,6 +1813,18 @@ paths:
                   $ref: '#/components/examples/GetWarningSettingDetail'
         "204":
           description: no content
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "500":
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
     put:
@@ -1806,10 +1852,22 @@ paths:
           description: success
         "401":
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "404":
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning/setting/{ID}/condition/enable:
@@ -1840,8 +1898,28 @@ paths:
           description: OK
         "400":
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "404":
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "500":
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
   /web/warning/setting/{ID}/enable:
@@ -1870,8 +1948,28 @@ paths:
           description: OK
         "400":
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         "404":
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        "500":
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
       security:
       - bearerAuth: []
 components:
@@ -2030,16 +2128,17 @@ components:
           type: boolean
     CreateWarning:
       type: object
+      required:
+      - name
+      - enable
+      - unit
+      - conditions
+      - apply_fields
       properties:
         apply_fields:
           type: array
           items:
-            type: object
-            properties:
-              field:
-                type: string
-              name:
-                type: string
+            $ref: '#/components/schemas/applyFields'
         conditions:
           type: array
           items:
@@ -3556,6 +3655,9 @@ components:
       type: array
       items:
         type: object
+        required:
+        - key
+        - value
         properties:
           key:
             type: string
@@ -3563,9 +3665,21 @@ components:
             type: string
     GetScheduleDetail:
       type: object
+      required:
+      - apply_date
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
       properties:
         apply_date:
           type: object
+          required:
+          - start
+          - end
           properties:
             end:
               type: string
@@ -3697,16 +3811,18 @@ components:
                 type: string
     GetWarningSettingDetail:
       type: object
+      required:
+      - id
+      - name
+      - enable
+      - unit
+      - conditions
+      - apply_fields
       properties:
         apply_fields:
           type: array
           items:
-            type: object
-            properties:
-              field:
-                type: string
-              name:
-                type: string
+            $ref: '#/components/schemas/applyFields'
         conditions:
           type: array
           items:
@@ -3723,6 +3839,12 @@ components:
       type: array
       items:
         type: object
+        required:
+        - id
+        - name
+        - enable
+        - unit
+        - conditions
         properties:
           conditions:
             type: array
@@ -6228,6 +6350,15 @@ components:
       properties:
         error_msg:
           type: string
+    applyFields:
+      required:
+      - field
+      - name
+      properties:
+        field:
+          type: string
+        name:
+          type: string
     chartField:
       type: object
       example:
@@ -6298,12 +6429,7 @@ components:
         enable:
           type: boolean
         frequency:
-          type: object
-          properties:
-            minutes:
-              type: integer
-            times:
-              type: integer
+          $ref: '#/components/schemas/frequency'
         logicals:
           type: array
           items:
@@ -6375,8 +6501,21 @@ components:
           type: string
         name:
           type: string
+    frequency:
+      type: object
+      required:
+      - minutes
+      - times
+      properties:
+        minutes:
+          type: integer
+        times:
+          type: integer
     intervalAct:
       type: object
+      required:
+      - start
+      - end
       properties:
         end:
           $ref: '#/components/schemas/timeAct'
@@ -6481,6 +6620,9 @@ components:
           type: string
     reversDateTimeAct:
       type: object
+      required:
+      - time
+      - act
       properties:
         act:
           type: array
@@ -6500,9 +6642,37 @@ components:
       - condition
       properties:
         condition:
-          $ref: '#/components/schemas/condition'
+          type: object
+          required:
+          - time_range
+          - week_days
+          - frequency
+          - logicals
+          properties:
+            frequency:
+              $ref: '#/components/schemas/frequency'
+            logicals:
+              type: array
+              items:
+                $ref: '#/components/schemas/logical'
+            time_range:
+              type: object
+              properties:
+                end:
+                  type: string
+                  example: 23:59:59Z
+                start:
+                  type: string
+                  example: 00:00:00Z
+            week_days:
+              type: array
+              items:
+                type: integer
     timeAct:
       type: object
+      required:
+      - time
+      - act
       properties:
         act:
           type: array
@@ -6516,6 +6686,15 @@ components:
           type: string
           description: 開始時間
           example: 08:00:00+08:00
+    timeRange:
+      type: object
+      properties:
+        end:
+          type: string
+          example: 23:59:59Z
+        start:
+          type: string
+          example: 00:00:00Z
     userChart:
       type: object
       required:

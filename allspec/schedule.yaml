@@ -160,6 +160,9 @@ components:
             type: string
           description: 二個模式
           example: ["class", "afterClass"]
+      required:
+        - time
+        - act
     timeAct:
       type: object
       properties:
@@ -173,6 +176,9 @@ components:
             type: string
           description: action key
           example: ["close_light", "open_air_conditioner"]
+      required:
+        - time
+        - act
     intervalAct:
       type: object
       properties:
@@ -180,6 +186,9 @@ components:
           $ref: '#/components/schemas/timeAct'
         end:
           $ref: '#/components/schemas/timeAct'
+      required:
+        - start
+        - end
     GetScenarioOptions:
       type: array
       items:
@@ -189,6 +198,9 @@ components:
             type: string
           value:
             type: string
+        required:
+          - key
+          - value
     GetReservationDetail:
       type: array
       items:
@@ -206,6 +218,9 @@ components:
             end:
               type: string
               description: 排程適用期間
+          required:
+            - start
+            - end
         mon:
           type: array
           items:
@@ -234,6 +249,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/intervalAct'
+      required:
+        - apply_date
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
   securitySchemes:
     bearerAuth:
       type: http

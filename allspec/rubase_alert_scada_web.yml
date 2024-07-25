@@ -31,12 +31,26 @@ paths:
                   id:
                     type: string
                     example: fb2c4869-5238-4ea5-994c-677666927ea1
+                required:
+                  - id
         '400':
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
     get:
       tags: [ews]
       summary: 取得預警設定列表
@@ -57,8 +71,16 @@ paths:
           description: no content
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v2/warning/setting/{ID}:
     get:
       tags: [ews]
@@ -84,6 +106,18 @@ paths:
                   $ref: '#/components/examples/GetWarningSettingDetail'
         '204':
           description: no content
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '500':
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
     put:
       tags: [ews]
       summary: 更新預警
@@ -109,10 +143,22 @@ paths:
           description: success
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '404':
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
     delete:
       tags: [ews]
       summary: 刪除預警
@@ -130,10 +176,22 @@ paths:
           description: success
         '401':
           description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '404':
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v2/warning/setting/{ID}/enable:
     put:
       tags: [ews]
@@ -160,8 +218,28 @@ paths:
           description: OK
         '400':
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '404':
           description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '500':
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
   /v2/warning/setting/{ID}/condition/enable:
     put:
       tags: [ews]
@@ -190,11 +268,48 @@ paths:
           description: OK
         '400':
           description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
         '404':
           description: not found
-  
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+        '500':
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
 components:
   schemas:
+    ErrorsResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        service:
+          type: string
+        status:
+          type: integer
+          format: int32
+      required:
+        - error
+        - status
+        - service
+      example:
+        error: "this is error message"
+        status: 400
+        service: "scada"
     logical:
       type: object
       properties:
@@ -203,35 +318,60 @@ components:
           enum: ['=', '!=', '>', '<', '>=', '<=', '&=']
         value:
           type: number
+      required:
+        - op
+        - value
+    frequency:
+      type: object
+      properties:
+        minutes:
+          type: integer
+        times:
+          type: integer
+      required:
+        - minutes
+        - times
+    timeRange:
+      type: object
+      properties:
+        start:
+          type: string
+          example: "00:00:00Z"
+        end:
+          type: string
+          example: "23:59:59Z"
     condition:
       type: object
       properties:
         enable:
           type: boolean
         timeRange:
-          type: object
-          properties:
-            start:
-              type: string
-              example: "00:00:00Z"
-            end:
-              type: string
-              example: "23:59:59Z"
+          $ref: '#/components/schemas/timeRange'
         week_days:
           type: array
           items:
             type: integer
         frequency:
-          type: object
-          properties:
-            minutes:
-              type: integer
-            times:
-              type: integer
+          $ref: '#/components/schemas/frequency' 
         logicals:
           type: array
           items:
             $ref: '#/components/schemas/logical'
+      required:
+        - enable
+        - timeRange
+        - week_days
+        - frequency
+        - logicals
+    applyFields:
+      properties:
+        field:
+          type: string
+        name:
+          type: string
+      required:
+        - field
+        - name
     CreateWarning:
       type: object
       properties:
@@ -248,12 +388,13 @@ components:
         apply_fields:
           type: array
           items:
-            type: object
-            properties:
-              field:
-                type: string
-              name:
-                type: string
+            $ref: '#/components/schemas/applyFields'   
+      required:
+        - name
+        - enable
+        - unit
+        - conditions
+        - apply_fields
     GetWarningSettingList:
       type: array
       items:
@@ -271,6 +412,12 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/condition'
+        required:
+          - id
+          - name
+          - enable
+          - unit
+          - conditions
     GetWarningSettingDetail:
       type: object
       properties:
@@ -289,12 +436,14 @@ components:
         apply_fields:
           type: array
           items:
-            type: object
-            properties:
-              field:
-                type: string
-              name:
-                type: string
+            $ref: '#/components/schemas/applyFields'
+      required:
+        - id
+        - name
+        - enable
+        - unit
+        - conditions
+        - apply_fields
   examples:
     CreateWarning:
       value:
