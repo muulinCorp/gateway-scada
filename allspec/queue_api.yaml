@@ -1,18 +1,18 @@
 openapi: 3.0.2
 info:
   version: "1.0.0"
-  title: "Queue Service"
+  title: "Queue_Service"
   description: "Scada Queue service"
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /v1/queue:
+  /v1/queue/dashboard:
     get:
       tags: [queue]
-      summary: 取得系統佇列
-      operationId: get-queue
+      summary: 取得系統佇列儀表版
+      operationId: get-queue-dashboard
       security:
         - BearerAuth: []
       responses:
@@ -21,7 +21,47 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetQueue'
+                $ref: '#/components/schemas/GetQueueDashboard'
+              examples:
+                queueDashboard:
+                  $ref: '#/components/examples/getQueueDashboard'
+        '500':
+          description: 伺服器發生錯誤
+  /v1/queue/dashboard/sse:
+    get:
+      tags: [queue]
+      summary: 取得系統佇列儀表版 SSE
+      operationId: get-queue-dashboard-sse
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/GetQueueDashboard'
+              examples:
+                queueDashboard:
+                  $ref: '#/components/examples/getQueueDashboard'
+  /v1/queue/equip_layout:
+    get:
+      tags: [queue]
+      summary: 取得智慧除霜設備清單
+      operationId: get-queue-equip-layout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupsDetail'
+              examples:
+                equipLayout:
+                  $ref: '#/components/examples/getEquipLayout'
+              
         '204':
           description: no content
         '401':
@@ -42,6 +82,7 @@ paths:
               examples:
                 error500:
                   $ref: '#/components/examples/error500'
+  /v1/queue:
     post:
       tags: [queue]
       summary: 建立佇列群組
@@ -53,9 +94,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateQueue'
+            examples:
+              createQueue:
+                $ref: '#/components/examples/createQueue'
       responses:
         '200':
           description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 50f71bac-c8d2-460c-b281-36d4ef8fbbfa
+                required:
+                  - id
         '400':
           description: 無效的輸入
           content:
@@ -102,7 +156,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateQueue'
+                $ref: '#/components/schemas/GetQueueDetail'
+              examples:
+                getQueueDetail:
+                  $ref: '#/components/examples/getQueueDetail'
         '401':
           description: permission denied
           content:
@@ -142,13 +199,17 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/CreateQueue'
+            examples:
+              createQueue:
+                $ref: '#/components/examples/createQueue'
       responses:
         '200':
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateQueue'
+          description: success      
         '401':
           description: permission denied
           content:
@@ -260,7 +321,7 @@ paths:
               examples:
                 error500:
                   $ref: '#/components/examples/error500'
-  /v1/queue/equip/{NAME}:
+  /v1/queue/equip/{ELEMENT_ID}:
     get:
       tags: [queue]
       summary: 取得queue設備資訊
@@ -269,7 +330,7 @@ paths:
         - BearerAuth: []
       parameters:
         - in: path
-          name: NAME
+          name: ELEMENT_ID
           required: true
           schema:
             type: string
@@ -280,6 +341,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueEquipInfo'
+              examples:
+                queueEquipInfo:
+                  $ref: '#/components/examples/getQueueEquipInfo'
         '204':
           description: no content
         '401':
@@ -320,11 +384,13 @@ paths:
         - in: query
           name: start
           required: true
+          example: 2022-01-01T00:00:00+08:00
           schema:
             type: string
         - in: query
           name: end
           required: true
+          example: 2022-01-01T00:00:00+08:00
           schema:
             type: string
       responses:
@@ -334,6 +400,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueLogArray'
+              examples:
+                queueLogArray:
+                  $ref: '#/components/examples/getQueueLogArray'
         '400':
           description: 無效的輸入
           content:
@@ -380,92 +449,29 @@ components:
     queListEquip:
       type: object
       properties:
+        element_id:
+          type: string
+          description: 設備id
         name:
           type: string
           description: 名稱
-        waitingTime:
+          readOnly: true
+        waiting_time:
           type: integer
           description: 預計執行等待時間(分)
-        remainTime:
+        remain_time:
           type: integer
           description: 當前除霜狀態剩餘時間(分)
-        totalRemainTime:
+        total_remain_time:
           type: integer
           description: 除霜流程剩餘時間(分)
       required:
+        - element_id
         - name
-        - waitingTime
-        - remainTime
-        - totalRemainTime
-    queEquip:
-      type: object
-      properties:
-        name:
-          type: string
-          description: 名稱
-        state_field:
-          type: string
-          description: 狀態
-        execute_field:
-          type: string
-          description: 執行除霜
-        waiting_field:
-          type: string
-          description: 預計執行等待時間欄位
-        processID_field:
-          type: string
-          description: 除霜程序ID
-        defDelayTime_field:
-          type: string
-          description: 除霜延遲時間
-        defTime_field:
-          type: string
-          description: 除霜時間
-        defDripTime_field:
-          type: string
-          description: 除霜滴水時間
-        defDelayRemainTime_field:
-          type: string
-          description: 除霜延遲剩餘時間
-        defRemainTime_field:
-          type: string
-          description: 除霜剩餘時間
-        defDripRemainTime_field:
-          type: string
-          description: 除霜滴水剩餘時間
-        defMode_field:
-          type: string
-          description: 除霜模式
-        defStopMode_field:
-          type: string
-          description: 除霜終止模式
-        ioStatus_field:
-          type: string
-          description: 輸入/出狀態
-        forcedDef_field:
-          type: string
-          description: 強制除霜/解除霜
-        errCode_field:
-          type: string
-          description: 錯誤提示
-      required:
-        - name
-        - state_field
-        - execute_field
-        - waiting_field
-        - processID_field
-        - defDelayTime_field
-        - defTime_field
-        - defDripTime_field
-        - defDelayRemainTime_field
-        - defRemainTime_field
-        - defDripRemainTime_field
-        - defMode_field
-        - defStopMode_field
-        - ioStatus_field
-        - forcedDef_field
-        - errCode_field
-    GetQueue:
+        - waiting_time
+        - remain_time
+        - total_remain_time
+    GetQueueDashboard:
       type: array
       items:
         type: object
@@ -474,70 +480,75 @@ components:
             type: string
           name:
             type: string
+            description: 群組名稱
           concurrence:
             type: integer
-          equipNum:
+            format: int32
+            description: 群組同時除霜數量
+          equip_count:
             type: integer
+            format: int32
             description: 群組設備數量
           equips:
             type: array
+            description: 群組設備明細
             items:
               $ref: '#/components/schemas/queListEquip'
-          cutInlineNum:
+          cut_inline_count:
             type: integer
-            description: 插隊設備數量
-          cutInlineList:
+            description: 插隊(強制除霜)設備數量
+          cut_inline_list:
             type: array
             items:
               $ref: '#/components/schemas/queListEquip'
-          inlineNum:
+          inline_count:
             type: integer
             description: 排隊設備數量
-          inlineList:
+          inline_list:
             type: array
             items:
               $ref: '#/components/schemas/queListEquip'
-          delayNum:
+          delay_count:
             type: integer
             description: 群組延遲除霜設備數量
-          delayList:
+          delay_list:
             type: array
             items:
               $ref: '#/components/schemas/queListEquip'
-          defrostNum:
+          defrost_count:
             type: integer
             description: 群組除霜設備數量
-          defrostList:
+          defrost_list:
             type: array
             items:
               $ref: '#/components/schemas/queListEquip'
-          dripNum:
+          drip_count:
             type: integer
             description: 群組滴水設備數量
-          dripList:
+          drip_list:
             type: array
             items:
               $ref: '#/components/schemas/queListEquip'
-          createTime:
+          create_time:
             type: string
             description: 群組建立日期
       required:
         - id
         - name
         - concurrence
-        - equipNum
+        - equip_count
         - equips
-        - cutInlineNum
-        - cutInlineList
-        - inlineNum
-        - inlineList
-        - delayNum
-        - delayList
-        - defrostNum
-        - defrostList
-        - dripNum
-        - dripList
-        - createTime
+        - cut_inline_count
+        - cut_inline_list
+        - inline_count
+        - inline_list
+        - delay_count
+        - delay_list
+        - defrost_count
+        - defrost_list
+        - drip_count
+        - drip_list
+        - create_time
     CreateQueue:
       type: object
       properties:
@@ -548,82 +559,116 @@ components:
         equips:
           type: array
           items:
-            $ref: '#/components/schemas/queEquip'
+            type: string
       required:
         - name
         - concurrence
         - equips
+    GetQueueDetail:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/CreateQueue' 
+        equip_layout:
+          $ref: '#/components/schemas/GroupsDetail'
+    ElementDetail: 
+      type: object
+      properties:
+        id: 
+          type: string
+          example: EL_1685671772617118
+        name: 
+          type: string
+          example: FI1011 
+        defrost_group:
+          type: string
+        is_selected:
+          type: boolean      
+    GroupsDetail:
+      type: array
+      items:
+        type: object
+        properties:
+          name: 
+            type: string
+            example: 1F A庫 碼頭理貨區
+          elements:
+            type: array
+            items:
+              $ref: "#/components/schemas/ElementDetail"
     QueueEquipInfo:
       type: object
       properties:
-        name:
+        element_id:
           type: string
-        queueName:
+        equip_name:
+          type: string
+        queue_name:
           type: string
         state:
           type: string
           enum: ["none", "waiting", "force","inline", "cutInline", "delay", "defrost", "drip"]
-        waitingTime:
+        waiting_time:
           type: integer
           description: 預計等待除霜時間(分)
-        defDelayTime:
+        def_delay_time:
           type: integer
           description: 除霜延遲時間(分)
-        defTime:
+        def_time:
           type: integer
           description: 除霜時間(分)
-        defDripTime:
+        def_drip_time:
           type: integer
           description: 除霜滴水時間(分)
-        defDelayRemainTime:
+        def_delay_remain_time:
           type: integer
           description: 除霜延遲剩餘時間(分)
-        defRemainTime:
+        def_remain_time:
           type: integer
           description: 除霜剩餘時間(分)
-        defDripRemainTime:
+        def_drip_remain_time:
           type: integer
           description: 除霜滴水剩餘時間(分)
-        totalRemainTime:
+        total_remain_time:
           type: integer
           description: 除霜剩餘時間(分)
       required:
         - name
-        - queueName
+        - queue_name
         - state
-        - waitingTime
-        - defDelayTime
-        - defTime
-        - defDripTime
-        - defDelayRemainTime
-        - defRemainTime
-        - defDripRemainTime
-        - totalRemainTime
+        - waiting_time
+        - def_delay_time
+        - def_time
+        - def_drip_time
+        - def_delay_remain_time
+        - def_remain_time
+        - def_drip_remain_time
+        - total_remain_time
     MoveQueueEquip:
       type: object
       properties:
-        originQueID:
+        origin_que_id:
           type: string
-        targetQueID:
+        target_que_id:
           type: string
         equips:
           type: array
           items:
             type: string
       required:
-        - originQueID
-        - targetQueID
+        - origin_que_id
+        - target_que_id
         - equips
     QueueLogArray:
       type: array
       items:
         type: object
         properties:
-          equipName:
+          equip_name:
             type: string
-          processID:
+          process_id:
             type: string
-          stateLog:
+          state_logs:
             type: array
             items:
               type: object
@@ -632,33 +677,39 @@ components:
                   type: string
                 state:
                   type: string
-                defMode:
+                  enum: ["none", "waiting", "force","inline", "cutInline", "delay", "defrost", "drip"]
+                def_mode:
                   type: integer
+                  format: int32
                   description: 除霜模式
-                defStopMode:
+                def_stop_mode:
                   type: integer
+                  format: int32
                   description: 除霜終止模式
-                ioStatus:
+                io_status:
                   type: integer
+                  format: int32
                   description: 輸入/出狀態
-                forcedDef:
+                forced_def:
                   type: integer
+                  format: int32
                   description: 強制除霜/解除霜
-                errCode:
+                err_code:
                   type: integer
+                  format: int32
                   description: 錯誤提示
               required:
                 - time
                 - state
-                - defMode
-                - defStopMode
-                - ioStatus
-                - forcedDef
-                - errCode
+                - def_mode
+                - def_stop_mode
+                - io_status
+                - forced_def
+                - err_code
         required:
           - equipName
           - processID
-          - stateLog
+          - state_log
   examples:
     error400:
       value:
@@ -680,6 +731,136 @@ components:
         status: 500
         service: "scada"
         message: "this is error message"
+    getEquipLayout:
+      value: 
+        - name: "1F A庫 碼頭理貨區"
+          elements:
+            - id: "EL_1685671772617118"
+              name: "FI1011"
+              defrost_group: ""
+              is_selected: false
+            - id: "EL_1685671799014433"
+              name: "FI1012"
+              defrost_group: ""
+              is_selected: false
+            - id: "EL_1685671799020442"
+              name: "FI1013"
+              defrost_group: "groupA"
+              is_selected: true
+            - id: "EL_1685671799027592"
+              name: "FI1014"
+              defrost_group: ""
+              is_selected: false
+        - name: "1F B庫 冷凍暫存區"
+          elements:
+            - id: "EL_1685671799034036"
+              name: "FW1101"
+              defrost_group: ""
+              is_selected: false
+    getQueueDashboard:
+      value:
+        - id: 50f71bac-c8d2-460c-b281-36d4ef8fbbfa
+          name: "1F A庫 碼頭理貨區"
+          concurrence: 1
+          equip_count: 2
+          equips:
+            - element_id: "EL_1685671772617118"
+              name: "FI1011"
+              waiting_time: 0
+              remain_time: 0
+              total_remain_time: 0
+            - element_id: "EL_1685671799020442"
+              name: "FI1013"
+              waiting_time: 2
+              remain_time: 0
+              total_remain_time: 2
+          cut_inline_count: 0
+          cut_inline_list: []
+          inline_count: 0
+          inline_list: []
+          delay_count: 1
+          delay_list:
+            - element_id: "EL_1685671799020442"
+              name: "FI1013"
+              waiting_time: 2
+              remain_time: 0
+              total_remain_time: 2
+          defrost_count: 0
+          defrost_list: []
+          drip_count: 0
+          drip_list: []
+          create_time: "2024-04-11T18:58:00+08:00"
+    createQueue:
+      value:
+        name: "冷凍暫存區"
+        concurrence: 1
+        equips:
+          - "EL_1685671799034036"
+          - "EL_1685671799020442"
+    getQueueDetail:
+      value:
+        config:
+          name: "冷凍暫存區"
+          concurrence: 1
+          equips:
+            - "EL_1685671799034036"
+            - "EL_1685671799020442"
+        equip_layout:
+          - name: "1F A庫 碼頭理貨區"
+            elements:
+              - id: "EL_1685671799034036"
+                name: "FI1011"
+                defrost_group: "冷凍暫存區"
+                is_selected: true
+              - id: "EL_1685671799020442"
+                name: "FI1013"
+                defrost_group: "冷凍暫存區"
+                is_selected: true
+              - id: "EL_1685671799027592"
+                name: "FI1014"
+                defrost_group: ""
+                is_selected: false
+    getQueueEquipInfo:
+      value:
+        element_id: "EL_1685671799020442"
+        equip_name: "FI1013"
+        queue_name: H庫
+        state: "none"
+        waiting_time: 0
+        def_delay_time: 0
+        def_time: 0
+        def_drip_time: 0
+        def_delay_remain_time: 0
+        def_remain_time: 0
+        def_drip_remain_time: 0
+        total_remain_time: 0
+    getQueueLogArray:
+      value:
+        - equip_name: "FI1013"
+          process_id: "49812394"
+          state_logs:
+            - time: "2024-04-11T18:58:00+08:00"
+              state: "waiting"
+              def_mode: 0
+              def_stop_mode: 1
+              io_status: 0
+              forced_def: 0
+              err_code: 0
+            - time: "2024-04-11T19:00:00+08:00"
+              state: "inline"
+              def_mode: 0
+              def_stop_mode: 1
+              io_status: 0
+              forced_def: 0
+              err_code: 0
+            - time: "2024-04-11T19:01:00+08:00"
+              state: "delay"
+              def_mode: 0
+              def_stop_mode: 1
+              io_status: 0
+              forced_def: 0
+              err_code: 0
+
   securitySchemes:
     BearerAuth:
       type: http
