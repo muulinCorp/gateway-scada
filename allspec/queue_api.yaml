@@ -1,60 +1,47 @@
 openapi: 3.0.2
 info:
   version: "1.0.0"
-  title: "Queue_Service"
+  title: "Queue Service"
   description: "Scada Queue service"
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /v1/queue/dashboard:
-    get:
-      tags: [queue]
-      summary: 取得系統佇列儀表版
-      operationId: get-queue-dashboard
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetQueueDashboard'
-        '500':
-          description: 伺服器發生錯誤
-  /v1/queue/dashboard/sse:
-    get:
-      tags: [queue]
-      summary: 取得系統佇列儀表版 SSE
-      operationId: get-queue-dashboard-sse
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: success
-          content:
-            text/event-stream:
-              schema:
-                $ref: '#/components/schemas/GetQueueDashboard'
-  /v1/queue/equip_layout:
-    get:
-      tags: [queue]
-      summary: 取得智慧除霜設備清單
-      operationId: get-queue-equip-layout
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GroupsDetail'
-        '500':
-          description: 伺服器發生錯誤
   /v1/queue:
+    get:
+      tags: [queue]
+      summary: 取得系統佇列
+      operationId: get-queue
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetQueue'
+        '204':
+          description: no content
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
     post:
       tags: [queue]
       summary: 建立佇列群組
@@ -71,8 +58,31 @@ paths:
           description: success
         '400':
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
   /v1/queue/{ID}:
     get:
       tags: [queue]
@@ -92,9 +102,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetQueueDetail'
+                $ref: '#/components/schemas/CreateQueue'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        '404':
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error404'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
     put:
       tags: [queue]
       summary: 更新queue
@@ -114,8 +149,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateQueue'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        '404':
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error404'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
     delete:
       tags: [queue]
       summary: 刪除queue
@@ -131,8 +191,33 @@ paths:
       responses:
         '200':
           description: success
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        '404':
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error404'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
   /v1/queue/_move:
     put:
       tags: [queue]
@@ -150,8 +235,31 @@ paths:
           description: success
         '400':
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error401'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
   /v1/queue/equip/{NAME}:
     get:
       tags: [queue]
@@ -174,8 +282,33 @@ paths:
                 $ref: '#/components/schemas/QueueEquipInfo'
         '204':
           description: no content
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error401'
+        '404':
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error404:
+                  $ref: '#/components/examples/error404'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
   /v1/queue/log:
     get:
       tags: [queue]
@@ -203,10 +336,47 @@ paths:
                 $ref: '#/components/schemas/QueueLogArray'
         '400':
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error400:
+                  $ref: '#/components/examples/error400'
+        '401':
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error401'
         '500':
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
 components:
   schemas:
+    ErrorsResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        service:
+          type: string
+        status:
+          type: integer
+          format: int32
+      required:
+        - error
+        - status
+        - service
     queListEquip:
       type: object
       properties:
@@ -222,12 +392,80 @@ components:
         totalRemainTime:
           type: integer
           description: 除霜流程剩餘時間(分)
+      required:
+        - name
+        - waitingTime
+        - remainTime
+        - totalRemainTime
     queEquip:
       type: object
       properties:
-        id:
+        name:
           type: string
-    GetQueueDashboard:
+          description: 名稱
+        state_field:
+          type: string
+          description: 狀態
+        execute_field:
+          type: string
+          description: 執行除霜
+        waiting_field:
+          type: string
+          description: 預計執行等待時間欄位
+        processID_field:
+          type: string
+          description: 除霜程序ID
+        defDelayTime_field:
+          type: string
+          description: 除霜延遲時間
+        defTime_field:
+          type: string
+          description: 除霜時間
+        defDripTime_field:
+          type: string
+          description: 除霜滴水時間
+        defDelayRemainTime_field:
+          type: string
+          description: 除霜延遲剩餘時間
+        defRemainTime_field:
+          type: string
+          description: 除霜剩餘時間
+        defDripRemainTime_field:
+          type: string
+          description: 除霜滴水剩餘時間
+        defMode_field:
+          type: string
+          description: 除霜模式
+        defStopMode_field:
+          type: string
+          description: 除霜終止模式
+        ioStatus_field:
+          type: string
+          description: 輸入/出狀態
+        forcedDef_field:
+          type: string
+          description: 強制除霜/解除霜
+        errCode_field:
+          type: string
+          description: 錯誤提示
+      required:
+        - name
+        - state_field
+        - execute_field
+        - waiting_field
+        - processID_field
+        - defDelayTime_field
+        - defTime_field
+        - defDripTime_field
+        - defDelayRemainTime_field
+        - defRemainTime_field
+        - defDripRemainTime_field
+        - defMode_field
+        - defStopMode_field
+        - ioStatus_field
+        - forcedDef_field
+        - errCode_field
+    GetQueue:
       type: array
       items:
         type: object
@@ -283,6 +521,23 @@ components:
           createTime:
             type: string
             description: 群組建立日期
+      required:
+        - id
+        - name
+        - concurrence
+        - equipNum
+        - equips
+        - cutInlineNum
+        - cutInlineList
+        - inlineNum
+        - inlineList
+        - delayNum
+        - delayList
+        - defrostNum
+        - defrostList
+        - dripNum
+        - dripList
+        - createTime
     CreateQueue:
       type: object
       properties:
@@ -294,80 +549,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/queEquip'
-    GetQueueDetail:
-      type: object
-      properties:
-        config:
-          $ref: '#/components/schemas/CreateQueue' 
-        equip_layout:
-          $ref: '#/components/schemas/GroupsDetail'
-    ElementDetail: 
-      type: object
-      properties:
-        id: 
-          type: string
-          example: EL_1685671772617118
-        name: 
-          type: string
-          example: FI1011 
-        defrost_group:
-          type: string
-        is_selected:
-          type: boolean      
-    GroupsDetail:
-      type: array
-      items:
-        type: object
-        properties:
-          name: 
-            type: string
-            example: 1F A庫 碼頭理貨區
-          elements:
-            type: array
-            items:
-              $ref: "#/components/schemas/ElementDetail"
-      example:
-                [
-                  {
-                      "name": "1F A庫 碼頭理貨區",
-                      "elements": [
-                          {
-                              "id": "EL_1685671772617118",
-                              "name": "FI1011",
-                              "defrost_group": "",
-                              "is_selected": false
-                          },
-                          {
-                              "id": "EL_1685671799014433",
-                              "name": "FI1012",
-                              "defrost_group": "",
-                              "is_selected": false
-                          },
-                          {
-                              "id": "EL_1685671799020442",
-                              "name": "FI1013",
-                              "defrost_group": "groupA",
-                              "is_selected": false
-                          },
-                          {
-                              "id": "EL_1685671799027592",
-                              "name": "FI1014",
-                              "defrost_group": "",
-                              "is_selected": false
-                          }
-                      ]
-                  },
-                  {
-                      "name": "1F B庫 冷凍暫存區",
-                      "elements": [
-                          {
-                              "id": "EL_1685671799034036",
-                              "name": "FW1101",
-                              "defrost_group": ""
-                          }
-                      ]
-                  }
-              ]
+      required:
+        - name
+        - concurrence
+        - equips
     QueueEquipInfo:
       type: object
       properties:
@@ -402,6 +587,18 @@ components:
         totalRemainTime:
           type: integer
           description: 除霜剩餘時間(分)
+      required:
+        - name
+        - queueName
+        - state
+        - waitingTime
+        - defDelayTime
+        - defTime
+        - defDripTime
+        - defDelayRemainTime
+        - defRemainTime
+        - defDripRemainTime
+        - totalRemainTime
     MoveQueueEquip:
       type: object
       properties:
@@ -413,6 +610,10 @@ components:
           type: array
           items:
             type: string
+      required:
+        - originQueID
+        - targetQueID
+        - equips
     QueueLogArray:
       type: array
       items:
@@ -446,6 +647,39 @@ components:
                 errCode:
                   type: integer
                   description: 錯誤提示
+              required:
+                - time
+                - state
+                - defMode
+                - defStopMode
+                - ioStatus
+                - forcedDef
+                - errCode
+        required:
+          - equipName
+          - processID
+          - stateLog
+  examples:
+    error400:
+      value:
+        status: 400
+        service: "scada"
+        message: "this is error message"
+    error401:
+      value:
+        status: 401
+        service: "scada"
+        message: "this is error message"
+    error404:
+      value:
+        status: 404
+        service: "scada"
+        message: "this is error message"
+    error500:
+      value:
+        status: 500
+        service: "scada"
+        message: "this is error message"
   securitySchemes:
     BearerAuth:
       type: http

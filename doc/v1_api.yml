@@ -5,7 +5,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.2
+  version: 1.0.3
 servers:
 - url: https://api-dev.oosa.life
   description: Dev API
@@ -32,7 +32,7 @@ tags:
   description: Scada connect with Communicate service
 - name: Scada_Layout_Service
   description: 前端版型相關資訊服務
-- name: Queue_Service
+- name: Queue Service
   description: Scada Queue service
 - name: Report_Service
   description: 報表、數據相關服務
@@ -716,9 +716,44 @@ paths:
       security:
       - bearerAuth: []
   /web/queue:
+    get:
+      tags:
+      - Queue Service
+      - queue
+      summary: 取得系統佇列
+      operationId: get-queue
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetQueue'
+        "204":
+          description: no content
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        "500":
+          description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
+      security:
+      - bearerAuth: []
     post:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 建立佇列群組
       operationId: create-queue
@@ -732,14 +767,37 @@ paths:
           description: success
         "400":
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error400'
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
   /web/queue/_move:
     put:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 移動設備群組
       operationId: move-queue-equip
@@ -753,14 +811,37 @@ paths:
           description: success
         "400":
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error400'
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error401'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
   /web/queue/{ID}:
     delete:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 刪除queue
       operationId: delete-queue
@@ -773,13 +854,38 @@ paths:
       responses:
         "200":
           description: success
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        "404":
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error404'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
     get:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 取得queue明細
       operationId: get-queue-detail
@@ -795,14 +901,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetQueueDetail'
+                $ref: '#/components/schemas/CreateQueue'
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        "404":
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error404'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
     put:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 更新queue
       operationId: update-queue
@@ -819,48 +950,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateQueue'
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-  /web/queue/dashboard:
-    get:
-      tags:
-      - Queue_Service
-      - queue
-      summary: 取得系統佇列儀表版
-      operationId: get-queue-dashboard
-      responses:
-        "200":
-          description: success
+        "401":
+          description: permission denied
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetQueueDashboard'
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error401'
+        "404":
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error404'
         "500":
           description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-  /web/queue/dashboard/sse:
-    get:
-      tags:
-      - Queue_Service
-      - queue
-      summary: 取得系統佇列儀表版 SSE
-      operationId: get-queue-dashboard-sse
-      responses:
-        "200":
-          description: success
           content:
-            text/event-stream:
+            application/json:
               schema:
-                $ref: '#/components/schemas/GetQueueDashboard'
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
   /web/queue/equip/{NAME}:
     get:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 取得queue設備資訊
       operationId: get-queue-equip-info
@@ -879,32 +1001,39 @@ paths:
                 $ref: '#/components/schemas/QueueEquipInfo'
         "204":
           description: no content
-        "500":
-          description: 伺服器發生錯誤
-      security:
-      - bearerAuth: []
-  /web/queue/equip_layout:
-    get:
-      tags:
-      - Queue_Service
-      - queue
-      summary: 取得智慧除霜設備清單
-      operationId: get-queue-equip-layout
-      responses:
-        "200":
-          description: success
+        "401":
+          description: permission denied
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GroupsDetail'
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error401'
+        "404":
+          description: 佇列設備不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error404:
+                  $ref: '#/components/examples/error404'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
   /web/queue/log:
     get:
       tags:
-      - Queue_Service
+      - Queue Service
       - queue
       summary: 佇列log
       operationId: queue-log
@@ -928,8 +1057,31 @@ paths:
                 $ref: '#/components/schemas/QueueLogArray'
         "400":
           description: 無效的輸入
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error400:
+                  $ref: '#/components/examples/error400'
+        "401":
+          description: permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error401:
+                  $ref: '#/components/examples/error401'
         "500":
           description: 伺服器發生錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorsResponse'
+              examples:
+                error500:
+                  $ref: '#/components/examples/error500'
       security:
       - bearerAuth: []
   /web/register:
@@ -2017,6 +2169,10 @@ components:
               $ref: '#/components/schemas/report_field'
     CreateQueue:
       type: object
+      required:
+      - name
+      - concurrence
+      - equips
       properties:
         concurrence:
           type: integer
@@ -2549,13 +2705,9 @@ components:
     ElementDetail:
       type: object
       properties:
-        defrost_group:
-          type: string
         id:
           type: string
           example: EL_1685671772617118
-        is_selected:
-          type: boolean
         name:
           type: string
           example: FI1011
@@ -3445,7 +3597,7 @@ components:
             "3": 高
           additionalProperties:
             type: string
-    GetQueueDashboard:
+    GetQueue:
       type: array
       items:
         type: object
@@ -3501,13 +3653,23 @@ components:
             description: 排隊設備數量
           name:
             type: string
-    GetQueueDetail:
-      type: object
-      properties:
-        config:
-          $ref: '#/components/schemas/CreateQueue'
-        equip_layout:
-          $ref: '#/components/schemas/GroupsDetail'
+      required:
+      - id
+      - name
+      - concurrence
+      - equipNum
+      - equips
+      - cutInlineNum
+      - cutInlineList
+      - inlineNum
+      - inlineList
+      - delayNum
+      - delayList
+      - defrostNum
+      - defrostList
+      - dripNum
+      - dripList
+      - createTime
     GetReport:
       type: object
       example:
@@ -3862,28 +4024,876 @@ components:
       type: array
       example:
       - elements:
-        - defrost_group: ""
-          id: EL_1685671772617118
-          is_selected: false
+        - id: EL_1685671772617118
           name: FI1011
-        - defrost_group: ""
-          id: EL_1685671799014433
-          is_selected: false
+        - id: EL_1685671799014433
           name: FI1012
-        - defrost_group: groupA
-          id: EL_1685671799020442
-          is_selected: false
+        - id: EL_1685671799020442
           name: FI1013
-        - defrost_group: ""
-          id: EL_1685671799027592
-          is_selected: false
+        - id: EL_1685671799027592
           name: FI1014
+        id: GR_1685671380584759
         name: 1F A庫 碼頭理貨區
       - elements:
-        - defrost_group: ""
-          id: EL_1685671799034036
+        - id: EL_1685671799034036
           name: FW1101
+        id: GR_1684461774
         name: 1F B庫 冷凍暫存區
+      - elements:
+        - id: EL_1685671799065003
+          name: FW1201
+        id: GR_1684461798
+        name: 1F C庫 冷藏待料區
+      - elements:
+        - id: EL_1685671799052678
+          name: FW1202
+        id: GR_1684461830
+        name: 1F D庫 低溫原料區
+      - elements:
+        - id: EL_1685671799046677
+          name: FW1203
+        - id: EL_1685671799040042
+          name: FW1204
+        id: GR_1684462231
+        name: 1F E庫 冷藏庫
+      - elements:
+        - id: EL_1685671799058684
+          name: FW1205
+        id: GR_1684462233
+        name: 1F F庫 冷藏配料暫存庫
+      - elements:
+        - id: EL_1685671799071005
+          name: FW1206
+        id: GR_1684462246
+        name: 1F G庫 冷藏庫
+      - elements:
+        - id: EL_1685671799077641
+          name: FW1102
+        id: GR_1684462255
+        name: 1F H庫 冷凍庫
+      - elements:
+        - id: EL_1685671799083623
+          name: FW1103
+        - id: EL_1685671799090641
+          name: FW1104
+        - id: EL_1685671799097622
+          name: FW1105
+        - id: EL_1685671799103623
+          name: FW1106
+        id: GR_1684462265
+        name: 1F I庫 冷凍庫
+      - elements:
+        - id: EL_1685671799108641
+          name: FW1207
+        id: GR_1684462276
+        name: 1F J庫 冷藏庫
+      - elements:
+        - id: EL_1685671799115623
+          name: FW1107
+        - id: EL_1685671799121623
+          name: FW1108
+        - id: EL_1685671799127642
+          name: FW1109
+        - id: EL_1685671799133847
+          name: FW1110
+        - id: EL_1685671799139878
+          name: FW1111
+        id: GR_1684462280
+        name: 1F K庫 冷凍庫
+      - elements:
+        - id: EL_1685671799146873
+          name: FW1208
+        id: GR_1684462294
+        name: 1F L庫 冷藏庫
+      - elements:
+        - id: EL_1684402040
+          name: FI3011
+        id: GR_1684460121
+        name: 3F A庫 原料冷藏庫
+      - elements:
+        - id: EL_1684465280
+          name: FI3061
+        id: GR_1684460163
+        name: 3F B庫 原料冷凍庫(1)
+      - elements:
+        - id: EL_1684465407
+          name: FI3021
+        id: GR_1684460242
+        name: 3F C庫 解凍庫(1)
+      - elements:
+        - id: EL_1684465418
+          name: FW3102
+        - id: EL_1684465436
+          name: FW3103
+        id: GR_1684460536
+        name: 3F D庫 拆箱/清洗區2
+      - elements:
+        - id: EL_1684465440
+          name: FI3071
+        id: GR_1684460581
+        name: 3F E庫 原料冷凍庫(2)
+      - elements:
+        - id: EL_1684465476
+          name: FI3031
+        id: GR_1684460725
+        name: 3F F庫 解凍庫(2)
+      - elements:
+        - id: EL_1684465485
+          name: FW3101
+        id: GR_1684461199
+        name: 3F G庫 蔬菜前處理區
+      - elements:
+        - id: EL_1684465515
+          name: FW3104
+        - id: EL_1684465535
+          name: FW3105
+        - id: EL_1684465540
+          name: FW3106
+        - id: EL_1684465543
+          name: FW3107
+        - id: EL_1684465545
+          name: FW3108
+        - id: EL_1684465548
+          name: FW3109
+        id: GR_1684461295
+        name: 3F H庫 肉品前處理區
+      - elements:
+        - id: EL_1684465552
+          name: FW3110
+        - id: EL_1684465636
+          name: FW3111
+        id: GR_1684461381
+        name: 3F I庫 海鮮前處理區
+      - elements:
+        - id: EL_1684465644
+          name: FW3112
+        id: GR_1684461406
+        name: 3F J庫 肉品分切區
+      - elements:
+        - id: EL_1684465651
+          name: FI3041
+        id: GR_1684461472
+        name: 3F K庫 肉品醃漬庫
+      - elements:
+        - id: EL_1684465659
+          name: FW3113
+        - id: EL_1684465670
+          name: FW3114
+        - id: EL_1684465672
+          name: FW3115
+        - id: EL_1684465677
+          name: FW3116
+        - id: EL_1684465679
+          name: FW3117
+        - id: EL_1684465682
+          name: FW3118
+        id: GR_1684461509
+        name: 3F L庫 生鮮包裝區
+      - elements:
+        - id: EL_1684465685
+          name: FW3119
+        - id: EL_1684465695
+          name: FW3120
+        - id: EL_1684465702
+          name: FW3121
+        - id: EL_1684465704
+          name: FW3122
+        id: GR_1684461532
+        name: 3F M庫 裝藍/疊棧區
+      - elements:
+        - id: EL_1684465707
+          name: FI3081
+        id: GR_1684461607
+        name: 3F N庫 冷凍庫
+      - elements:
+        - id: EL_1684465725
+          name: FI3101
+        - id: EL_1684465741
+          name: FI3102
+        id: GR_1684461621
+        name: 3F O庫 急速冷凍庫(1)
+      - elements:
+        - id: EL_1684465746
+          name: FI3111
+        - id: EL_1684465754
+          name: FI3112
+        id: GR_1684461645
+        name: 3F P庫 急速冷凍庫(2)
+      - elements:
+        - id: EL_1684465757
+          name: FI3091
+        id: GR_1684461656
+        name: 3F S庫 冷凍留樣庫
+      - elements:
+        - id: EL_1684465769
+          name: FI3051
+        id: GR_1684461689
+        name: 3F S庫 冷藏留樣庫
+      - elements:
+        - id: EL_1684463135
+          name: FI5031
+        id: GR_1684462298
+        name: 5F A庫 冷凍庫
+      - elements:
+        - id: EL_1684463154
+          name: FI5021
+        id: GR_1684462336
+        name: 5F B庫 解凍庫(3)
+      - elements:
+        - id: EL_1684463194
+          name: FW5101
+        - id: EL_1684463218
+          name: FW5102
+        id: GR_1684462355
+        name: 5F C庫 拆箱/清洗區
+      - elements:
+        - id: EL_1684463224
+          name: FI5041
+        - id: EL_1684463244
+          name: FI5042
+        id: GR_1684462373
+        name: 5F D庫 冷凍庫
+      - elements:
+        - id: EL_1684463247
+          name: FI5011
+        id: GR_1684462379
+        name: 5F E庫 肉品醃漬庫
+      - elements:
+        - id: EL_1684463270
+          name: FW5103
+        - id: EL_1684463292
+          name: FW5104
+        id: GR_1684462393
+        name: 5F F庫 肉品前處理區
+      - elements:
+        - id: EL_1684463295
+          name: FW5105
+        - id: EL_1684463297
+          name: FW5106
+        id: GR_1684462417
+        name: 5F F庫 蔬菜前處理區
+      - elements:
+        - id: EL_1684463300
+          name: FW5107
+        - id: EL_1684463352
+          name: FW5108
+        - id: EL_1684463359
+          name: FW5109
+        - id: EL_1684463362
+          name: FW5110
+        - id: EL_1684463374
+          name: FW5111
+        - id: EL_1684463377
+          name: FW5112
+        - id: EL_1684463380
+          name: FW5113
+        - id: EL_1684463386
+          name: FW5114
+        id: GR_1684462566
+        name: 5F I庫 包裝區
+      - elements:
+        - id: EL_1684463392
+          name: FW5115
+        - id: EL_1684463400
+          name: FW5116
+        - id: EL_1684463403
+          name: FW5117
+        - id: EL_1684463406
+          name: FW5118
+        - id: EL_1684463408
+          name: FW5119
+        - id: EL_1684463411
+          name: FW5120
+        id: GR_1684462589
+        name: 5F J庫 裝籃/疊棧區
+      - elements:
+        - id: EL_1700444573132303
+          name: FI_IQC1
+        id: GR_1700444571648642
+        name: 5F IQC1庫
+      - elements:
+        - id: EL_1700444720884769
+          name: FI_IQC2
+        id: GR_1700444707296402
+        name: 5F IQC2庫
+      - elements:
+        - id: EL_1700444793852290
+          name: FI_IQC31
+        - id: EL_1700444834900746
+          name: FI_IQC32
+        id: GR_1700444792880112
+        name: 5F IQC3庫
+      - elements:
+        - id: EL_1700467385329153
+          name: FI_IQF1
+        id: GR_1700467374457577
+        name: 5F IQF1庫
+      - elements:
+        - id: EL_1700445549763977
+          name: FI_buffer1
+        id: GR_1700445548844236
+        name: 5F 緩衝庫
+      - elements:
+        - id: EL_1684908230148877
+          name: 3F電錶
+        - id: EL_1684908254519151
+          name: 5F電錶
+        - id: EL_1686704949717484
+          name: 1F電錶
+        - id: EL_1700445119202068
+          name: IQC/IQF電錶
+        id: GR_1684908185115320
+        name: 電錶資訊
+      - elements:
+        - id: EL_1684910781515461
+          name: 1F A庫碼頭理貨區大顯
+        - id: EL_1684910785244453
+          name: 1F B庫冷凍暫存區大顯
+        - id: EL_1684910785251454
+          name: 1F C庫冷藏待料區大顯
+        - id: EL_1684910785258453
+          name: 1F D庫低溫原料區大顯
+        - id: EL_1684910785264455
+          name: 1F E庫冷藏庫大顯
+        - id: EL_1684910785271454
+          name: 1F F庫冷藏配料暫存區大顯
+        - id: EL_1684910785277472
+          name: 1F G庫冷藏庫大顯
+        - id: EL_1684910785284455
+          name: 1F H庫冷凍庫大顯
+        - id: EL_1684910785291454
+          name: 1F I庫冷凍庫大顯
+        - id: EL_1684910785298452
+          name: 1F J庫冷藏庫大顯
+        - id: EL_1684910785304454
+          name: 1F K庫冷凍庫大顯
+        - id: EL_1684910785310456
+          name: 1F L庫冷藏庫大顯
+        id: GR_1684910773717921
+        name: 1F 大型顯示器
+      - elements:
+        - id: EL_1684911779036687
+          name: 1F A庫碼頭理貨區照明
+        - id: EL_1684911796134164
+          name: 1F B庫冷凍暫存區照明
+        - id: EL_1684911796140698
+          name: 1F C庫冷藏待料區照明
+        - id: EL_1684911796147691
+          name: 1F D庫低溫原料區照明
+        - id: EL_1684911796154684
+          name: 1F E庫冷藏庫照明
+        - id: EL_1684911796160776
+          name: 1F F庫冷藏配料暫存區照明
+        - id: EL_1684911796166884
+          name: 1F G庫冷藏庫照明
+        - id: EL_1684911796172886
+          name: 1F H庫冷凍庫照明
+        - id: EL_1684911796178901
+          name: 1F I庫冷凍庫照明
+        - id: EL_1684911796185492
+          name: 1F J庫冷藏庫照明
+        - id: EL_1684911796192487
+          name: 1F K庫冷凍庫照明
+        - id: EL_1684911796200119
+          name: 1F L庫冷藏庫照明
+        - id: EL_1685064364982289
+          name: 1F 照明群控
+        id: GR_1684910776400226
+        name: 1F 照明資訊
+      - elements:
+        - id: EL_1684910785317455
+          name: 3F A庫原料冷藏庫大顯
+        - id: EL_1684911771164016
+          name: 3F B庫原料冷凍庫(1)大顯
+        - id: EL_1684911771170997
+          name: 3F C庫解凍庫(1)大顯
+        - id: EL_1684911771177149
+          name: 3F D庫拆箱/清洗區2大顯
+        - id: EL_1684911771183715
+          name: 3F E庫原料冷凍庫(2)大顯
+        - id: EL_1684911771190705
+          name: 3F F庫解凍庫(2)大顯
+        - id: EL_1684911771197705
+          name: 3F G庫蔬菜前處理區大顯
+        - id: EL_1684911771204310
+          name: 3F H庫肉品前處理區大顯
+        - id: EL_1684911771209777
+          name: 3F I庫海鮮前處理區大顯
+        - id: EL_1684911771215849
+          name: 3F J庫肉品分切區大顯
+        - id: EL_1684911771222618
+          name: 3F K庫肉品醃漬庫大顯
+        - id: EL_1684911771229689
+          name: 3F L庫生鮮包裝區大顯
+        - id: EL_1684911771235709
+          name: 3F M庫裝籃/疊棧區2大顯
+        - id: EL_1684911771241711
+          name: 3F N庫冷凍庫大顯
+        - id: EL_1684911771249708
+          name: 3F O庫急速冷凍庫(1)大顯
+        - id: EL_1684911771256378
+          name: 3F P庫急速冷凍庫(2)大顯
+        - id: EL_1684911771262381
+          name: 3F S庫冷凍留樣庫大顯
+        - id: EL_1684911771268381
+          name: 3F S庫冷藏留樣庫大顯
+        id: GR_1684910776408225
+        name: 3F 大型顯示器
+      - elements:
+        - id: EL_1684911796206121
+          name: 3F A庫原料冷藏庫照明
+        - id: EL_1684911803367866
+          name: 3F B庫原料冷凍庫(1)照明
+        - id: EL_1684911803373897
+          name: 3F C庫解凍庫(1)照明
+        - id: EL_1684911803379992
+          name: 3F D庫拆箱/清洗區2照明
+        - id: EL_1684911803385995
+          name: 3F E庫原料冷凍庫(2)照明
+        - id: EL_1684911803392994
+          name: 3F F庫解凍庫(2)照明
+        - id: EL_1684911803399723
+          name: 3F G庫蔬菜前處理區照明
+        - id: EL_1684911803406722
+          name: 3F H庫肉品前處理區照明
+        - id: EL_1684911803413683
+          name: 3F I庫海鮮前處理區照明
+        - id: EL_1684911803419684
+          name: 3F J庫肉品分切區照明
+        - id: EL_1684911803426277
+          name: 3F K庫肉品醃漬庫照明
+        - id: EL_1684911803433278
+          name: 3F L庫生鮮包裝區照明(右)
+        - id: EL_1684911803438672
+          name: 3F M庫裝籃/疊棧區2照明
+        - id: EL_1684911803445465
+          name: 3F N庫冷凍庫照明
+        - id: EL_1684911803452465
+          name: 3F O庫急速冷凍庫(1)照明
+        - id: EL_1684911803459521
+          name: 3F P庫急速冷凍庫(2)照明
+        - id: EL_1684911803466605
+          name: 3F S庫冷凍留樣庫照明
+        - id: EL_1684911803472605
+          name: 3F L庫生鮮包裝區照明(左)
+        - id: EL_1685064394623586
+          name: 3F 照明群控
+        id: GR_1684910776414255
+        name: 3F 照明資訊
+      - elements:
+        - id: EL_1684911771275396
+          name: 5F A庫冷凍庫大顯
+        - id: EL_1684911778970372
+          name: 5F B庫解凍庫(3)大顯
+        - id: EL_1684911778977442
+          name: 5F C庫拆箱/清洗區大顯
+        - id: EL_1684911778983460
+          name: 5F D庫冷藏庫大顯
+        - id: EL_1684911778990464
+          name: 5F E庫肉品醃漬庫大顯
+        - id: EL_1684911779011077
+          name: 5F I庫包裝區(右)大顯
+        - id: EL_1684911779017751
+          name: 5F I庫包裝區(左)大顯
+        - id: EL_1684911779024333
+          name: 5F J庫裝藍/疊棧區1大顯
+        - id: EL_1684911779030337
+          name: 5F J庫裝籃/疊棧區2大顯
+        - id: EL_1684912972392496
+          name: 5F F庫肉品前處理區大顯
+        - id: EL_1684912997846784
+          name: 5F F庫蔬菜前處理區大顯
+        - id: EL_1700445207089176
+          name: 5F IQF1庫大顯
+        - id: EL_1700445299991992
+          name: 5F IQC1庫大顯
+        - id: EL_1700445299999017
+          name: 5F IQC2庫大顯
+        - id: EL_1700445300008028
+          name: 5F IQC3庫大顯
+        id: GR_1684910776420267
+        name: 5F 大型顯示器
+      - elements:
+        - id: EL_1684911803478608
+          name: 5F A庫冷凍庫照明
+        - id: EL_1684911812816135
+          name: 5F B庫解凍庫(3)照明
+        - id: EL_1684911812823210
+          name: 5F C庫拆箱/清洗區照明
+        - id: EL_1684911812828283
+          name: 5F D庫冷藏庫照明
+        - id: EL_1684911812834302
+          name: 5F E庫肉品醃漬庫照明
+        - id: EL_1684911812840303
+          name: 5F F庫肉品前處理區照明
+        - id: EL_1684911812846458
+          name: 5F F庫蔬菜前處理區照明
+        - id: EL_1684911812853082
+          name: 5F I庫包裝區(右)照明
+        - id: EL_1684911812859083
+          name: 5F I庫包裝區(左)照明
+        - id: EL_1684911812866081
+          name: 5F J庫裝籃/疊棧區照明
+        - id: EL_1684911812879517
+          name: 5F M庫暫存區照明
+        - id: EL_1684912157580429
+          name: 5F KL庫男女更衣室/緩衝/換鞋/洗手消毒區照明
+        - id: EL_1685064399894332
+          name: 5F 照明群控
+        id: GR_1684910776427085
+        name: 5F 照明資訊
+      - elements:
+        - id: EL_1684913470831731
+          name: 3F庫板上溫濕度計1
+        - id: EL_1684913499375581
+          name: 3F庫板上溫濕度計2
+        - id: EL_1684913499383133
+          name: 3F庫板上溫濕度計3
+        - id: EL_1684913499390177
+          name: 3F庫板上溫濕度計4
+        - id: EL_1684913499396199
+          name: 3F庫板上溫濕度計5
+        - id: EL_1684913499401215
+          name: 3F空調箱(PAH)
+        - id: EL_1684915539174624
+          name: 3F除濕機1(S1)
+        - id: EL_1684915578658038
+          name: 3F除濕機2(S2)
+        - id: EL_1684915578664080
+          name: 3F除濕機3(S3)
+        - id: EL_1684915578670095
+          name: 3F除濕機4(S4)
+        - id: EL_1684915578676865
+          name: 3F除濕機5(S5)
+        - id: EL_1684915578682884
+          name: 3F除濕機6(S6)
+        - id: EL_1684915578688888
+          name: 3F除濕機7(S7)
+        - id: EL_1684915578694954
+          name: 3F除濕機8(S8)
+        - id: EL_1685339566535099
+          name: 3F除濕機群控
+        id: GR_1684913102930039
+        name: 3F空調箱/除濕機
+      - elements:
+        - id: EL_1684913499408219
+          name: 5F庫板上溫濕度計1
+        - id: EL_1684913511476694
+          name: 5F庫板上溫濕度計2
+        - id: EL_1684913511483685
+          name: 5F庫板上溫濕度計3
+        - id: EL_1684913511490374
+          name: 5F庫板上溫濕度計4
+        - id: EL_1684913511497374
+          name: 5F庫板上溫濕度計5
+        - id: EL_1684913511503504
+          name: 5F空調箱(PAH)
+        - id: EL_1684915578701100
+          name: 5F除濕機1(S1)
+        - id: EL_1684915615691639
+          name: 5F除濕機2(S2)
+        - id: EL_1684915615698024
+          name: 5F除濕機3(S3)
+        - id: EL_1684915615704086
+          name: 5F除濕機4(S4)
+        - id: EL_1684915615710116
+          name: 5F除濕機5(S5)
+        - id: EL_1684915615717114
+          name: 5F除濕機6(S6)
+        - id: EL_1684915615723301
+          name: 5F除濕機7(S7)
+        - id: EL_1684915615728319
+          name: 5F除濕機8(S8)
+        - id: EL_1685339706280313
+          name: 5F除濕機群控
+        id: GR_1684913231866123
+        name: 5F空調箱/除濕機
+      - elements:
+        - id: EL_1686706446912882
+          name: WT11
+        - id: EL_1686706452902578
+          name: WT12
+        - id: EL_1686706452909337
+          name: WT13
+        - id: EL_1686706452915498
+          name: WT14
+        - id: EL_1686706452921976
+          name: WT15
+        - id: EL_1686706452927989
+          name: WT16
+        - id: EL_1686706452934973
+          name: WT17
+        - id: EL_1686706452940974
+          name: WT18
+        - id: EL_1686706452947138
+          name: WT19
+        - id: EL_1686706452953305
+          name: WT20
+        - id: EL_1686706452960303
+          name: WT21
+        - id: EL_1686706452966303
+          name: WT22
+        - id: EL_1686706452973128
+          name: WT23
+        - id: EL_1686706452979268
+          name: FO101
+        - id: EL_1686706452985533
+          name: FO102
+        - id: EL_1686706452992378
+          name: CH101
+        - id: EL_1686706452998378
+          name: CH102
+        - id: EL_1686706453005378
+          name: CH103
+        - id: EL_1686706453011623
+          name: CH104
+        - id: EL_1686706453018650
+          name: CH105
+        - id: EL_1686706453024656
+          name: CH106
+        - id: EL_1686706453030686
+          name: CT101
+        - id: EL_1686706453037442
+          name: DWP1
+        - id: EL_1686706453043576
+          name: DWSP1
+        - id: EL_1686706453049623
+          name: CWP101
+        - id: EL_1686706453055718
+          name: CWP102
+        - id: EL_1686706453061750
+          name: CHP101
+        - id: EL_1686706453068737
+          name: CHP102
+        - id: EL_1686706453074767
+          name: CHP103
+        - id: EL_1686706453080866
+          name: CHP104
+        - id: EL_1686706453111241
+          name: TNK101
+        - id: EL_1686706453117241
+          name: TNK102
+        - id: EL_1686706453123338
+          name: 1F 水塔旁通閥
+        - id: EL_1686706453129617
+          name: 1F 滷水壓差1
+        - id: EL_1686706453136611
+          name: TAK101
+        - id: EL_1686706453143749
+          name: TAK102
+        - id: EL_1686707502733989
+          name: 1F 滷水壓差2
+        - id: EL_1686719064293592
+          name: SCR1
+        - id: EL_1686719082992520
+          name: SCR2
+        - id: EL_1686719082999511
+          name: SCR3
+        - id: EL_1686719083006660
+          name: SCR4
+        - id: EL_1686732403501236
+          name: PHE101
+        id: GR_1684917823677332
+        name: 1F 系統圖
+      - elements:
+        - id: EL_1684917861265486
+          name: WT1
+        - id: EL_1684917956068380
+          name: WT2
+        - id: EL_1684917956074397
+          name: WT5
+        - id: EL_1684917956081394
+          name: WT6
+        - id: EL_1684917980663726
+          name: CHP301
+        - id: EL_1684918022172866
+          name: CHP302
+        - id: EL_1684918022179846
+          name: CT301
+        - id: EL_1684918022185851
+          name: CT302
+        - id: EL_1684982134692647
+          name: CH301
+        - id: EL_1684982137322783
+          name: CH302
+        - id: EL_1684982137328878
+          name: CH303
+        - id: EL_1684982137334926
+          name: FO306
+        - id: EL_1684982137341922
+          name: FO307
+        - id: EL_1684982137348710
+          name: FO308
+        - id: EL_1684982137354864
+          name: FO310
+        - id: EL_1684982137360898
+          name: FO311
+        - id: EL_1684982137367508
+          name: FO312
+        - id: EL_1684982137373549
+          name: FO313
+        - id: EL_1684982137379722
+          name: FO309
+        - id: EL_1684982137385961
+          name: FO301
+        - id: EL_1684982137392952
+          name: FO302
+        - id: EL_1684982137399531
+          name: FO303
+        - id: EL_1684982137405615
+          name: FO304
+        - id: EL_1684982137411646
+          name: FO305
+        - id: EL_1684982137418061
+          name: CWP301
+        - id: EL_1684982137425061
+          name: CWP302
+        - id: EL_1684982356285261
+          name: 3F 水塔旁通閥
+        - id: EL_1684982376067981
+          name: 3F 滷水壓差
+        - id: EL_1684996642176823
+          name: TAK301
+        - id: EL_1684996661543904
+          name: TAK302
+        id: GR_1684917857811769
+        name: 3F 系統圖
+      - elements:
+        - id: EL_1684917956087571
+          name: WT7
+        - id: EL_1684917980643728
+          name: WT8
+        - id: EL_1684917980649733
+          name: WT9
+        - id: EL_1684917980656726
+          name: WT10
+        - id: EL_1684918022191981
+          name: CHP501
+        - id: EL_1684918042517420
+          name: CHP502
+        - id: EL_1684918042523569
+          name: CT501
+        - id: EL_1685001649850765
+          name: CWP501
+        - id: EL_1685001826024776
+          name: CWP502
+        - id: EL_1685001826030864
+          name: TAK501
+        - id: EL_1685001826036894
+          name: 5F 水塔旁通閥
+        - id: EL_1685001826043890
+          name: 5F 滷水壓差
+        - id: EL_1685001915385452
+          name: CH501
+        - id: EL_1685001918141959
+          name: CH502
+        - id: EL_1685001918149002
+          name: CH503
+        - id: EL_1685001918155586
+          name: FO501
+        - id: EL_1685001918162592
+          name: FO502
+        - id: EL_1685001918169714
+          name: FO503
+        - id: EL_1685001918176289
+          name: FO504
+        id: GR_1684917857818759
+        name: 5F 系統圖
+      - elements:
+        - id: EL_1700446403179007
+          name: WT31
+        - id: EL_1700446657869393
+          name: WT32
+        - id: EL_1700446657876313
+          name: WT33
+        - id: EL_1700446657884313
+          name: WT34
+        - id: EL_1700446657891312
+          name: IQF_CT
+        - id: EL_1700446657898312
+          name: IQF_CWP
+        - id: EL_1700446657904558
+          name: FO_IQF1
+        - id: EL_1700446657911148
+          name: FO_IQF2
+        - id: EL_1700446657918463
+          name: FO_IQF3
+        - id: EL_1700446657924999
+          name: FO_buffer
+        - id: EL_1700446657931409
+          name: IQC_CT
+        - id: EL_1700446657936741
+          name: IQC_CWP
+        - id: EL_1700446657943673
+          name: FO_IQC1
+        - id: EL_1700446657952764
+          name: FO_IQC2
+        - id: EL_1700446657959630
+          name: FO_IQC31
+        - id: EL_1700446657965719
+          name: FO_IQC32
+        id: GR_1700446331982704
+        name: IQC/IQF系統圖
+      - elements:
+        - id: EL_1688976745796201
+          name: LT_CT
+        - id: EL_1688976745846482
+          name: LT_CWP
+        - id: EL_1688976745784189
+          name: LT_BCH
+        - id: EL_1688976745790189
+          name: LT_TNK
+        - id: EL_1688976745827383
+          name: LT_CHP1
+        - id: EL_1688976745833873
+          name: LT_CHP2
+        - id: EL_1688976745840045
+          name: LT_CHP3
+        - id: EL_1688976745939007
+          name: LT_CHT
+        - id: EL_1688976745802218
+          name: HT_CT
+        - id: EL_1688976745808219
+          name: HT_CWP1
+        - id: EL_1688976745814680
+          name: HT_CWP2
+        - id: EL_1688976745932013
+          name: HT_CHT
+        - id: EL_1688976745879305
+          name: WT35
+        - id: EL_1688976745885305
+          name: WT36
+        - id: EL_1688976745892486
+          name: WT37
+        - id: EL_1688976745899014
+          name: WT38
+        - id: EL_1688976745906007
+          name: WT39
+        - id: EL_1688976745913008
+          name: WT40
+        - id: EL_1688976745919010
+          name: WT41
+        - id: EL_1688976745925010
+          name: WT42
+        - id: EL_1700535132420496
+          name: WT43
+        - id: EL_1700535142839388
+          name: WT44
+        - id: EL_1688976745821292
+          name: PHE201
+        id: GR_1684918119126676
+        name: 滑冰槽
+      - elements:
+        - id: EL_1684918042529961
+          name: PU301
+        - id: EL_1684918169883576
+          name: PU501
+        - id: EL_1688974279596759
+          name: TAK401
+        - id: EL_1688974328723198
+          name: FO401
+        id: GR_1684918119133668
+        name: 按摩池
       items:
         type: object
         properties:
@@ -3891,6 +4901,9 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ElementDetail'
+          id:
+            type: string
+            example: GR_1685671380584759
           name:
             type: string
             example: 1F A庫 碼頭理貨區
@@ -3969,6 +4982,10 @@ components:
           example: 環保機電監控系統
     MoveQueueEquip:
       type: object
+      required:
+      - originQueID
+      - targetQueID
+      - equips
       properties:
         equips:
           type: array
@@ -4152,6 +5169,18 @@ components:
               example: 02 1111 3333
     QueueEquipInfo:
       type: object
+      required:
+      - name
+      - queueName
+      - state
+      - waitingTime
+      - defDelayTime
+      - defTime
+      - defDripTime
+      - defDelayRemainTime
+      - defRemainTime
+      - defDripRemainTime
+      - totalRemainTime
       properties:
         defDelayRemainTime:
           type: integer
@@ -4196,6 +5225,10 @@ components:
       type: array
       items:
         type: object
+        required:
+        - equipName
+        - processID
+        - stateLog
         properties:
           equipName:
             type: string
@@ -4205,6 +5238,14 @@ components:
             type: array
             items:
               type: object
+              required:
+              - time
+              - state
+              - defMode
+              - defStopMode
+              - ioStatus
+              - forcedDef
+              - errCode
               properties:
                 defMode:
                   type: integer
@@ -6541,11 +7582,79 @@ components:
           type: number
     queEquip:
       type: object
+      required:
+      - name
+      - state_field
+      - execute_field
+      - waiting_field
+      - processID_field
+      - defDelayTime_field
+      - defTime_field
+      - defDripTime_field
+      - defDelayRemainTime_field
+      - defRemainTime_field
+      - defDripRemainTime_field
+      - defMode_field
+      - defStopMode_field
+      - ioStatus_field
+      - forcedDef_field
+      - errCode_field
       properties:
-        id:
+        defDelayRemainTime_field:
           type: string
+          description: 除霜延遲剩餘時間
+        defDelayTime_field:
+          type: string
+          description: 除霜延遲時間
+        defDripRemainTime_field:
+          type: string
+          description: 除霜滴水剩餘時間
+        defDripTime_field:
+          type: string
+          description: 除霜滴水時間
+        defMode_field:
+          type: string
+          description: 除霜模式
+        defRemainTime_field:
+          type: string
+          description: 除霜剩餘時間
+        defStopMode_field:
+          type: string
+          description: 除霜終止模式
+        defTime_field:
+          type: string
+          description: 除霜時間
+        errCode_field:
+          type: string
+          description: 錯誤提示
+        execute_field:
+          type: string
+          description: 執行除霜
+        forcedDef_field:
+          type: string
+          description: 強制除霜/解除霜
+        ioStatus_field:
+          type: string
+          description: 輸入/出狀態
+        name:
+          type: string
+          description: 名稱
+        processID_field:
+          type: string
+          description: 除霜程序ID
+        state_field:
+          type: string
+          description: 狀態
+        waiting_field:
+          type: string
+          description: 預計執行等待時間欄位
     queListEquip:
       type: object
+      required:
+      - name
+      - waitingTime
+      - remainTime
+      - totalRemainTime
       properties:
         name:
           type: string
@@ -6905,3 +8014,23 @@ components:
         view_logs:
         - account: ppp
           time: "2016-07-14T00:00:00Z"
+    error400:
+      value:
+        message: this is error message
+        service: scada
+        status: 400
+    error401:
+      value:
+        message: this is error message
+        service: scada
+        status: 401
+    error404:
+      value:
+        message: this is error message
+        service: scada
+        status: 404
+    error500:
+      value:
+        message: this is error message
+        service: scada
+        status: 500
