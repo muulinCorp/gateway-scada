@@ -272,3 +272,6 @@ components:
         error: "this is error message"
         status: 400
         service: "scada"
+servers:
+  - url: http://auth-svc:9080
+    description: Auth_Service

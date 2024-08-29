@@ -1,31 +1,18 @@
 openapi: 3.0.2
 info:
   version: "1.0.3"
-  title: "Scada API"
-  description: "Scada API"
+  title: "Scada Web API"
+  description: "Scada Web API"
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 servers:
+  - url: https://mock.apidog.com/m1/606880-573224-default
+    description: Mock API
   - url: https://api-dev.oosa.life 
     description: Dev API
-  - url: http://auth-svc:9080
-    description: Scada-Auth-Api
-  - url: http://com2scada-svc:9080
-    description: Com2Scada
-  - url: http://layout-svc:9080
-    description: Scada_Layout_Service
-  - url: http://schedule-svc:9080
-    description: Schedule_Service
-  - url: http://queue-svc:9080
-    description: Queue_Service
-  - url: http://report-svc:9080
-    description: Report_Service
-  - url: http://event-svc:9080
-    description: Event_Service
-  - url: http://rubase-alert-svc:9080
-    description: Early_Warning_Service
+
 
 components:
   securitySchemes:

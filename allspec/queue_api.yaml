@@ -866,3 +866,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+servers:
+  - url: http://queue-svc:9080
+    description: Queue_Service

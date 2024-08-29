@@ -44,6 +44,7 @@
     {
     "endpoint": "{{ $endpoint.endpoint }}",
     "method": "{{ $endpoint.method }}",
+    {{if $endpoint.timeout}}"timeout": {{ marshal $endpoint.timeout }},{{end}}
     "input_headers": [
         "User-Agent",
         "Authorization",

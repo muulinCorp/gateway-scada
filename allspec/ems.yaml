@@ -1,0 +1,1178 @@
+openapi: 3.1.0
+info:
+  title: SCADA-WEB
+  description: ''
+  version: 1.0.0
+tags:
+  - name: ems
+paths:
+  /v1/meter/{key}/electricity-demand/dashboard:
+    get:
+      summary: 取得用電需量管理儀表版資訊
+      deprecated: false
+      description: ''
+      operationId: get-electricity-demand-dashboard
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema: &ref_1
+                $ref: '#/components/schemas/GetElectricityDemandDashboard'
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/meter/{key}/electricity-demand/schedule:
+    get:
+      summary: 取得用電需量管理排程資訊
+      deprecated: false
+      description: ''
+      operationId: get-electricity-demand-schedule
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: mode
+          in: query
+          description: 需量模式
+          required: true
+          schema:
+            type: string
+            enum:
+              - normal
+              - dynamo
+            x-apidog:
+              enumDescriptions:
+                normal: 市電
+                dynamo: 發電機
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandSchedule'
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/meter/{key}/electricity-demand/schedule/{mode}:
+    put:
+      summary: 更新用電需量管理排程資訊
+      deprecated: false
+      description: ''
+      operationId: update-electricity-demand-schedule
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: 電錶key
+          required: true
+          schema:
+            type: string
+        - name: mode
+          in: path
+          description: 需量模式
+          required: true
+          example: ''
+          schema:
+            type: string
+            enum:
+              - normal
+              - dynamo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateElectricityDemandSchedule'
+            example: ''
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/meter/{key}/electricity-demand:
+    post:
+      summary: 建立用電需量管理設定
+      deprecated: false
+      description: ''
+      operationId: create-electricity-demand
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &ref_0
+              $ref: '#/components/schemas/CreateElectricityDemand'
+            example: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                required:
+                  - id
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/meter/{key}/electricity-demand/init:
+    get:
+      summary: 初始化用電需量管理設定
+      deprecated: false
+      description: ''
+      operationId: init-electricity-demand
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: 電錶key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitElectricityDemand'
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/meter/{key}/electricity-demand/{id}:
+    get:
+      summary: 取得用電需量管理設定明細
+      deprecated: false
+      description: ''
+      operationId: get-electricity-demand-detail
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateElectricityDemandDetail'
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+    put:
+      summary: 設定用電需量管理
+      deprecated: false
+      description: ''
+      operationId: update-electricity-demand-detail
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ''
+          required: true
+          example: ''
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema: *ref_0
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/meter:
+    get:
+      summary: 取得電表清單
+      deprecated: false
+      description: 取得電表清單
+      operationId: get-eletricity-demand/meter
+      tags:
+        - ems
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    name:
+                      type: string
+                      description: 電表名稱
+                    unit:
+                      type: string
+                      description: 電表單位
+                  required:
+                    - key
+                    - name
+                    - unit
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+  /v1/sse/meter/{key}/electricity-demand/dashboard:
+    get:
+      summary: 取得用電需量管理儀表版資訊 Copy
+      deprecated: false
+      description: ''
+      operationId: sse-electricity-demand-dashboard
+      tags:
+        - ems
+      parameters:
+        - name: key
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema: *ref_1
+        '401':
+          description: Unauthorization
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+        '403':
+          description: EMS未設定
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  error:
+                    type: string
+                  status:
+                    type: integer
+                required:
+                  - service
+                  - error
+                  - status
+        '500':
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  service:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                required:
+                  - service
+                  - status
+                  - error
+      security:
+        - bearer: []
+components:
+  schemas:
+    ElectricityDemandConfiguration:
+      type: object
+      required:
+        - groups
+        - elements
+      properties:
+        elements:
+          type: array
+          description: 設表列表
+          items: &ref_3
+            $ref: '#/components/schemas/ElectricityDemandElement'
+        groups:
+          type: array
+          description: 設備群組
+          items:
+            type: object
+            required:
+              - name
+              - id
+            properties:
+              id:
+                type: string
+                description: 群組id
+              name:
+                type: string
+                description: 群組名稱
+    ElectricityDemandElement:
+      type: object
+      required:
+        - element_id
+        - element_name
+        - field
+        - group_id
+        - unloading_index
+      properties:
+        element_id:
+          type: string
+          description: 設備id
+        element_name:
+          type: string
+          description: 設備名稱
+        field:
+          type: string
+          description: 控制點位
+        group_id:
+          type: string
+          description: 群組id
+        unloading_index:
+          type: integer
+          description: 卸載索引
+    unloadingItem:
+      type: object
+      required:
+        - elapsed_mins
+        - is_open
+        - electricity
+      properties:
+        elapsed_mins:
+          type: integer
+          description: 延後判斷分鐘
+        electricity:
+          type: number
+          description: 電力條件
+        is_open:
+          type: boolean
+          description: 啟用
+    resumeItem:
+      type: object
+      required:
+        - electricity
+        - elapsed_mins
+      properties:
+        elapsed_mins:
+          type: integer
+          description: 延後判斷分鐘
+        electricity:
+          type: number
+          description: 復歸電力條件
+    dailySchedule:
+      type: object
+      required:
+        - index
+        - id
+      properties:
+        id:
+          type: string
+        index:
+          type: integer
+          description: '-1表示未啟用，數值表示需量清單對應的index'
+          readOnly: true
+    CreateElectricityDemandDetail:
+      type: object
+      required:
+        - id
+        - name
+        - mode
+        - enable
+        - restricted_mins
+        - target_electricity
+        - resume
+        - unloading
+      properties:
+        configuration: &ref_2
+          $ref: '#/components/schemas/ElectricityDemandConfiguration'
+        enable:
+          type: boolean
+          description: 開關
+        id:
+          type: string
+          description: 需量id
+        mode:
+          type: string
+          description: 模式
+          enum:
+            - normal
+            - dynamo
+        name:
+          type: string
+          description: 需量名稱
+        restricted_mins:
+          type: integer
+          description: 禁止時間
+        resume: &ref_4
+          $ref: '#/components/schemas/resumeItem'
+        target_electricity:
+          type: number
+          description: 契約電量(kW)
+        unloading:
+          type: array
+          description: 卸載設定
+          items: &ref_5
+            $ref: '#/components/schemas/unloadingItem'
+    GetElectricityDemandDashboard:
+      type: object
+      required:
+        - graph_config
+        - mode
+        - target_electricity
+        - restricted_mins
+        - delay_mins
+        - correct_time
+        - current_mins
+        - used_electricity
+        - current_electricity
+        - forecast_electricity
+        - avg_electricity
+        - adjust_electricity
+        - last_electricity
+        - daily_max_electricity
+        - daily_max_time
+        - month_max_electricity
+        - month_max_datetime
+        - year_max_electricity
+        - year_max_datetime
+      properties:
+        adjust_electricity:
+          type: number
+        avg_electricity:
+          type: number
+        correct_time:
+          type: string
+        current_electricity:
+          type: number
+        current_mins:
+          type: integer
+        daily_max_electricity:
+          type: number
+        daily_max_time:
+          type: string
+        delay_mins:
+          type: integer
+        forecast_electricity:
+          type: number
+        graph_config:
+          type: object
+          required:
+            - current_electricity_color
+            - forecast_electricity_color
+            - target_electricity_color
+          properties:
+            current_electricity_color:
+              type: string
+            forecast_electricity_color:
+              type: string
+            target_electricity_color:
+              type: string
+        last_electricity:
+          type: number
+        mode:
+          type: string
+          enum:
+            - normal
+            - dynamo
+        month_max_datetime:
+          type: string
+        month_max_electricity:
+          type: number
+        restricted_mins:
+          type: integer
+        target_electricity:
+          type: number
+        used_electricity:
+          type: array
+          maxItems: 15
+          items:
+            type: number
+        year_max_datetime:
+          type: string
+        year_max_electricity:
+          type: number
+    InitElectricityDemand:
+      type: object
+      properties:
+        configuration: *ref_2
+    CreateElectricityDemand:
+      type: object
+      required:
+        - mode
+        - name
+        - enable
+        - restricted_mins
+        - target_electricity
+        - resume
+        - unloading
+        - elements
+      properties:
+        elements:
+          type: array
+          items: *ref_3
+        enable:
+          type: boolean
+        mode:
+          type: string
+          enum:
+            - normal
+            - dynamo
+        name:
+          type: string
+        restricted_mins:
+          type: integer
+          description: 禁止時間
+        resume: *ref_4
+        target_electricity:
+          type: number
+          description: 契約電量(kW)
+        unloading:
+          type: array
+          items: *ref_5
+    UpdateElectricityDemandSchedule:
+      type: object
+      required:
+        - sun
+        - mon
+        - tues
+        - wed
+        - thur
+        - fri
+        - sat
+      properties:
+        fri:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: &ref_6
+            $ref: '#/components/schemas/dailySchedule'
+        mon:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: *ref_6
+        sat:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: *ref_6
+        sun:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: *ref_6
+        thur:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: *ref_6
+        tues:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: *ref_6
+        wed:
+          type: array
+          minItems: 24
+          maxItems: 24
+          items: *ref_6
+    GetElectricityDemandSchedule:
+      type: object
+      required:
+        - electricity_demands
+        - schedules
+      properties:
+        electricity_demands:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+        schedules:
+          type: object
+          required:
+            - sun
+            - mon
+            - wed
+            - tues
+            - thur
+            - fri
+            - sat
+          properties:
+            fri:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+            mon:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+            sat:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+            sun:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+            thur:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+            tues:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+            wed:
+              type: array
+              minItems: 24
+              maxItems: 24
+              items: *ref_6
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+  - url: http://ems-svc:9080
+    description: Ems_Service

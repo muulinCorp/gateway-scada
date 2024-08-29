@@ -8,32 +8,6 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 paths:
-  /v1/sse/{FLOOR_ID}:
-    get:
-      summary: "Floor-SSE"
-      description: "Floor-SSE"
-      operationId: "get-sse"
-      security:
-        - BearerAuth: []
-      parameters:
-      - name: FLOOR_ID
-        in: path
-        description: String ID of the tv
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: "SSE"
-          content:
-            'text/event-stream':
-              schema:
-                type: object
-                additionalProperties:
-                  type: string
-                example:
-                  10100@1F_engine_AVD101: 12.4
-                  10101@1F_engine_AVD101: -2.8
   /v1/controller:
     post:
       summary: 遠端控制
@@ -70,3 +44,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+servers:
+  - url: http://com2scada-svc:9080
+    description: Com2Scada_Service

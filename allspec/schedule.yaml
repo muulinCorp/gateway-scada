@@ -263,3 +263,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+servers:
+  - url: http://schedule-svc:9080
+    description: Schedule_Service

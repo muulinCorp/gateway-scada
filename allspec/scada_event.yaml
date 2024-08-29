@@ -556,3 +556,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+servers:
+  - url: http://event-svc:9080
+    description: Event_Service

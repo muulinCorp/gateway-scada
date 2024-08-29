@@ -6312,3 +6312,6 @@ components:
         title:
           type: string
           example: "環保機電監控系統"
+servers:
+  - url: http://layout-svc:9080
+    description: Layout_Service
