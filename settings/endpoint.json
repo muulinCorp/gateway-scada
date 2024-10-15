@@ -203,7 +203,7 @@
       "description": "取得數據報表",
       "endpoint": "/web/report/pdf",
       "method": "POST",
-      "timeout": "30s",
+      "timeout": "300s",
       "backend": "/v1/report/pdf",
       "host": [
         "http://report-svc:9080"
@@ -481,7 +481,7 @@
       "endpoint": "/web/report/excel",
       "method": "POST",
       "backend": "/v1/report/excel",
-      "timeout": "30s",
+      "timeout": "300s",
       "host": [
         "http://report-svc:9080"
       ]
