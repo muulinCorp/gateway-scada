@@ -6,9 +6,9 @@ services:
     - traefik.http.routers.gateway.rule=Host(`gateway.docker.localhost`)
     - traefik.http.routers.gateway.entrypoints=web
     - traefik.http.services.gateway.loadbalancer.server.port=8000
-    - traefik.http.routers.gateway.service=dev-sso-gateway
+    - traefik.http.routers.gateway.service=gateway
     - traefik.http.routers.gateway.middlewares=api
-    # - traefik.http.routers.dev-sso-gateway.middlewares=oathkeeper, api
+    # - traefik.http.routers.gateway.middlewares=oathkeeper, api
     env_file:
     - ./.env.${ENV}
     command: ["run", "-c", "/etc/krakend/krakend.tmpl"]
