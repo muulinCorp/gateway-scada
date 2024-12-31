@@ -8,7 +8,7 @@ tags:
   - name: ems/v1
   - name: scada-web
 paths:
-  /meter/{key}/electricity-demand/dashboard:
+  /v1/meter/{key}/electricity-demand/dashboard:
     get:
       summary: 取得用電需量管理儀表版資訊
       deprecated: false
@@ -111,7 +111,7 @@ paths:
       x-apidog-status: designing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386580-run
-  /meter/{key}/electricity-demand/schedule:
+  /v1/meter/{key}/electricity-demand/schedule:
     get:
       summary: 取得用電需量管理排程資訊
       deprecated: false
@@ -230,7 +230,7 @@ paths:
       x-apidog-status: testing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386581-run
-  /meter/{key}/electricity-demand/schedule/{mode}:
+  /v1/meter/{key}/electricity-demand/schedule/{mode}:
     put:
       summary: 更新用電需量管理排程資訊
       deprecated: false
@@ -348,7 +348,7 @@ paths:
       x-apidog-status: testing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386582-run
-  /meter/{key}/electricity-demand:
+  /v1/meter/{key}/electricity-demand:
     post:
       summary: 建立用電需量管理設定
       deprecated: false
@@ -517,7 +517,7 @@ paths:
       x-apidog-status: testing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386583-run
-  /meter/{key}/electricity-demand/init:
+  /v1/meter/{key}/electricity-demand/init:
     get:
       summary: 初始化用電需量管理設定
       deprecated: false
@@ -620,7 +620,7 @@ paths:
       x-apidog-status: testing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386584-run
-  /meter/{key}/electricity-demand/{id}:
+  /v1/meter/{key}/electricity-demand/{id}:
     get:
       summary: 取得用電需量管理設定明細
       deprecated: false
@@ -870,7 +870,7 @@ paths:
       x-apidog-status: testing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9482767-run
-  /meter:
+  /v1/meter:
     get:
       summary: 取得電表清單
       deprecated: false
@@ -969,7 +969,7 @@ paths:
       x-apidog-status: testing
       x-apidog-maintainer: chen focke
       x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9448667-run
-  /sse/meter/{key}/electricity-demand/dashboard:
+  /v1/sse/meter/{key}/electricity-demand/dashboard:
     get:
       summary: (SSE)取得用電需量管理儀表版資訊
       deprecated: false

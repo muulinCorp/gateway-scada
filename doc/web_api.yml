@@ -30,803 +30,6 @@ tags:
 - name: Schedule_Service
   description: 預約排程、固定排程及週排程功能服務
 paths:
-  /meter:
-    get:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 取得電表清單(對應 GET /meter)
-      description: 取得電表清單
-      operationId: get-eletricity-demand/meter
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Ems_Meter'
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /meter/{key}/electricity-demand:
-    post:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 建立用電需量管理設定(對應 POST /meter/{key}/electricity-demand)
-      operationId: create-electricity-demand
-      parameters:
-      - name: key
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateElectricityDemand'
-            example:
-              elements:
-              - element_id: 2db4e6e214920bda2ddf18f2
-                field: dolore qui est amet
-                unloading_index: -8.0965942e+07
-              - element_id: ad9babfccaf75ddc52e14fe6
-                field: fugiat qui Duis proident ex
-                unloading_index: 4.192684e+07
-              - element_id: 39cacc62cffc3b1dee9ad8ca
-                field: aute aliquip labore
-                unloading_index: 7.3741342e+07
-              enable: true
-              mode: dynamo
-              name: Javier Towne
-              restricted_mins: -7.9635112e+07
-              resume:
-                elapsed_mins: 8.069644e+06
-                electricity: 5.817156677968675e+07
-              target_electricity: -9.630246129532158e+06
-              unloading:
-              - elapsed_mins: -6.4364555e+07
-                electricity: 8.993300586113921e+07
-                is_open: true
-              - elapsed_mins: 6.4299509e+07
-                electricity: -9.257287627040735e+07
-                is_open: true
-              - elapsed_mins: 4.6279576e+07
-                electricity: -3.640488865142602e+07
-                is_open: false
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - id
-                properties:
-                  id:
-                    type: string
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /meter/{key}/electricity-demand/{id}:
-    get:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 取得用電需量管理設定明細(對應 GET /meter/{key}/electricity-demand/{id})
-      operationId: get-electricity-demand-detail
-      parameters:
-      - name: key
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        example: ""
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateElectricityDemandDetail'
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-    put:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 設定用電需量管理(對應 PUT /meter/{key}/electricity-demand/{id})
-      operationId: update-electricity-demand-detail
-      parameters:
-      - name: key
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        example: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateElectricityDemand'
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /meter/{key}/electricity-demand/dashboard:
-    get:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 取得用電需量管理儀表版資訊(對應 GET /meter/{key}/electricity-demand/dashboard)
-      operationId: get-electricity-demand-dashboard
-      parameters:
-      - name: key
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetElectricityDemandDashboard'
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /meter/{key}/electricity-demand/init:
-    get:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 初始化用電需量管理設定(對應 GET /meter/{key}/electricity-demand/init)
-      operationId: init-electricity-demand
-      parameters:
-      - name: key
-        in: path
-        description: 電錶key
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InitElectricityDemand'
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /meter/{key}/electricity-demand/schedule:
-    get:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 取得用電需量管理排程資訊(對應 GET /meter/{key}/electricity-demand/schedule)
-      operationId: get-electricity-demand-schedule
-      parameters:
-      - name: key
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: mode
-        in: query
-        description: 需量模式
-        required: true
-        schema:
-          type: string
-          enum:
-          - normal
-          - dynamo
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetElectricityDemandSchedule'
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /meter/{key}/electricity-demand/schedule/{mode}:
-    put:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: 更新用電需量管理排程資訊(對應 PUT /meter/{key}/electricity-demand/schedule/{mode})
-      operationId: update-electricity-demand-schedule
-      parameters:
-      - name: key
-        in: path
-        description: 電錶key
-        required: true
-        schema:
-          type: string
-      - name: mode
-        in: path
-        description: 需量模式
-        required: true
-        schema:
-          type: string
-          enum:
-          - normal
-          - dynamo
-        example: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateElectricityDemandSchedule'
-            example: ""
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetElectricityDemandSchedule'
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
-  /sse/meter/{key}/electricity-demand/dashboard:
-    get:
-      tags:
-      - ems/v1
-      - scada-web
-      summary: (SSE)取得用電需量管理儀表版資訊(對應 GET /sse/meter/{key}/electricity-demand/dashboard)
-      operationId: sse-electricity-demand-dashboard
-      parameters:
-      - name: key
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetElectricityDemandDashboard'
-        "401":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - error
-                - status
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-        "500":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - service
-                - status
-                - error
-                properties:
-                  error:
-                    type: string
-                  service:
-                    type: string
-                  status:
-                    type: integer
-      security:
-      - bearerAuth: []
-      externalDocs:
-        description: Ems_Service
-        url: http://ems-svc:9080
   /web/chart:
     get:
       tags:
@@ -873,7 +76,7 @@ paths:
     get:
       tags:
       - chart
-      summary: 取得圖表儀表版資訊(對應 GET /v1/chart/dashboard)
+      summary: 取得圖表儀表版資訊(對應 GET /web/chart/dashboard)
       operationId: get-data-chart-dashboard
       responses:
         "200":
@@ -892,7 +95,7 @@ paths:
     post:
       tags:
       - chart
-      summary: 儲存使用者自訂圖表欄位(對應 POST /web/chart/dashboard)
+      summary: 儲存使用者自訂圖表欄位(對應 POST /v1/chart/dashboard)
       operationId: save-data-chart-dashboard
       requestBody:
         content:
@@ -1492,6 +695,727 @@ paths:
       externalDocs:
         description: Auth_Service
         url: http://auth-svc:9080
+  /web/meter:
+    get:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 取得電表清單(對應 GET /v1/meter)
+      description: 取得電表清單
+      operationId: get-eletricity-demand/meter
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ems_Meter'
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+  /web/meter/{key}/electricity-demand:
+    post:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 建立用電需量管理設定(對應 POST /v1/meter/{key}/electricity-demand)
+      operationId: create-electricity-demand
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateElectricityDemand'
+            example:
+              elements:
+              - element_id: 2db4e6e214920bda2ddf18f2
+                field: dolore qui est amet
+                unloading_index: -8.0965942e+07
+              - element_id: ad9babfccaf75ddc52e14fe6
+                field: fugiat qui Duis proident ex
+                unloading_index: 4.192684e+07
+              - element_id: 39cacc62cffc3b1dee9ad8ca
+                field: aute aliquip labore
+                unloading_index: 7.3741342e+07
+              enable: true
+              mode: dynamo
+              name: Javier Towne
+              restricted_mins: -7.9635112e+07
+              resume:
+                elapsed_mins: 8.069644e+06
+                electricity: 5.817156677968675e+07
+              target_electricity: -9.630246129532158e+06
+              unloading:
+              - elapsed_mins: -6.4364555e+07
+                electricity: 8.993300586113921e+07
+                is_open: true
+              - elapsed_mins: 6.4299509e+07
+                electricity: -9.257287627040735e+07
+                is_open: true
+              - elapsed_mins: 4.6279576e+07
+                electricity: -3.640488865142602e+07
+                is_open: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                properties:
+                  id:
+                    type: string
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+  /web/meter/{key}/electricity-demand/{id}:
+    get:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 取得用電需量管理設定明細(對應 GET /v1/meter/{key}/electricity-demand/{id})
+      operationId: get-electricity-demand-detail
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateElectricityDemandDetail'
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+    put:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 設定用電需量管理(對應 PUT /web/meter/{key}/electricity-demand/{id})
+      operationId: update-electricity-demand-detail
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateElectricityDemand'
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+  /web/meter/{key}/electricity-demand/dashboard:
+    get:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 取得用電需量管理儀表版資訊(對應 GET /v1/meter/{key}/electricity-demand/dashboard)
+      operationId: get-electricity-demand-dashboard
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandDashboard'
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+  /web/meter/{key}/electricity-demand/init:
+    get:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 初始化用電需量管理設定(對應 GET /v1/meter/{key}/electricity-demand/init)
+      operationId: init-electricity-demand
+      parameters:
+      - name: key
+        in: path
+        description: 電錶key
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitElectricityDemand'
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+  /web/meter/{key}/electricity-demand/schedule:
+    get:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 取得用電需量管理排程資訊(對應 GET /v1/meter/{key}/electricity-demand/schedule)
+      operationId: get-electricity-demand-schedule
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mode
+        in: query
+        description: 需量模式
+        required: true
+        schema:
+          type: string
+          enum:
+          - normal
+          - dynamo
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandSchedule'
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
+  /web/meter/{key}/electricity-demand/schedule/{mode}:
+    put:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: 更新用電需量管理排程資訊(對應 PUT /v1/meter/{key}/electricity-demand/schedule/{mode})
+      operationId: update-electricity-demand-schedule
+      parameters:
+      - name: key
+        in: path
+        description: 電錶key
+        required: true
+        schema:
+          type: string
+      - name: mode
+        in: path
+        description: 需量模式
+        required: true
+        schema:
+          type: string
+          enum:
+          - normal
+          - dynamo
+        example: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateElectricityDemandSchedule'
+            example: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandSchedule'
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
   /web/pwd:
     put:
       summary: 修改密碼(對應 PUT /v1/pwd)
@@ -2516,6 +2440,82 @@ paths:
       externalDocs:
         description: Schedule_Service
         url: http://schedule-svc:9080
+  /web/sse/meter/{key}/electricity-demand/dashboard:
+    get:
+      tags:
+      - ems/v1
+      - scada-web
+      summary: (SSE)取得用電需量管理儀表版資訊(對應 GET /v1/sse/meter/{key}/electricity-demand/dashboard)
+      operationId: sse-electricity-demand-dashboard
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetElectricityDemandDashboard'
+        "401":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - error
+                - status
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - service
+                - status
+                - error
+                properties:
+                  error:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: integer
+      security:
+      - bearerAuth: []
+      externalDocs:
+        description: Ems_Service
+        url: http://ems-svc:9080
   /web/token/refresh:
     get:
       summary: 更新access token(對應 GET /v1/token/refresh)
@@ -2878,7 +2878,7 @@ paths:
     get:
       tags:
       - ews
-      summary: 取得預警設定詳情(對應 GET /v2/warning/setting/{ID})
+      summary: 取得預警設定詳情(對應 GET /web/warning/setting/{ID})
       operationId: get-warning-setting-detail
       parameters:
       - name: ID
@@ -2918,7 +2918,7 @@ paths:
     put:
       tags:
       - ews
-      summary: 更新預警(對應 PUT /web/warning/setting/{ID})
+      summary: 更新預警(對應 PUT /v2/warning/setting/{ID})
       operationId: update-warning-setting
       parameters:
       - name: ID
