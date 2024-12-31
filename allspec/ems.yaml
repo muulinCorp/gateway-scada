@@ -5,15 +5,18 @@ info:
   version: 1.0.0
 tags:
   - name: ems
+  - name: ems/v1
+  - name: scada-web
 paths:
-  /v1/meter/{key}/electricity-demand/dashboard:
+  /meter/{key}/electricity-demand/dashboard:
     get:
       summary: 取得用電需量管理儀表版資訊
       deprecated: false
       description: ''
       operationId: get-electricity-demand-dashboard
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -23,13 +26,15 @@ paths:
             type: string
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
-              schema: &ref_1
+              schema: &ref_2
                 $ref: '#/components/schemas/GetElectricityDemandDashboard'
+          headers: {}
+          x-apidog-name: success
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -42,12 +47,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -60,12 +71,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -78,20 +95,31 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/meter/{key}/electricity-demand/schedule:
+      x-apidog-folder: ems/v1
+      x-apidog-status: designing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386580-run
+  /meter/{key}/electricity-demand/schedule:
     get:
       summary: 取得用電需量管理排程資訊
       deprecated: false
       description: ''
       operationId: get-electricity-demand-schedule
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -108,19 +136,24 @@ paths:
             enum:
               - normal
               - dynamo
-            x-apidog:
-              enumDescriptions:
-                normal: 市電
-                dynamo: 發電機
+            x-apidog-enum:
+              - name: ''
+                value: normal
+                description: 市電
+              - name: ''
+                value: dynamo
+                description: 發電機
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
-              schema:
+              schema: &ref_0
                 $ref: '#/components/schemas/GetElectricityDemandSchedule'
+          headers: {}
+          x-apidog-name: success
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -133,12 +166,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -151,12 +190,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -169,20 +214,31 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/meter/{key}/electricity-demand/schedule/{mode}:
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386581-run
+  /meter/{key}/electricity-demand/schedule/{mode}:
     put:
       summary: 更新用電需量管理排程資訊
       deprecated: false
       description: ''
       operationId: update-electricity-demand-schedule
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -208,14 +264,14 @@ paths:
             example: ''
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
-              schema:
-                type: object
-                properties: {}
+              schema: *ref_0
+          headers: {}
+          x-apidog-name: success
         '400':
-          description: Bad Request
+          description: ''
           content:
             application/json:
               schema:
@@ -228,12 +284,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Bad Request
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -246,12 +308,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -264,20 +332,31 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/meter/{key}/electricity-demand:
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386582-run
+  /meter/{key}/electricity-demand:
     post:
       summary: 建立用電需量管理設定
       deprecated: false
       description: ''
       operationId: create-electricity-demand
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -288,12 +367,40 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: &ref_0
+            schema: &ref_1
               $ref: '#/components/schemas/CreateElectricityDemand'
-            example: ''
+            example:
+              elements:
+                - element_id: 2db4e6e214920bda2ddf18f2
+                  field: dolore qui est amet
+                  unloading_index: -80965942
+                - element_id: ad9babfccaf75ddc52e14fe6
+                  field: fugiat qui Duis proident ex
+                  unloading_index: 41926840
+                - element_id: 39cacc62cffc3b1dee9ad8ca
+                  field: aute aliquip labore
+                  unloading_index: 73741342
+              enable: true
+              mode: dynamo
+              name: Javier Towne
+              restricted_mins: -79635112
+              resume:
+                elapsed_mins: 8069644
+                electricity: 58171566.77968675
+              target_electricity: -9630246.129532158
+              unloading:
+                - elapsed_mins: -64364555
+                  electricity: 89933005.86113921
+                  is_open: true
+                - elapsed_mins: 64299509
+                  electricity: -92572876.27040735
+                  is_open: true
+                - elapsed_mins: 46279576
+                  electricity: -36404888.65142602
+                  is_open: false
       responses:
         '200':
-          description: OK
+          description: ''
           content:
             application/json:
               schema:
@@ -301,10 +408,15 @@ paths:
                 properties:
                   id:
                     type: string
+                x-apidog-orders:
+                  - id
                 required:
                   - id
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: OK
         '400':
-          description: Bad Request
+          description: ''
           content:
             application/json:
               schema:
@@ -317,12 +429,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Bad Request
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -335,12 +453,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -353,12 +477,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -371,20 +501,31 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/meter/{key}/electricity-demand/init:
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386583-run
+  /meter/{key}/electricity-demand/init:
     get:
       summary: 初始化用電需量管理設定
       deprecated: false
       description: ''
       operationId: init-electricity-demand
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -394,13 +535,15 @@ paths:
             type: string
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/InitElectricityDemand'
+          headers: {}
+          x-apidog-name: success
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -413,12 +556,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -431,12 +580,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -449,20 +604,31 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/meter/{key}/electricity-demand/{id}:
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386584-run
+  /meter/{key}/electricity-demand/{id}:
     get:
       summary: 取得用電需量管理設定明細
       deprecated: false
       description: ''
       operationId: get-electricity-demand-detail
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -479,13 +645,15 @@ paths:
             type: string
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateElectricityDemandDetail'
+          headers: {}
+          x-apidog-name: success
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -498,12 +666,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -516,12 +690,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -534,19 +714,30 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9386585-run
     put:
       summary: 設定用電需量管理
       deprecated: false
       description: ''
       operationId: update-electricity-demand-detail
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -564,17 +755,21 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: *ref_0
+            schema: *ref_1
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
+                x-apidog-orders: []
+                x-apidog-ignore-properties: []
+          headers: {}
+          x-apidog-name: success
         '400':
-          description: Bad Request
+          description: ''
           content:
             application/json:
               schema:
@@ -587,12 +782,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Bad Request
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -605,12 +806,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -623,12 +830,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -641,45 +854,45 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/meter:
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9482767-run
+  /meter:
     get:
       summary: 取得電表清單
       deprecated: false
       description: 取得電表清單
       operationId: get-eletricity-demand/meter
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters: []
       responses:
         '200':
-          description: Success
+          description: ''
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    key:
-                      type: string
-                    name:
-                      type: string
-                      description: 電表名稱
-                    unit:
-                      type: string
-                      description: 電表單位
-                  required:
-                    - key
-                    - name
-                    - unit
+                  $ref: '#/components/schemas/Ems_Meter'
+          headers: {}
+          x-apidog-name: Success
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -692,12 +905,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -710,12 +929,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -728,20 +953,31 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
-  /v1/sse/meter/{key}/electricity-demand/dashboard:
+      x-apidog-folder: ems/v1
+      x-apidog-status: testing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9448667-run
+  /sse/meter/{key}/electricity-demand/dashboard:
     get:
-      summary: 取得用電需量管理儀表版資訊 Copy
+      summary: (SSE)取得用電需量管理儀表版資訊
       deprecated: false
       description: ''
       operationId: sse-electricity-demand-dashboard
       tags:
-        - ems
+        - ems/v1
+        - scada-web
       parameters:
         - name: key
           in: path
@@ -751,12 +987,14 @@ paths:
             type: string
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
-              schema: *ref_1
+              schema: *ref_2
+          headers: {}
+          x-apidog-name: success
         '401':
-          description: Unauthorization
+          description: ''
           content:
             application/json:
               schema:
@@ -769,12 +1007,18 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: Unauthorization
         '403':
-          description: EMS未設定
+          description: ''
           content:
             application/json:
               schema:
@@ -787,12 +1031,18 @@ paths:
                     type: string
                   status:
                     type: integer
+                x-apidog-orders:
+                  - service
+                  - error
+                  - status
                 required:
                   - service
                   - error
                   - status
+          headers: {}
+          x-apidog-name: EMS未設定
         '500':
-          description: 伺服器錯誤
+          description: ''
           content:
             application/json:
               schema:
@@ -805,28 +1055,56 @@ paths:
                     type: integer
                   error:
                     type: string
+                x-apidog-orders:
+                  - service
+                  - status
+                  - error
                 required:
                   - service
                   - status
                   - error
+          headers: {}
+          x-apidog-name: 伺服器錯誤
       security:
         - bearer: []
+      x-apidog-folder: ems/v1
+      x-apidog-status: designing
+      x-apidog-maintainer: chen focke
+      x-run-in-apidog: https://apidog.com/web/project/606880/apis/api-9448709-run
 components:
   schemas:
+    upperAndLower:
+      type: object
+      properties:
+        upper:
+          type: number
+        lower:
+          type: number
+      x-apidog-orders:
+        - upper
+        - lower
+      required:
+        - upper
+        - lower
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     ElectricityDemandConfiguration:
       type: object
       required:
         - groups
         - elements
+        - input_limit
       properties:
         elements:
           type: array
+          items: &ref_5
+            type: object
+            properties: {}
           description: 設表列表
-          items: &ref_3
-            $ref: '#/components/schemas/ElectricityDemandElement'
+          maxItems: 150
+          minItems: 30
         groups:
           type: array
-          description: 設備群組
           items:
             type: object
             required:
@@ -839,6 +1117,66 @@ components:
               name:
                 type: string
                 description: 群組名稱
+            x-apidog-orders:
+              - id
+              - name
+            x-apidog-ignore-properties: []
+          description: 設備群組
+          minItems: 9
+          maxItems: 30
+        input_limit:
+          type: object
+          properties:
+            target_electricity:
+              anyOf:
+                - &ref_3
+                  properties:
+                    upper:
+                      type: number
+                    lower:
+                      type: number
+                  x-apidog-orders:
+                    - upper
+                    - lower
+                  required:
+                    - upper
+                    - lower
+                  $ref: '#/components/schemas/upperAndLower'
+                - type: 'null'
+              description: 用電量限制範圍
+            restricted_mins:
+              anyOf:
+                - *ref_3
+                - type: 'null'
+              description: 禁止時間限制範圍
+            electricity:
+              anyOf:
+                - *ref_3
+                - type: 'null'
+              description: 卸載電量限制範圍
+            elapsed_mins:
+              anyOf:
+                - *ref_3
+                - type: 'null'
+              description: 卸載時間限制範圍
+          x-apidog-orders:
+            - target_electricity
+            - restricted_mins
+            - electricity
+            - elapsed_mins
+          description: 輸入限制範圍
+          required:
+            - target_electricity
+            - restricted_mins
+            - electricity
+            - elapsed_mins
+          x-apidog-ignore-properties: []
+      x-apidog-orders:
+        - elements
+        - groups
+        - input_limit
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     ElectricityDemandElement:
       type: object
       required:
@@ -847,6 +1185,7 @@ components:
         - field
         - group_id
         - unloading_index
+        - is_exist
       properties:
         element_id:
           type: string
@@ -854,15 +1193,30 @@ components:
         element_name:
           type: string
           description: 設備名稱
+          readOnly: true
         field:
           type: string
           description: 控制點位
         group_id:
           type: string
           description: 群組id
+          readOnly: true
         unloading_index:
           type: integer
           description: 卸載索引
+        is_exist:
+          type: boolean
+          description: 設備是否存在電表管理列表
+          readOnly: true
+      x-apidog-orders:
+        - element_id
+        - element_name
+        - field
+        - group_id
+        - unloading_index
+        - is_exist
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     unloadingItem:
       type: object
       required:
@@ -873,12 +1227,21 @@ components:
         elapsed_mins:
           type: integer
           description: 延後判斷分鐘
+          format: uint
+          minimum: 0
+          maximum: 14
         electricity:
           type: number
           description: 電力條件
         is_open:
           type: boolean
           description: 啟用
+      x-apidog-orders:
+        - elapsed_mins
+        - electricity
+        - is_open
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     resumeItem:
       type: object
       required:
@@ -888,63 +1251,17 @@ components:
         elapsed_mins:
           type: integer
           description: 延後判斷分鐘
+          format: uint
+          minimum: 0
+          maximum: 15
         electricity:
           type: number
           description: 復歸電力條件
-    dailySchedule:
-      type: object
-      required:
-        - index
-        - id
-      properties:
-        id:
-          type: string
-        index:
-          type: integer
-          description: '-1表示未啟用，數值表示需量清單對應的index'
-          readOnly: true
-    CreateElectricityDemandDetail:
-      type: object
-      required:
-        - id
-        - name
-        - mode
-        - enable
-        - restricted_mins
-        - target_electricity
-        - resume
-        - unloading
-      properties:
-        configuration: &ref_2
-          $ref: '#/components/schemas/ElectricityDemandConfiguration'
-        enable:
-          type: boolean
-          description: 開關
-        id:
-          type: string
-          description: 需量id
-        mode:
-          type: string
-          description: 模式
-          enum:
-            - normal
-            - dynamo
-        name:
-          type: string
-          description: 需量名稱
-        restricted_mins:
-          type: integer
-          description: 禁止時間
-        resume: &ref_4
-          $ref: '#/components/schemas/resumeItem'
-        target_electricity:
-          type: number
-          description: 契約電量(kW)
-        unloading:
-          type: array
-          description: 卸載設定
-          items: &ref_5
-            $ref: '#/components/schemas/unloadingItem'
+      x-apidog-orders:
+        - elapsed_mins
+        - electricity
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     GetElectricityDemandDashboard:
       type: object
       required:
@@ -999,6 +1316,11 @@ components:
               type: string
             target_electricity_color:
               type: string
+          x-apidog-orders:
+            - current_electricity_color
+            - forecast_electricity_color
+            - target_electricity_color
+          x-apidog-ignore-properties: []
         last_electricity:
           type: number
         mode:
@@ -1023,10 +1345,164 @@ components:
           type: string
         year_max_electricity:
           type: number
+      x-apidog-orders:
+        - adjust_electricity
+        - avg_electricity
+        - correct_time
+        - current_electricity
+        - current_mins
+        - daily_max_electricity
+        - daily_max_time
+        - delay_mins
+        - forecast_electricity
+        - graph_config
+        - last_electricity
+        - mode
+        - month_max_datetime
+        - month_max_electricity
+        - restricted_mins
+        - target_electricity
+        - used_electricity
+        - year_max_datetime
+        - year_max_electricity
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
+    dailySchedule:
+      type: object
+      required:
+        - index
+        - id
+      properties:
+        id:
+          type: string
+        index:
+          type: integer
+          description: '-1表示未啟用，數值表示需量清單對應的index'
+          readOnly: true
+      x-apidog-orders:
+        - id
+        - index
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
+    Ems_Meter:
+      type: object
+      required:
+        - key
+        - name
+        - unit
+        - support_modes
+        - mode
+        - signal_field
+        - electric_field
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+          description: 電表名稱
+        unit:
+          type: string
+          description: 電表單位
+        support_modes:
+          type: array
+          items:
+            type: string
+            enum:
+              - normal
+              - dynamo
+            x-apidog:
+              enumDescriptions:
+                normal: 市電
+                dynamo: 發電機
+          description: 支援模式
+        mode:
+          type: string
+          enum:
+            - normal
+            - dynamo
+          x-apidog:
+            enumDescriptions:
+              normal: 市電
+              dynamo: 發電機
+          description: 模式
+        signal_field:
+          type: string
+          description: 發電機訊號欄位
+        electric_field:
+          type: string
+          description: 電力欄位
+      x-apidog-orders:
+        - key
+        - name
+        - unit
+        - support_modes
+        - mode
+        - signal_field
+        - electric_field
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
+    CreateElectricityDemandDetail:
+      type: object
+      required:
+        - id
+        - name
+        - mode
+        - enable
+        - restricted_mins
+        - target_electricity
+        - resume
+        - unloading
+      properties:
+        configuration: &ref_4
+          $ref: '#/components/schemas/ElectricityDemandConfiguration'
+        enable:
+          type: boolean
+          description: 開關
+        id:
+          type: string
+          description: 需量id
+        mode:
+          type: string
+          description: 模式
+          enum:
+            - normal
+            - dynamo
+        name:
+          type: string
+          description: 需量名稱
+        restricted_mins:
+          type: integer
+          description: 禁止時間
+        resume: &ref_6
+          $ref: '#/components/schemas/resumeItem'
+        target_electricity:
+          type: number
+          description: 契約電量(kW)
+        unloading:
+          type: array
+          description: 卸載設定
+          items: &ref_7
+            $ref: '#/components/schemas/unloadingItem'
+      x-apidog-orders:
+        - configuration
+        - enable
+        - id
+        - mode
+        - name
+        - restricted_mins
+        - resume
+        - target_electricity
+        - unloading
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     InitElectricityDemand:
       type: object
       properties:
-        configuration: *ref_2
+        configuration: *ref_4
+      x-apidog-orders:
+        - configuration
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     CreateElectricityDemand:
       type: object
       required:
@@ -1041,7 +1517,7 @@ components:
       properties:
         elements:
           type: array
-          items: *ref_3
+          items: *ref_5
         enable:
           type: boolean
         mode:
@@ -1054,13 +1530,27 @@ components:
         restricted_mins:
           type: integer
           description: 禁止時間
-        resume: *ref_4
+          format: uint
+          minimum: 0
+          maximum: 14
+        resume: *ref_6
         target_electricity:
           type: number
           description: 契約電量(kW)
         unloading:
           type: array
-          items: *ref_5
+          items: *ref_7
+      x-apidog-orders:
+        - elements
+        - enable
+        - mode
+        - name
+        - restricted_mins
+        - resume
+        - target_electricity
+        - unloading
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     UpdateElectricityDemandSchedule:
       type: object
       required:
@@ -1071,43 +1561,60 @@ components:
         - thur
         - fri
         - sat
+        - delete_ids
       properties:
         fri:
           type: array
           minItems: 24
           maxItems: 24
-          items: &ref_6
+          items: &ref_8
             $ref: '#/components/schemas/dailySchedule'
         mon:
           type: array
           minItems: 24
           maxItems: 24
-          items: *ref_6
+          items: *ref_8
         sat:
           type: array
           minItems: 24
           maxItems: 24
-          items: *ref_6
+          items: *ref_8
         sun:
           type: array
           minItems: 24
           maxItems: 24
-          items: *ref_6
+          items: *ref_8
         thur:
           type: array
           minItems: 24
           maxItems: 24
-          items: *ref_6
+          items: *ref_8
         tues:
           type: array
           minItems: 24
           maxItems: 24
-          items: *ref_6
+          items: *ref_8
         wed:
           type: array
           minItems: 24
           maxItems: 24
-          items: *ref_6
+          items: *ref_8
+        delete_ids:
+          type: array
+          items:
+            type: string
+          writeOnly: true
+      x-apidog-orders:
+        - fri
+        - mon
+        - sat
+        - sun
+        - thur
+        - tues
+        - wed
+        - delete_ids
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
     GetElectricityDemandSchedule:
       type: object
       required:
@@ -1123,6 +1630,15 @@ components:
                 type: string
               name:
                 type: string
+              enable:
+                type: boolean
+            x-apidog-orders:
+              - id
+              - name
+              - enable
+            required:
+              - enable
+            x-apidog-ignore-properties: []
         schedules:
           type: object
           required:
@@ -1138,37 +1654,51 @@ components:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
             mon:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
             sat:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
             sun:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
             thur:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
             tues:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
             wed:
               type: array
               minItems: 24
               maxItems: 24
-              items: *ref_6
+              items: *ref_8
+          x-apidog-orders:
+            - fri
+            - mon
+            - sat
+            - sun
+            - thur
+            - tues
+            - wed
+          x-apidog-ignore-properties: []
+      x-apidog-orders:
+        - electricity_demands
+        - schedules
+      x-apidog-ignore-properties: []
+      x-apidog-folder: Schemas
   securitySchemes:
     bearer:
       type: http
